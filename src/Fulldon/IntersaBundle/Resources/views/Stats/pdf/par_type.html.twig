@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        .couleur-titre {
+            color:#d58512;
+        }
+        th {
+            text-align: left;
+        }
+        .row_td {
+            background-color: #B3BCF8;
+        }
+        .sub_total {
+            background-color: #1AC5EC;
+        }
+        .aligne_row {
+            text-align: right;
+            width:150px;
+        }
+    </style>
+
+</head>
+<body>
+<center>
+
+
+
+<h1 style="margin-top:5px;" class="couleur-intersa" >Etat Journalier par Mode de Règlement ({{ entity }})  </h1>
+    <hr style="margin:5px 0px 5px 0px;" />
+{{ date_debut|date('d/m/Y') }}
+</center>
+<hr />
+<div class="row">
+{% set quantity = 0 %}
+{% set cumul = 0 %}
+
+        <div class="form-group col-md-12">
+                <table class="table table-condensed" style="width:100%;float:left;">
+                    <thead>
+                    <tr>
+                        <th>Type de réglement</th>
+                        <th>Quantité</th>
+                        <th>Montant en Euros</th>
+                    </tr>
+                    </thead>
+                    <tbody id="content" >
+                    {% for cat in data %}
+                        <tr class="">
+
+                            <td class="row_td">
+                                {% if cat.type == 'PA' %}
+                                    Prélévement automatique
+                                {% endif %}
+                                {% if cat.type == 'CS' %}
+                                    CHèques seuls
+                                {% endif %}
+                                {% if cat.type == 'BC' %}
+                                    Bulletin Chèque
+                                {% endif %}
+                                {% if cat.type == 'ESPECE' %}
+                                    Espèce
+                                {% endif %}
+                                {% if cat.type == 'VIREMENT' %}
+                                    Virement bancaire.
+                                {% endif %}
+
+                            </td>
+                            <td class="row_td aligne_row"  >{{ cat.comptage }}</td>
+                            <td class="row_td aligne_row"  >{{ cat.cumul }}€</td>
+                        </tr>
+                        {% set quantity = quantity +  cat.comptage %}
+                        {% set cumul = cumul +  cat.cumul  %}
+                    {% endfor %}
+                    <tr >
+
+                        <td ><div style="text-align: left;">Total Général</div></td>
+                        <td class="sub_total aligne_row">{{ quantity }}</td>
+                        <td class="sub_total aligne_row">{{ cumul }}€</td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+
+    </div>
+
+
+</body>
+</html>

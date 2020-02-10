@@ -1,0 +1,136 @@
+-------tbody---------- 
+
+{% for key, donateurs in data %}
+                {% for r in donateurs %}
+                    <tr>
+                        {% for col in col_display %}
+                            {% if col == "numdonateur" %}
+                                <td>{{ r.refDonateur }}</td>
+                            {% elseif col ==  "nom" %}
+                                <td>{{ r.nom }}</td>
+                            {% elseif col == "prenom" %}
+                                <td>{{ r.prenom }}</td>
+                            {% elseif col == "statut" %}
+                                <td> {% if r.removed %}<span
+                                        class="label label-danger arrowed-in arrowed-in-right">Désactivé</span> {% else %}
+                                    <span class="label label-success arrowed-in arrowed-in-right">Actif</span>{% endif %}
+                                </td>
+                            {% elseif col == "nomentreprise" %}
+                                <td>{% if r.nomEntreprise is defined and r.nomEntreprise is not null %}{{ r.nomEntreprise }}{% else %} N/A{% endif %}</td>
+                            {% elseif col == "email" %}
+                                <td>{{ r.email }}</td>
+                            {% elseif col == "birthday" %}
+                                <td>{{ r.dateNaissance|date('d/m/Y') }}</td>
+                            {% elseif col == "telmobile" %}
+                                <td>{{ r.telephoneMobile }}</td>
+                            {% elseif col == "telfixe" %}
+                                <td>{{ r.telephoneFixe }}</td>
+                            {% elseif col == "cat" %}
+                                <td><ul>
+                                        {% for cat in r.categories %}
+                                            <li>{{ cat.name }}</li>
+                                            {% endfor %}
+                                    </ul></td>
+                                {% elseif col == "adscriterecherchese" %}
+                                <td>{{ r.adscriterecherchese3 }}</td>
+                            {% elseif col == "ville" %}
+                                <td>{{ r.isoville }}</td>
+                            {% elseif col == "pays" %}
+                                <td>{{ r.isopays|getcountryname }}</td>
+                            {% elseif col == "zipcode" %}
+                                <td>{{ r.zipcode }}</td>
+                            {% elseif col == "createdat" %}
+                                <td>{{ r.createdAt|date('d/m/Y') }}</td>
+                            {% endif %}
+                        {% endfor %}
+
+
+                    </tr>
+
+                {% endfor %}
+            {% endfor %}
+------------------------------------------thead------------------
+
+    {% for key,value in col_display %}
+                    {% if value == "numdonateur" %}
+                        <th >{{'# REF'}}</th>
+                        {% elseif value ==  "nom" %}
+                        <th >{{ 'Nom' }}</th>
+                        {% elseif value ==  "prenom" %}
+                        <th >{{ 'Prénom' }}</th> 
+                        {% elseif value ==  "nomentreprise" %}
+                        <th >{{ 'Entreprise' }}</th> 
+                        {% elseif value ==  "statut" %}
+                        <th>{{ 'Statut' }}</th> 
+
+                    {% elseif value ==  "email" %}
+                        <th>{{ 'Email' }}</th> 
+
+                    {% elseif value ==  "birthday" %}
+                        <th>{{ 'Date de naissance' }}</th> 
+
+                    {% elseif value ==  "telmobile" %}
+                        <th>{{ 'Téléphone mobile' }}</th> 
+
+                    {% elseif value ==  "telfixe" %}
+                        <th>{{ 'Téléphone fixe' }}</th> 
+
+                    {% elseif value ==  "adscriterecherchese" %}
+                        <th>{{ 'Adscriterecherchese' }}</th> 
+                        {% elseif value ==  "ville" %}
+                        <th>{{ 'Ville' }}</th> 
+
+                    {% elseif value ==  "pays" %}
+                        <th>{{ 'Pays' }}</th> 
+
+                    {% elseif value ==  "zipcode" %}
+                        <th>{{ 'Code postal' }}</th> 
+
+                    {% elseif value ==  "createdat" %}
+                        <th>{{ 'Date de création' }}</th> 
+
+
+
+
+                    {% endif %}
+                {% endfor %}
+
+--------------------------------------
+ {% if criterecherche|length !=0%}
+            {# Pager #}
+            {% if pager.haveToPaginate %}
+                {% set state = '' %}
+                <ul class="pagination">
+                    {# back #}
+                    {% if pager.hasPreviousPage %}
+                        {% set state = 'paginate_button first' %}
+                        <li class="{{ state }}"><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateCritere({{ pager.getCurrentPage() -1 }})">&laquo;&nbsp;{{ 'Previous'|trans }}</a></li>
+                        {% else %}
+                        <li class="disabled">
+                            <span>&laquo;&nbsp;{{ 'Previous'|trans }}</span>
+                        </li>
+                    {% endif %}
+                    {# pages 1 2 3 ... #}
+                    {% for givenPage in 1..pager.getNbPages() %}
+                        {% set state = '' %}
+                        {% if  pager.getCurrentPage()  == givenPage %}
+                            {% set state = 'active' %}
+                        {% endif %}
+                        <li class="{{ state }}"><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateCritere({{ givenPage }})">{{ givenPage }}</a></li>
+                        {%  endfor %}
+
+
+                    {# forward #}
+                    {% set state = '' %}
+                    {% if pager.hasNextPage %}
+                        <li class="{{ state }}" ><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateCritere({{ pager.getCurrentPage() +1}})">{{ 'Next'|trans }}&nbsp;&raquo;</a></li>
+                        {% else %}
+                        <li class="disabled">
+                            <span>&laquo;&nbsp;{{ 'Next'|trans }}</span>
+                        </li>
+                    {% endif %}
+
+
+
+                {% endif %}
+            {% endif %}

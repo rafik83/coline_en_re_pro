@@ -1,0 +1,100 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+<div class="breadcrumbs" id="breadcrumbs">
+    <ol class="breadcrumb">
+        <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+        <li> <a href="{{ path('intersa_saisie_anomalie',{'page':1}) }}" >Gestion des anomalies</a></li>
+        <li class="active">Don :#{{ anomalie.id }} </li>
+    </ol>
+    </div>
+        <div class="page-content" >
+            {% set cheques = { 'BC':'BC','CS':'CS' } %}
+            {% set pa = { 'PA':'PA' } %}
+            {% set virement = { 'VIREMENT':'VIREMENT' } %}
+            {% set type = anomalie.type %}
+            <div class="col-md-12 pull-left">
+                <div class="page-header">
+                    <h1>
+                        Gestion des anomalies
+                        <small>
+                            <i class="ace-icon fa fa-angle-double-right"></i>
+                            Anomalie :#{{ anomalie.id }}
+                        </small>
+                    </h1>
+                </div><!-- /.page-header -->
+
+                {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') %}
+                <div class="btn-group btn-group-justified">
+                    <div class="btn-group">
+                        <a data-toggle="modal" data-target="#myModal" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-remove-sign"></span> Marquer comme abondonée</a>
+                    </div>
+                    <div class="btn-group">
+                        <a href="{{ path('intersa_saisie_reserie_anomalie', {'type':anomalie.type, 'nom':anomalie.lot, 'anomalie':anomalie.sequence}) }}" class="btn btn-primary pull-right" ><span class="glyphicon glyphicon-pencil"></span> Resaisir l'anomalie</a>
+                    </div>
+                </div>
+                {% endif %}
+                <hr />
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">Abondon de l'anomalie</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="alert alert-danger">Si vous marquez l'anomalie #{{ anomalie.sequence }} comme abondonnée, elle ne sera plus visible dans la console d'administration,
+                                    Voulez-vous vraiment confirmer votre action ?</div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                                <a type="button" class="btn btn-danger" href="{{ path('intersa_anomalie_correct',{'id':anomalie.id}) }}">Confirmer </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <div class="panel panel-danger">
+                            <div class="panel-heading">Elements de l'anomalie : </div>
+                            <div class="panel-body">
+                                <h4 class="couleur-intersa">Informations : </h4>
+                                <hr />
+                                <b>Lot : </b>{{ anomalie.lot }} <br />
+                                <b>Séquence : </b>{{ anomalie.sequence}} <br />
+                                <b>Date de l'anomalie : </b>{{ anomalie.createdAt|date('Y-m-d H:i:s') }}<br />
+                                <b>Commentaire : </b> <br />
+                                {{ anomalie.commentaire|nl2br }}
+                                <br />
+                                <h4 class="couleur-intersa">Visuel : </h4>
+                                <hr />
+                                {% if type in pa|keys or type in virement|keys %}
+                                    {%  if data['image'][0] is defined %} <img src="{{ path('assets_img',{'token': data['image'][0]}) }}" style="max-height: 900px;" />{% endif %}
+                                {% else %}
+                                    {%  if data['image'][0] is defined %} <img src="{{ path('assets_img',{'token': data['image'][0]}) }}" style="width: 100%" />{% endif %}
+                                    {%  if data['image'][1] is defined %} <img src="{{ path('assets_img',{'token': data['image'][1]}) }}" style="width: 100%" />{% endif %}
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+
+            $('#fulldon_donateurbundle_dontype_abonnement_actif').on('click', function(){
+                if($('#fulldon_donateurbundle_dontype_abonnement_actif').is(':checked')) {
+                    $('#abo_date').show();
+                } else {
+                    $('#abo_date').hide();
+                }
+            });
+        </script>
+    {% endblock %}

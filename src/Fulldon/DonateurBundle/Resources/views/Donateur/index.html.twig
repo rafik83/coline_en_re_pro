@@ -1,0 +1,20 @@
+{% extends "FulldonDonateurBundle:Donateur:coque_donateur.html.twig" %}
+    {% block coque_donateur %}
+            <h1 class="couleur-donateur" style="margin-top:5px;">{{"Mon espace donateur"|trans({},'messages')  }}</h1>
+            <hr />
+
+        {% for flashMessage in app.session.flashbag.get('warning') %}
+            <div class="alert alert-warning">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {%  set params = app.request.attributes.get('_route_params') %}
+            {% if init['perso'] is defined and  init['perso'] is not null %}
+                 {% if params['_locale'] == 'fr' %}
+                     {{ init['perso'].presentation | raw }}
+                 {% elseif params['_locale'] == 'en' %}
+                     {{ init['perso'].presentationEn | raw }}
+                 {% endif %}
+            {% endif %}
+
+{% endblock %}

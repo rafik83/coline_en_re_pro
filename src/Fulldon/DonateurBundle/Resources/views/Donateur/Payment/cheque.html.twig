@@ -1,0 +1,56 @@
+{% extends "FulldonDonateurBundle:Donateur:coque_donateur.html.twig" %}
+    {% block coque_donateur %}
+        <div class="row" >
+
+        <div class="col-md-12" >
+        <h1  class="couleur-donateur" > {{ "Je fais un don par cheque"|trans({},'messages') }}<div class="pull-right" ><img src="{{ asset('barecode/'~datamatrix~'.png') }}" /></div> </h1>
+        <hr />
+            <br />
+        {% for flashMessage in app.session.flashbag.get('info') %}
+            <div class="alert alert-success hidden-print">
+                {{ flashMessage|trans({},'messages') }}
+            </div>
+        {% endfor %}
+            {{ "Pour finaliser votre don, il vous suffit d'imprimer le formulaire ci-dessous et de l'envoyer accompagné de votre chèque de"|trans({},'messages') }} <b>{{ don.montant }} €</b> {{ "à l'ordre de"|trans({},'messages') }} {{ assoc_name }} {{ "à l'adresse suivante"|trans({},'messages') }} :<br />
+            <center>
+                {%  set params = app.request.attributes.get('_route_params') %}
+                {% if init['perso'] is defined and init['perso'] is not null %}
+                    {{ init['perso'].adresseAssoc | raw }}
+                {% endif %}
+            </center>
+            <h4 class="couleur-donateur">{{ "Formulaire à envoyer"|trans({},'messages') }}</h4>
+            {{ "Votre don de"|trans({},'messages') }} <strong>{{ don.montant }} €</strong> {{ "au bénéfice des actions de"|trans({},'messages') }} {{ assoc_name }} {{ "collecté par"|trans({},'messages') }} {{ assoc_name }}<br />
+
+            {{ "Référence du don"|trans({},'messages') }}: {{ don.id }}<br />
+            {{ "Montant de la transaction"|trans({},'messages') }} : <strong>{{ don.montant }} €</strong><br />
+            {{ "Code origine"|trans({},'messages') }} : {{ don.cause.libelle }}<br />
+
+            <h4 class="couleur-donateur">{{ "Adresse du donateur"|trans({},'messages') }}:</h4>
+            <center><strong>
+            {{ donateur.prenom }} {{ donateur.nom }}<br />
+            {{ donateur.adresse1 }}<br />
+            {{ donateur.adresse2 }}<br />
+            {{ donateur.adresse3 }}<br />
+            {{ donateur.zipcode }}  {% if donateur.ville is defined and donateur.ville is not null %}{{ donateur.ville.name }} {% endif %}<br />
+                    {% if donateur.pays is defined and donateur.pays is not null %}{{ donateur.pays.name }} {% endif %}
+            </strong></center>
+            <br />
+            {% if init['perso'] is defined  and init['perso'] is not null%}
+                {% if params['_locale'] == 'fr' %}
+                    {{ init['perso'].rfMessage | raw }}
+                {% elseif params['_locale'] == 'en' %}
+                    {{ init['perso'].rfMessageEn | raw }}
+                {% endif %}
+            {% endif %}
+
+        </div>
+            <div class="col-md-12 hidden-print" >
+                <br />
+            <center><a href="javascript:window.print()" class="btn btn-primary"><span class="glyphicon glyphicon-print"></span> {{ "Imprimer cette page"|trans({},'messages') }}</a></center>
+                </div>
+            </div>
+    {% endblock %}
+    {% block javascripts %}
+    {{ parent() }}
+
+{% endblock %}

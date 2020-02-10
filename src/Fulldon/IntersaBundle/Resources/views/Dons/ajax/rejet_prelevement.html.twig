@@ -1,0 +1,26 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <form action="{{ path("intersa_dons_rejet_prelevement",{'did':don_id,'id': prelevement.id}) }}" method="POST">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="confirmDeleteLabel">Rejet des prélevements</h4>
+        </div>
+        <div class="modal-body">
+            Veuillez choisir le motif du rejet du prélèvement : #{{ prelevement.id }}?
+                <br />
+                <label for="motif"><label for="motif" class="required">Motif de rejet :</label></label>
+                <SELECT name="motif"  class="task_field form-control " >
+                    {% for motif in motifs %}
+                        <option value="{{ motif.id }}">{{ motif.name }}</option>
+                    {% endfor %}
+                </SELECT>
+                <br />
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+            <input type="submit" class="btn btn-danger" value="Rejeter" ></a>
+        </div>
+        </form>
+    </div>
+</div>

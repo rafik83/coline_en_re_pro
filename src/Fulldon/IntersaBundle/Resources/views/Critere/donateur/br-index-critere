@@ -1,0 +1,572 @@
+
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+    {% stylesheets '../app/Resources/Public/css/global/jquery-ui/*' %}
+    <link rel="stylesheet" type="text/css" charset="UTF-8" media="all" href="{{ asset_url }}"/>
+    {% endstylesheets %}
+{% endblock %}
+{% block coque_intersa %}
+    <div class="breadcrumbs" id="breadcrumbs">
+        <script type="text/javascript">
+            try {
+                ace.settings.check('breadcrumbs', 'fixed')
+            } catch (e) {
+            }
+        </script>
+        <ol class="breadcrumb">
+            <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+            <li class="active">Liste des donateurs</li>
+        </ol>
+    </div>
+    <div class="page-content">
+
+        <!-- PAGE CONTENT BEGINS -->
+        <div class="page-header">
+            <h1>
+                Liste des donateurs
+
+            </h1>
+        </div>
+        <!-- /.page-header -->
+
+        {% for flashMessage in app.session.flashbag.get('info') %}
+            <div class="alert alert-success">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('warning') %}
+            <div class="alert alert-warning">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('success') %}
+            <div class="alert alert-success">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('erreur') %}
+            <div class="alert alert-danger">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+
+
+        <div class="pull-right">
+        </div>
+
+
+
+
+        <!-- Tab panes -->
+
+        <div class="tab-pane" id="result">
+            <br/>
+           
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Critére Recherche</th>
+                        <th>Titre</th>
+                        <th>Description</th>
+                        <th>Date Création</th>
+                           
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="content">
+                    
+                    <tr id="teste_lien">
+                        <td>
+                            <button id="search_cietere_donateur"  class="btn btn-default btn-xs"><span>Chercher</span></button>
+                        </td> 
+                    </tr>
+                    
+                   
+                </tbody>
+            </table>
+            <center>
+                {% if last_page > 1 %}
+                    {% set state = '' %}
+                    <ul class="pagination pull-center">
+                        {% if result2.hasPreviousPage %}
+                            {% set state = 'paginate_button first' %}
+                            <li class="{{ state }}">
+                                <a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ result2.getCurrentPage() -1 }}" style="cursor: pointer">&laquo;&nbsp;{{ 'Précédent'|trans }}</a>
+
+                            </li>
+                        {% else %}
+                            <li class="disabled">
+                                <span>&laquo;&nbsp;{{ 'Précédent'|trans }}</span>
+                            </li>
+                        {% endif %}
+                        <!--li><a href="{#{ path('elastic_donateur') }}?{{ params }}&page={{ previous_page }#}">&laquo;</a>
+                        </li-->
+                        {% for page in 1..last_page %}
+                            {% if page >= current_page-4 and page <= current_page+4 %}
+                                {% if   page == current_page-4 or page == current_page+4 %}
+                                    {% if   page == current_page-4 %}
+                                        <li><a href="{{ path('intersa_get_all_sauvgarde_donateur') }}?{{ params }}&page=1">1</a></li>
+                                        <li class="disabled"><a href="#">...</a></li>
+                                        {% else %}
+                                        <li class="disabled"><a href="#">...</a></li>
+                                        <li>
+                                            <a href="{{ path('intersa_get_all_sauvgarde_donateur') }}?{{ params }}&page={{ last_page }}">{{ last_page }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% else %}
+                                    {% if page == current_page %}
+                                        <li class="active"><a href="#">{{ page }}</a></li>
+                                        {% else %}
+                                        <li>
+                                            <a href="{{ path('intersa_get_all_sauvgarde_donateur') }}?{{ params }}&page={{ page }}">{{ page }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        {% set state = '' %}
+                        {% if result2.hasNextPage %}
+                            <li class="{{ state }}" ><a href="{{ path('intersa_get_all_sauvgarde_donateur') }}?{{ params }}&page={{ result2.getCurrentPage() +1}}" style="cursor: pointer">{{ 'Suivant'|trans }}&nbsp;&raquo;</a></li>
+                            {% else %}
+                            <li class="disabled">
+                                <span>&laquo;&nbsp;{{ 'Suivant'|trans }}</span>
+                            </li>
+                        {% endif %}
+                        <!--li><a href="{#{ path('elastic_donateur') }}?{{ params }}&page={{ next_page }#}">&raquo;</a></li-->
+                    </ul>
+                {% endif %}
+            </center>
+
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts '../app/Resources/Public/js/jquery-ui/jquery-ui.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script>
+        $(document).ready(function () {
+
+        });
+
+    </script>
+{% endblock %}
+
+--------------------------
+
+complete: function (comp)
+                {
+                    console.log(comp);
+                    
+                },
+
+{% if col in cols|keys %}
+                    <th>{{ cols[col] }} {% if col in sortcols|keys %} <a href="#" onclick="flipsort('{{ col }}')" class="pull-right sort" ><i id="sort_{{ col }}" ></i></a>{% endif %}</th>
+                {% endif %}
+
+
+ <div id="container_sg_donateur_elasticsearch" style="display: none">
+            {% include 'FulldonIntersaBundle:Critere:ligne_search_donateur.html.twig' with {'data': data,'col_display': col_display} %}
+        </div>
+
+--------------------------------------------
+
+
+
+
+
+
+{% for key,value in col_display %}
+                            {% if key == "numdonateur" %}
+                                <th>{{ '#REF'}}</th>
+                                {% elseif key ==  "nom" %}
+                                <th>{{ 'Nom' }}</th>
+                                {% elseif key == "prenom" %}
+                                <th>{{ 'Prénom' }}</th>
+                                {% elseif key == "statut" %}
+                                <th> {% if r.removed %}<span
+                                        class="label label-danger arrowed-in arrowed-in-right">Désactivé</span> {% else %}
+                                    <span class="label label-success arrowed-in arrowed-in-right">Actif</span>{% endif %}
+                                </th>
+                            {% elseif key == "nomentreprise" %}
+                                <th>{{'Nom Entreprise'}}</th>
+
+                            {% elseif key == "email" %}
+                                <th>{{ 'Email' }}</th>
+                                {% elseif key == "birthday" %}
+                                <th>{{ 'Date Naissance' }}</th>
+                                {% elseif key == "telmobile" %}
+                                <th>{{'Teléphone Mobile' }}</th>
+                                {% elseif key == "telfixe" %}
+                                <th>{{ 'Teléphone Fixe' }}</th>
+                                {% elseif key == "cat" %}
+                                <th>{{'Catégorie'}}</th>
+                                {% elseif key == "adresse" %}
+                                <th>{{ 'Adresse' }}</th>
+                                {% elseif key == "ville" %}
+                                <th>{{ 'ISO Ville' }}</th>
+                                {% elseif key == "pays" %}
+                                <th>{{ 'Pays' }}</th>
+                                {% elseif key == "zipcode" %}
+                                <th>{{ 'Code Postale'}}</th>
+                                {% endif %}
+                            {% endfor %}
+
+
+
+
+
+
+---------------------------
+
+{% for key,value in col_display %}
+                            {{dump(col_display[key])}}
+                            Key : {{ key }}
+                            Value : {{ value }}
+                        {% endfor %}
+
+
+                     
+
+
+
+-------------------------------------------------
+
+{{'enter for + donateurs +  data'}}
+
+  {{'enter for + col_r +  donateurs'}}
+
+ {{'enter for + col_display '}}
+
+{% if key == "numdonateur" %}
+
+
+{% elseif value ==  "prenom" %}
+                  <td><th>{{ 'Prénom' }}</th> </td>
+
+----------------------------------------------------------
+
+
+ <table class="table table-condensed" style="width:100%;float:left;">
+                <thead style="display: none">
+                    <!--tr id="columne_thead">
+                        {#% for col in col_display %}
+                            {% set sortcols = { 'numdonateur':'#REF','nom':'Nom','prenom':'Prénom','statut':'Statut',
+                'nomentreprise':'Nom d\'entreprise','email':'Email','birthday':'Date de naissance',
+                'telmobile':'Téléphone mobile','telfixe':'Téléphone fixe',
+                'adresse':'Adresse','ville':'Ville','pays':'Pays','zipcode':'Code postal','createdat':'Date de création'} %}
+                            {% set cols = { 'numdonateur':'#REF','nom':'Nom','prenom':'Prénom','statut':'Statut',
+                'nomentreprise':'Nom d\'entreprise','email':'Email','birthday':'Date de naissance',
+                'telmobile':'Téléphone mobile','telfixe':'Téléphone fixe','cat':'Catégories',
+                'adresse':'Adresse','ville':'Ville','pays':'Pays','zipcode':'Code postal','createdat':'Date de création'} %}
+
+                        {% endfor %#}
+
+                        
+                        
+                        
+                     
+                 
+
+                        
+                        
+
+                    </tr-->
+                </thead>
+                <tbody id="content" >
+                    {% for donateurs in data %}
+                        {% for r in donateurs %}
+                            <tr>
+                                {% for col in col_display %}
+                                    {% if col == "numdonateur" %}
+                                        <td>{{ r.refDonateur }}</td>
+                                    {% elseif col ==  "nom" %}
+                                        <td>{{ r.nom }}</td>
+                                    {% elseif col == "prenom" %}
+                                        <td>{{ r.prenom }}</td>
+                                    {% elseif col == "statut" %}
+                                        <td> {% if r.removed %}<span
+                                                class="label label-danger arrowed-in arrowed-in-right">Désactivé</span> {% else %}
+                                            <span class="label label-success arrowed-in arrowed-in-right">Actif</span>{% endif %}
+                                        </td>
+                                    {% elseif col == "nomentreprise" %}
+                                        <td>{% if r.nomEntreprise is defined and r.nomEntreprise is not null %}{{ r.nomEntreprise }}{% else %} N/A{% endif %}</td>
+                                    {% elseif col == "email" %}
+                                        <td>{{ r.email }}</td>
+                                    {% elseif col == "birthday" %}
+                                        <td>{{ r.dateNaissance|date('d/m/Y') }}</td>
+                                    {% elseif col == "telmobile" %}
+                                        <td>{{ r.telephoneMobile }}</td>
+                                    {% elseif col == "telfixe" %}
+                                        <td>{{ r.telephoneFixe }}</td>
+                                    {% elseif col == "cat" %}
+                                        <td><ul>
+                                                {% for cat in r.categories %}
+                                                    <li>{{ cat.name }}</li>
+                                                    {% endfor %}
+                                            </ul></td>
+                                        {% elseif col == "adresse" %}
+                                        <td>{{ r.adresse3 }}</td>
+                                    {% elseif col == "ville" %}
+                                        <td>{{ r.isoville }}</td>
+                                    {% elseif col == "pays" %}
+                                        <td>{{ r.isopays|getcountryname }}</td>
+                                    {% elseif col == "zipcode" %}
+                                        <td>{{ r.zipcode }}</td>
+                                    {% elseif col == "createdat" %}
+                                        <td>{{ r.createdAt|date('d/m/Y') }}</td>
+                                    {% endif %}
+                                {% endfor %}
+
+
+                            </tr>
+
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+
+
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ {% if last_page > 1 %}
+            {% set state = '' %}
+            <ul class="pagination pull-center">
+                {% if result2.hasPreviousPage %}
+                    {% set state = 'paginate_button first' %}
+                    <li class="{{ state }}">
+                        <a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ result2.getCurrentPage() -1 }}" style="cursor: pointer">&laquo;&nbsp;{{ 'Précédent'|trans }}</a>
+
+                    </li>
+                {% else %}
+                    <li class="disabled">
+                        <span>&laquo;&nbsp;{{ 'Précédent'|trans }}</span>
+                    </li>
+                {% endif %}
+                <!--li><a href="{#{ path('elastic_donateur') }}?{{ params }}&page={{ previous_page }#}">&laquo;</a>
+                </li-->
+                {% for page in 1..last_page %}
+                    {% if page >= current_page-4 and page <= current_page+4 %}
+                        {% if   page == current_page-4 or page == current_page+4 %}
+                            {% if   page == current_page-4 %}
+                                <li><a href="{{ path('elastic_donateur') }}?{{ params }}&page=1">1</a></li>
+                                <li class="disabled"><a href="#">...</a></li>
+                                {% else %}
+                                <li class="disabled"><a href="#">...</a></li>
+                                <li>
+                                    <a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ last_page }}">{{ last_page }}</a>
+                                </li>
+                            {% endif %}
+                        {% else %}
+                            {% if page == current_page %}
+                                <li class="active"><a href="#">{{ page }}</a></li>
+                                {% else %}
+                                <li>
+                                    <a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ page }}">{{ page }}</a>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                {% set state = '' %}
+                {% if result2.hasNextPage %}
+                    <li class="{{ state }}" ><a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ result2.getCurrentPage() +1}}" style="cursor: pointer">{{ 'Suivant'|trans }}&nbsp;&raquo;</a></li>
+                    {% else %}
+                    <li class="disabled">
+                        <span>&laquo;&nbsp;{{ 'Suivant'|trans }}</span>
+                    </li>
+                {% endif %}
+                <!--li><a href="{#{ path('elastic_donateur') }}?{{ params }}&page={{ next_page }#}">&raquo;</a></li-->
+            </ul>
+        {% endif %}
+
+---------------------------------
+
+public function searchTypePretElasticaAction(Request $request) {
+        if ($request->isXmlHttpRequest()) {
+            $data = $this->getRequest()->query->all();
+            $param = $data['param'];
+            $page = $data['page'];
+            $em = $this->getDoctrine()->getManager();
+            if ($param == "") {
+                $query = $em->getRepository('PaieBundle:TypePret')->findAll();
+            } else {
+                $elasticaManager = $this->container->get('fos_elastica.manager');
+                $query = $elasticaManager->getRepository('PaieBundle:TypePret')->search($param);
+            }
+            $adapter = new ArrayAdapter($query);
+            $pagerfanta = new Pagerfanta($adapter);
+            $typePrets = $pagerfanta
+                    ->setMaxPerPage(3)
+                    ->setCurrentPage($page)
+                    ->getCurrentPageResults();
+            $view = $this->renderView('PaieBundle:Parameter:TypePret/ligneTypePret.html.twig', array('typePrets' => $typePrets, 'pager' => $pagerfanta));
+            $response = new Response($view);
+            return $response;
+        } else {
+            $this->createNotFoundException(' requette non ajax');
+        }
+    }
+
+
+--------------------------------------
+
+  {% if scriterecherche|length !=0%}
+                    {# Pager #}
+                    {% if pager.haveToPaginate %}
+                        {% set state = '' %}
+                        <ul class="pagination">
+                            {# back #}
+                            {% if pager.hasPreviousPage %}
+                                {% set state = 'paginate_button first' %}
+                                <li class="{{ state }}"><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateCritere({{ pager.getCurrentPage() -1 }})">&laquo;&nbsp;{{ 'Previous'|trans }}</a></li>
+                                {% else %}
+                                <li class="disabled">
+                                    <span>&laquo;&nbsp;{{ 'Previous'|trans }}</span>
+                                </li>
+                            {% endif %}
+                                {# pages 1 2 3 ... #}
+                                {% for givenPage in 1..pager.getNbPages() %}
+                                    {% set state = '' %}
+                                    {% if  pager.getCurrentPage()  == givenPage %}
+                                        {% set state = 'active' %}
+                                    {% endif %}
+                                    <li class="{{ state }}"><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateCritere({{ givenPage }})">{{ givenPage }}</a></li>
+                                {%  endfor %}
+
+
+                            {# forward #}
+                            {% set state = '' %}
+                            {% if pager.hasNextPage %}
+                                <li class="{{ state }}" ><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateCritere({{ pager.getCurrentPage() +1}})">{{ 'Next'|trans }}&nbsp;&raquo;</a></li>
+                                {% else %}
+                                <li class="disabled">
+                                    <span>&laquo;&nbsp;{{ 'Next'|trans }}</span>
+                                </li>
+                            {% endif %}
+
+
+
+                        {% endif %}
+                    {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

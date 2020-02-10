@@ -1,0 +1,95 @@
+{% extends "FulldonDonateurBundle:Donateur:coque_donateur.html.twig" %}
+    {% block coque_donateur %}
+        <div class="row" >
+
+            <div class="col-xs-12 pull-left">
+                <h2 style="margin-top:5px;" class="couleur-donateur" >{{ "Historique des dons"|trans({},'messages') }}  </h2>
+                <hr />
+                {% for flashMessage in app.session.flashbag.get('info') %}
+                    <div class="alert alert-success">
+                        {{ flashMessage|trans({},'messages') }}
+                    </div>
+                {% endfor %}
+                    <div class="pagination_desc"><strong>{{ total_dons }}</strong> {{ "dons dans l'historique"|trans({},'messages') }}
+                        {% if last_page > 1 %}
+                            - page <strong>{{ current_page }}/{{ last_page }}</strong>
+                            <br />
+                        {% endif %}
+                    </div>
+                <table class="table table-condensed table-responsive">
+                    <thead>
+                    <tr>
+                        <th>{{ "Informations du don"|trans({},'messages') }}</th>
+                        <th>{{ "Montant"|trans({},'messages') }}</th>
+                        <th>{{ "Actions"|trans({},'messages') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for don in dons %}
+                        <tr {% if don.transaction.statut.code is defined %}
+                                {% if don.transaction.statut.code == "attente" %}class="warning"{% endif %}
+                                {% if don.transaction.statut.code == "traitement_paiement" %}class="alert-info"{% endif %}
+                                {% if don.transaction.statut.code == "don_valide" %}class="success"{% endif %}
+                                {% if don.transaction.statut.code == "paiement_annule" %}class="danger"{% endif %}
+                            {% else %}
+                                class="danger"
+                            {% endif %}
+                                >
+                            <td>
+                                <b>{{ "Date"|trans({},'messages') }} : </b> {{ don.createdAt | date('Y-m-d H:i:s') }} <br />
+                                <b>{{ "Etat"|trans({},'messages') }} & {{ "Abonnement"|trans({},'messages') }} : </b> {% if don.transaction.statut.libelle is defined %}{{ don.transaction.statut.libelle|trans({},'messages')  }}{% else %}{{ "Abandonné"|trans({},'messages') }}{% endif %} /  {% if don.ispa %}{{ "Don régulier"|trans({},'messages') }} : {% if don.abonnement.actif == 0 %}{{ "Desactivé"|trans({},'messages') }}{% else %}{{ "Activé"|trans({},'messages') }} {% endif %}{% else %}{{ "Don ponctuel"|trans({},'messages') }}{% endif %}<br />
+                                <b>{{ "Mode de paiement"|trans({},'messages') }} : </b> {% if don.modePaiement is not null %}{{ don.modePaiement.libelle }}{% endif %}<br />
+                                <b>{{ "Cause"|trans({},'messages') }} : </b>{% if don.cause is not null %}{{ don.cause.libelle }}{% endif %}<br />
+
+
+                            </td>
+                            <td> {{ don.montant }}€</td>
+                            <td>
+                                <a href="{{ path('donateur_don_view', {'id':don.id}) }}" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-eye-open"></span> {{ "Voir"|trans({},'messages') }}</a>
+                                {% if don.modePaiement is not null and don.modePaiement.id == 2 %}
+                                    <a href="{{ path('donateur_don_bulletin', {'mode':2,'id':don.id}) }}" class="btn btn-xs btn-default" ><span class="glyphicon glyphicon-eye-open"></span>  {{ "Bulletin"|trans({},'messages') }} </a>
+                                {% endif %}
+                                {% if don.ispa and don.modePaiement is not null and don.modePaiement.id == 4 %}
+                                    <a href="{{ path('donateur_don_bulletin', {'mode':4,'id':don.id}) }}" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-eye-open"></span>  {{ "Bulletin"|trans({},'messages') }} </a>
+                                {% endif %}
+                                {% if don.ispa and don.abonnement.signedFile is not null %}
+                                    <a href="{{ path('assets_signed_mandat', {'token': don.abonnement.signedFile}) }}" download  class="btn btn-xs btn-default" ><i class="fa fa-credit-card"></i> Mandat signé</a>
+                                {% endif %}
+
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <center>
+        {% if last_page > 1 %}
+            <ul class="pagination pull-center">
+                <li><a href="{{ path('donateur_history', { 'page': previous_page }) }}">&laquo;</a></li>
+                {% for page in 1..last_page %}
+                    {% if page == current_page %}
+                    <li class="active"><a href="#">{{ page }}</a></li>
+                    {% else %}
+                    <li><a href="{{ path('donateur_history', { 'page': page }) }}">{{ page }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                <li><a href="{{ path('donateur_history', { 'page': next_page }) }}">&raquo;</a></li>
+            </ul>
+            {% endif %}
+        </center>
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+
+            $('#fulldon_donateurbundle_dontype_abonnement_actif').on('click', function(){
+                if($('#fulldon_donateurbundle_dontype_abonnement_actif').is(':checked')) {
+                    $('#abo_date').show();
+                } else {
+                    $('#abo_date').hide();
+                }
+            });
+        </script>
+    {% endblock %}

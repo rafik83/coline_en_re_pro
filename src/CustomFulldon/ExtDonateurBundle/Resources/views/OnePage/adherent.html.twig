@@ -1,0 +1,1223 @@
+<!DOCTYPE HTML>
+<html style="margin:0px;padding:0px;">
+{% if init['perso'].couleurAdh is defined  and init['perso'].couleurAdh  is not null %}{%  set mycolor = init['perso'].couleurAdh %} {% else %}{%  set mycolor = '#7a6cc0' %}{% endif %}
+{% set adhvmr = init['perso'].montantAR|split(':') %}
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+    <link rel="shortcut icon" href="{{ asset("img/favicon.png") }} ">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{% block title %}{{ "J'adhère à l'association"|trans({},'messages') }}{% endblock %}</title>
+    {% stylesheets '../app/Resources/Public/css/global/onepage/onepage.css' %}
+    <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" charset="UTF-8" media="all" href="{{ asset_url }}"/>
+    {% endstylesheets %}
+    {% block stylesheets %}
+        {% stylesheets '../app/Resources/Public/css/global/*' %}
+        <link rel="stylesheet" type="text/css" charset="UTF-8" media="all" href="{{ asset_url }}"/>
+        {% endstylesheets %}
+        {% stylesheets '../app/Resources/Public/css/global/jquery-ui/jquery-ui.css' %}
+        <link rel="stylesheet" type="text/css" charset="UTF-8" media="all" href="{{ asset_url }}"/>
+        {% endstylesheets %}
+        {% stylesheets '../app/Resources/Public/css/global/onepage/onepage.css' %}
+        <link rel="stylesheet" type="text/css" charset="UTF-8" media="all" href="{{ asset_url }}"/>
+        {% endstylesheets %}
+    {% endblock %}
+    {% if mycolor is defined and mycolor is not null %}
+        <style type="text/css">
+            .couleur-donateur {
+                color: {{ mycolor }} !important;
+            }
+            .background-donateur {
+                background-color: {{ mycolor }}  !important;
+            }
+            a.list-group-item.active, a.list-group-item.active:hover, a.list-group-item.active:focus {
+                background-color: {{ mycolor }} !important;
+                border-color: {{ mycolor }} !important;
+            }
+            .pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+                background-color: {{ mycolor }} !important;
+                border-color: {{ mycolor }} !important;
+            }
+            a, a:hover {
+                color: #000000;
+            }
+            .datepicker td.active, .datepicker td.active:hover {
+                background-color: {{ mycolor }} !important;
+                background-image: -webkit-linear-gradient(top, {{ mycolor }}, {{ mycolor }})!important;;
+            }
+            .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open .dropdown-toggle.btn-default      {
+
+                background-color: #fff;
+                text-shadow: 0 0 0 #000 !important;
+            }
+            .btn-default {
+
+                background-color: {{ mycolor }};
+                border-color: {{ mycolor }};
+                font-weight: bold;
+                color : #fff;
+                text-shadow: 0 1px 0 {{ mycolor }};
+            }
+            .list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
+                text-shadow: 0 -1px 0 {{ mycolor }} !important;
+                background-image: -webkit-linear-gradient(top, {{ mycolor }} 0%, {{ mycolor }}) !important;
+                background-image: -webkit-gradient(linear, left top, left bottom, from({{ mycolor }}), to({{ mycolor }})) !important;
+                background-image: linear-gradient(to bottom, {{ mycolor }} 0%, {{ mycolor }} 100%) !important;
+                filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff428bca', endColorstr='#ff3278b3', GradientType=0);
+                background-repeat: repeat-x;
+                border-color: {{ mycolor }} ;
+            }
+            .panel-primary > .panel-heading {
+                background-image: -webkit-linear-gradient(top, {{ mycolor }} 0%, {{ mycolor }} 100%) !important;
+                background-image: -o-linear-gradient(top, {{ mycolor }} 0%, {{ mycolor }} 100%) !important;
+                background-image: -webkit-gradient(linear, left top, left bottom, from({{ mycolor }}), to({{ mycolor }})) !important;
+                background-image: linear-gradient(to bottom, {{ mycolor }} 0%, {{ mycolor }} 100%) !important;
+                filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff428bca', endColorstr='#ff357ebd', GradientType=0) !important;
+                background-repeat: repeat-x;
+            }
+
+             .footer-block {
+                background: url({{ asset('img/footer-block.png') }}) no-repeat bottom center;
+                color: #6a6a6a;
+                 padding:10px;
+                 padding-bottom: 30px;
+                 font-size: 12px;
+            }
+            .footer-block hr {
+                background-color: {{ mycolor }};
+                height: 2px ;
+            }
+            .hr-last-footer {
+                background-color: {{ mycolor }};
+                height: 1px ;
+                margin: 0px;
+            }
+
+            .logo_powered {
+                padding:20px 20px 20px 0;
+            }
+            .container_section, .powered_section{
+                margin: 0 auto;max-width: 970px;
+            }
+            .full_autremonatnat {
+                margin-left:10px;
+            }
+            .container {
+                width: 100% !important;
+            }
+            .hr-without-marge
+            {
+                margin: 0px;
+            }
+            .modal-dialog {
+                padding-top: 15%;
+            }
+            .big-title {
+                font-family: 'Raleway', sans-serif !important;
+                border: 0px;
+                padding:10px 5px 10px 5px;
+                background-color:{{ mycolor }};
+                color:#fff
+            }
+        </style>
+    {% endif %}
+
+
+</head>
+<body style="margin:0px;padding:0px;">
+<div class="container">
+<div class="row container_section" >
+
+<div class="col-md-12" >
+{% if init['perso'].headerPage is defined  and init['perso'].headerPage  is not null %}
+    <img src="{{ asset('upload/' ~ init['perso'].id ~'/' ~ init['perso'].headerPage)}}" alt="headerPage" style="width:940px;" class="img-responsive" />
+{% endif %}
+
+{%  set current_route = app.request.get('_route') %}
+{%  set params = app.request.attributes.get('_route_params') %}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="well well-sm " style="overflow:auto;border-radius: 0px;!important;margin-bottom: 0px;">
+            <div class="">
+                <div class="col-md-12">
+                    <b>{{ "Langues"|trans({},'messages') }} :</b> <a href="{{ path(current_route, params | merge({"_locale": "fr"})) }}" style="margin-top: 5px;" >
+                        {% image '@FulldonDonateurBundle/Resources/public/images/fr.png' %}
+                        <img src="{{ asset_url }}" alt="Français"/>
+                        {% endimage %}
+                    </a>&nbsp;|<a style="margin-top: 5px;padding-left: 4px;" href="{{ path(current_route, params | merge({"_locale": "en"})) }}">
+                        {% image '@FulldonDonateurBundle/Resources/public/images/gb.png' %}
+                        <img src="{{ asset_url }}" alt="English" />
+                        {% endimage %}
+                    </a>
+                    <br class="visible-sm"/>
+                    <br class="visible-sm"/>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+{% if display_error %}
+    <div class="alert alert-danger alert-dismissable" style="border-radius: 0px;">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <span class="glyphicon glyphicon-remove-circle" ></span> Une erreur est survenue lors de la validation de votre demande. <br />
+        <ul>
+            {% for flashMessage in app.session.flashbag.get('error') %}
+                <li>{{ flashMessage|trans({},'messages') }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+<form action="{{ path('fulldon_donateur_onepage_adherent') }}" method="POST" >
+    <input type="hidden" name="token" value="{{ token }}" />
+    <div class="row">
+    <div class="col-md-4">
+        <h4 class="big-title"><i
+                    class="fa fa-user icoh4"></i>  {{ "Mes coordonnées"|trans({},'messages') }}</h4>
+        <a href="#" class="pull-right" data-toggle="modal" data-target="#myModal"><b><i
+                        class="fa fa-user"></i> {{ "Je suis déjà un donateur"|trans({},'messages') }} </b></a>
+        <br/>
+
+        <label for="email" class="control-label custom-label">{{ "Email"|trans({},'messages') }} <span
+                    class="required-input"> * </span></label>
+
+        <div class="inner-addon right-addon">
+            <i class="glyphicon glyphicon-ok" id="icocheck"></i>
+            <input type="email" name="email" id="email" class="form-control input-sm form-control nilborder"
+                   required="required"
+                   onkeyup="verifyEmail();setTimer();" {% if data['email'] is defined %} value="{{ data['email'] }}" {% endif %}
+                    />
+        </div>
+        <div class="checkbox">
+            <label>
+                <input name="company_check" id="company_check" type="checkbox"> <b
+                        style="font-size:12px;">{{ "Je représente une organisation ou une société."|trans({},'messages') }}</b>
+            </label>
+        </div>
+        <div id="is_company" style="display: none;">
+            <label for="is_company" class="control-label ">{{ "Raison sociale"|trans({},'messages') }} </label>
+
+            <div>
+                <input type="text" name="raison_sociale" id="raison_social"
+                       class="form-control input-sm form-control nilborder"   {% if data['raison_sociale'] is defined %} value="{{ data['raison_sociale'] }}" {% endif %}
+                       disabled/>
+            </div>
+        </div>
+        <label for="civilite" class="control-label re">{{ "Civilité"|trans({},'messages') }} <span
+                    class="required-input"  id="req-civilite" > * </span></label>
+
+        <div>
+            <select name="civilite" class="form-control input-sm nilborder"  id="civilite"  disabled>
+                <option value="M" {% if data['civilite'] is defined and data['civilite'] == "M" %} selected="selected" {% endif %} >
+                    Monsieur
+                </option>
+                <option value="Mme" {% if data['civilite'] is defined and data['civilite'] == "Mme" %} selected="selected" {% endif %}>
+                    Madame
+                </option>
+                <option value="Mlle" {% if data['civilite'] is defined and data['civilite'] == "Mlle" %} selected="selected" {% endif %}>
+                    Mademoiselle
+                </option>
+            </select>
+        </div>
+        <input type="hidden" name="bic" id="bic"/>
+        <input type="hidden" name="iban" id="iban"/>
+        <input type="hidden" name="telephone" id="telephone"/>
+        <input type="hidden" name="indicatif" id="indicatif"/>
+        <label for="prenom" class="control-label ">{{ "Prénom"|trans({},'messages') }} <span class="required-input"  id="req-prenom" > * </span></label>
+
+        <div>
+            <input type="text" name="prenom" class="form-control input-sm nilborder" id="prenom"
+                   required="required" {% if data['prenom'] is defined %} value="{{ data['prenom'] }}" {% endif %}
+                   disabled/>
+        </div>
+        <label for="nom" class="control-label">{{ "Nom"|trans({},'messages') }} <span
+                    class="required-input" id="req-nom" > * </span></label>
+
+        <div>
+            <input type="text" name="nom" class="form-control input-sm nilborder" id="nom"
+                   required="required" {% if data['nom'] is defined %} value="{{ data['nom'] }}" {% endif %}
+                   disabled/>
+        </div>
+        <label for="pays" class="control-label">{{ "Pays"|trans({},'messages') }} <span class="required-input"
+                                                                                        disabled> * </span></label>
+
+        <div>
+            <select name="pays" id="pays" class="form-control input-sm nilborder" required="required"
+                    disabled>
+                {% for key,country in countries %}
+                    <option value="{{ key }}" {% if (data['pays'] is not defined or data['pays'] is empty ) and key =='FR' %} selected="selected" {% endif %} {% if data['pays'] is defined and data['pays'] == key %} selected="selected" {% endif %} >{{ country }}</option>
+                {% endfor %}
+            </select>
+
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label for="zipcode" class="control-label">{{ "Code postal"|trans({},'messages') }} <span
+                            class="required-input"> * </span></label>
+
+                <div>
+                    <input type="text" name="zipcode" id="zipcode" class="form-control input-sm nilborder"
+                           required="required" {% if data['zipcode'] is defined %} value="{{ data['zipcode'] }}" {% endif %}
+                           disabled/>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label for="ville" class="control-label">{{ "Ville"|trans({},'messages') }} <span
+                            class="required-input"> * </span></label>
+
+                <div>
+                    <input type="text" name="ville" id="ville" class="form-control input-sm nilborder"
+                           required="required" {% if data['ville'] is defined %} value="{{ data['ville'] }}" {% endif %}
+                           disabled/>
+                </div>
+            </div>
+        </div>
+        <label for="adresse1" class="control-label">{{ "Adresse"|trans({},'messages') }} <span
+                    class="required-input"> * </span></label>
+
+        <div>
+            <input type="text" name="adresse1" id="adresse1" class="form-control input-sm ui-autocomplete-input nilborder"
+                   required="required" {% if data['adresse1'] is defined %} value="{{ data['adresse1'] }}" {% endif %}
+                   disabled/>
+        </div>
+        <label for="adresse2" class="control-label">{{ "Complément adresse"|trans({},'messages') }} </label>
+
+        <div>
+            <input type="text" name="adresse2" id="adresse2"
+                   class="form-control input-sm nilborder"  {% if data['adresse2'] is defined %} value="{{ data['adresse2'] }}" {% endif %}
+                   disabled/>
+        </div>
+        <br/>
+
+        <div class=" pull-left  required-input-title hidden-xs" style="font-size: 12px;"> ( *
+            ) {{ "Champs obligatoires pour recevoir un reçu fiscal"|trans({},'messages') }}</div>
+        <div class=" pull-left  required-input-title visible-xs" style="font-size: 12px;"> ( *
+            ) {{ "Champs obligatoires"|trans({},'messages') }}</div>
+        <br/>
+    </div>
+
+
+        <div class="col-md-4">
+            <h4  class="big-title"><i class="fa fa-euro icoh4"></i>
+                {% if init['perso'].persoa is defined and  init['perso'].persoa is not null %}
+                    {% if params['_locale'] == 'fr' %}
+                        {{ init['perso'].persoa.ac2title1  }}
+                    {% elseif params['_locale'] == 'en' %}
+                        {{ init['perso'].persoa.ac2title1En  }}
+                    {% endif %}
+                {% else %}
+                    {{ "Je choisis ma cotisation"|trans({},'messages') }}
+                {% endif %}
+                 </h4>
+
+            <div class="mini-block">
+                {% if init['perso'].persoa is defined and  init['perso'].persoa is not null %}
+                    {% if params['_locale'] == 'fr' %}
+                        {{ init['perso'].persoa.ac2block1 | raw }}
+                    {% elseif params['_locale'] == 'en' %}
+                        {{ init['perso'].persoa.ac2block1En | raw }}
+                    {% endif %}
+                {% endif %}
+
+            </div>
+            <div class="panel panel-primary" style="border-color: {{ mycolor }};">
+                <div class="panel-heading" style="background-color: {{ mycolor }};border-color: {{ mycolor }}">
+                    {{ "Je préfère donner tous les mois"|trans({},'messages') }}
+                </div>
+                <div class="panel-body">
+                    <fieldset class="choice">
+                        <ul class="radio-inline-anon">
+                            {% for key, mr in adhvmr %}
+                                <li><label><span>{{ mr }} €</span> <input id="fullMontant_r_{{ key+1 }}"
+                                                                          class="align-checkbox" type="radio"
+                                                                          class="radio" value="{{ mr }}"
+                                                                          name="full_montant_r" {% if data['full_montant_r'] is defined and data['full_montant_r']== mr %} checked="checked" {% endif %}
+                                                                          onchange="fulldon_montant_r_onChange(this)"></label>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </fieldset>
+
+                    <label for="full_autremontant" class="full_autremonatnat">
+                        <input type="radio" value="other" name="full_montant_r" class="radio align-checkbox"
+                               id="fieldRadioAutreMontant_r" {% if data['montant_regulier'] is defined and data['montant_regulier'] is not empty %} checked="checked" {% endif %} >
+                        <small class="align-checkbox"> {{ "Autre montant"|trans({},'messages') }} :</small>
+                        <input type="text" name="montant_reguilier" id="montant_reguilier"
+                               class="form-control input-sm" {% if data['montant_regulier'] is defined and data['montant_reguilier'] is not null %} value="{{ data['montant_regulier'] }}" {% endif %}
+                               onkeyup="fulldon_autremontant_r_onkeyup(this)"/>
+                    </label>
+
+                    <div id="dedu_fiscal_r" style="font-size: 12px;">
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="mini-block">
+                {% if init['perso'].persoa is defined and  init['perso'].persoa is not null %}
+                    {% if params['_locale'] == 'fr' %}
+                        {{ init['perso'].persoa.ac2block2 | raw }}
+                    {% elseif params['_locale'] == 'en' %}
+                        {{ init['perso'].persoa.ac2block2En | raw }}
+                    {% endif %}
+                {% endif %}
+
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <h4  class="big-title" ><i class="fa fa-lock icoh4"></i>  {{ "Paiement"|trans({},'messages') }}  <b>100%</b> {{ "sécurisé"|trans({},'messages') }} </h4>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h5 class="couleur-donateur">{{ "Choisissez votre méthode de paiement"|trans({},'messages') }} </h5>
+                    <hr class="hr-without-marge" />
+                    <div class="icopay">
+                        <label>
+                            <input type="radio" name="payment_method" id="payment_method_1" value="VISA" {% if data['cb_payment_method'] is defined and data['cb_payment_method']=='VISA' %} checked="checked" {% endif %} onChange="cb_mp_onChange(this)" > <img alt="visa" src="{{ asset('img/visa.png') }}"  />
+                        </label>
+                    </div>
+                    <div class="icopay">
+                        <label>
+                            <input type="radio" name="payment_method" value="MasterCard" id="payment_method_2" {% if data['cb_payment_method'] is defined and data['cb_payment_method']=='MasterCard' %} checked="checked" {% endif %} onChange="cb_mp_onChange(this)" > <img alt="mastercard" src="{{ asset('img/mastercard.png') }}" />
+                        </label>
+                    </div>
+                    <div class="icopay" >
+                        <label>
+                            <input type="radio" name="payment_method" value="PAYPAL" id="payment_method_3" {% if data['cb_payment_method'] is defined and data['cb_payment_method']=='PAYPAL' %} checked="checked" {% endif %} onChange="cb_mp_onChange(this)"> <img  alt="paypal" src="{{ asset('img/paypal.png') }}" />
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div style="font-weight: bold;text-align: center;margin: auto;margin-bottom: 15px;">{{ "OU"|trans({},'messages') }}</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h5 class="couleur-donateur">{{ "Paiement par courrier"|trans({},'messages') }} </h5>
+                    <hr class="hr-without-marge" />
+                    <div class="checkbox" id="pa_container" {% if data['full_montant_p'] is defined and data['full_montant_p'] is not empty  %}style="display: none" {% endif %}>
+                        <label>
+                            <input type="checkbox" id="pa" name="pa" value="pa"  {% if data['pa_payment_method'] is defined and data['pa_payment_method']=='pa' %} checked="checked" {% endif %} onChange="other_mp_onChange(this);{% if subscription_online == 1 %}show_pop_relev();{% endif %}" > {{ "Prélèvement automatique"|trans({},'messages') }}
+                        </label>
+                    </div>
+                    <div id="info_bank_block"></div>
+                </div>
+            </div>
+            <input type="submit" class="btn btn-default btn-lg btn-block" style="width:100%;" value="{{ "Je valide mon adhésion"|trans({},'messages') }}" />
+            <div class="mini-block">
+                {% if init['perso'].persoa is defined and  init['perso'].persoa is not null %}
+                    {% if params['_locale'] == 'fr' %}
+                        {{ init['perso'].persoa.ac3block1 | raw }}
+                    {% elseif params['_locale'] == 'en' %}
+                        {{ init['perso'].persoa.ac3block1En | raw }}
+                    {% endif %}
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="current_localite" id="current_localite" />
+</form>
+<hr />
+</form>
+</div>
+<div class="row" style="margin: 0 auto;max-width: 970px;">
+    <div class="col-md-4 hidden-xs hidden-sm">
+        <div class="footer-block">
+            <h4 class="couleur-donateur">
+                {% if init['perso'].persoa is defined and  init['perso'].persoa is not null %}
+                    {% if params['_locale'] == 'fr' %}
+                        {{ init['perso'].persoa.ac1footertitle | raw }}
+                    {% elseif params['_locale'] == 'en' %}
+                        {{ init['perso'].persoa.ac1footertitleEn | raw }}
+                    {% endif %}
+                {% else %}
+                    {{ "Pourquoi donner ?"|trans({},'messages') }}
+                {% endif %}
+            </h4>
+            <hr/>
+            {% if init['perso'].persoa is defined and  init['perso'].persoa is not null %}
+                {% if params['_locale'] == 'fr' %}
+                    {{ init['perso'].persoa.ac1footer | raw }}
+                {% elseif params['_locale'] == 'en' %}
+                    {{ init['perso'].persoa.ac1footerEn | raw }}
+                {% endif %}
+            {% else %}
+
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-4 hidden-xs hidden-sm">
+        <div class="footer-block">
+            <h4 class="couleur-donateur" >
+                {% if init['perso'].persoa is defined and  init['perso'].persoa is not null %}
+                    {% if params['_locale'] == 'fr' %}
+                        {{ init['perso'].persoa.ac2footertitle | raw }}
+                    {% elseif params['_locale'] == 'en' %}
+                        {{ init['perso'].persoa.ac2footertitleEn | raw }}
+                    {% endif %}
+                {% else %}
+                    {{ "Respect de votre vie privée"|trans({},'messages') }}
+                {% endif %}
+            </h4>
+            <hr/>
+            {% if init['perso'].persoa is defined and  init['perso'].persoa is not null %}
+                {% if params['_locale'] == 'fr' %}
+                    {{ init['perso'].persoa.ac2footer | raw }}
+                {% elseif params['_locale'] == 'en' %}
+                    {{ init['perso'].persoa.ac2footerEn | raw }}
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-4 hidden-xs hidden-sm">
+        <div class="footer-block">
+            <h4 class="couleur-donateur"><i
+                        class="fa fa-lock icoh4"></i> {{ "Paiement sécurisé"|trans({},'messages') }} </h4>
+            <hr/>
+            {% if init['perso'].persoa is defined and  init['perso'].persoa is not null %}
+                {% if params['_locale'] == 'fr' %}
+                    {{ init['perso'].persod.dc3secure | raw }}
+                {% elseif params['_locale'] == 'en' %}
+                    {{ init['perso'].persod.dc3secureEn | raw }}
+                {% endif %}
+            {% endif %}
+
+            <br/>
+            <br/>
+            <center><img alt="security labels" class="img-responsive" src="{{ asset('img/security-bare.png') }}"/>
+            </center>
+        </div>
+    </div>
+
+</div>
+<div class="row powered_section"  >
+    <div class="col-md-12">
+        <br />
+        <hr class="hr-last-footer"/>
+        <a href="http://www.fulldon.fr" class="logo_powered" ><img  alt="Ogone" src="{{ asset('img/power1.png') }}" /></a>
+        <img  alt="security labels" class="hidden-md hidden-lg" style="float:right" src="{{ asset('img/security-bare.png') }}" />
+    </div>
+</div>
+</div> <!-- /container -->
+</div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">Authentification</h4>
+            </div>
+            <div class="modal-body">
+                <div id="auth_message">
+
+                </div>
+                <form class="form-" role="form" action="{{ path('login_check_donateur') }}" method="post">
+
+                    {# S'il y a une erreur, on l'affiche dans un joli cadre #}
+                    {% if error is defined%}
+                        <div class="alert alert-danger">{{ error.message|trans({},'messages') }}</div>
+                    {% endif %}
+                    {% for flashMessage in app.session.flashbag.get('info') %}
+                        <div class="alert alert-success">
+                            {{ flashMessage }}
+                        </div>
+                    {% endfor %}
+                    <div class="form-group">
+                        <label class="sr-only" for="exampleInputEmail2">Email address</label>
+                        <input type="text" name="_username" class="form-control input-sm" placeholder="{{"user"|trans({},'messages')  }}" style="border-radius:0px !important;" required autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="exampleInputPassword2">Password</label>
+                        <input type="password" name="_password" class="form-control input-sm" placeholder="{{"password"|trans({},'messages')  }}" style="border-radius:0px !important;" required>
+                    </div>
+
+                    <button class="btn btn-ms btn-default" type="submit">{{"Se connecter"|trans({},'messages')  }}</button>
+                    <a class="pull-right" href="{{ path('mdp_oublie_donateur') }}">{{"Mot de passe oublié ?"|trans({},'messages')  }}</a><br />
+                    <input type="hidden" name="_target_path" value="{{ path('donateur_adherent') }}" />
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- Modal -->
+<div class="modal fade" id="recoveryModal" tabindex="-1" role="dialog" aria-labelledby="recoveryModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                            class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="recoveryModalLabel"><i class="fa fa-user fa-lg"></i> {{ "Vous êtes déjà un donateur !"|trans({},'messages') }}  </h4>
+            </div>
+            <div class="modal-body pwd-recovery-link">
+                <div id="content-recovery">                </div>
+                {{ "Vous faites déjà partie des donateurs de l'association"|trans({},'messages') }}  {{ assoc_name }} !<br />
+                {{ "Afin de vous remercier de votre générosité, un espace dédié vous permet d'effectuer simplement vos dons en ligne."|trans({},'messages') }}
+                <br/><br/>
+
+                <a href="#" class="" onclick="passwordRecovery()">{{ "Cliquez-ici"|trans({},'messages') }}</a> {{ "pour recevoir votre mot de passe et finaliser votre don."|trans({},'messages') }}
+            </div>
+        </div>
+    </div>
+</div>
+{% if subscription_online == 1 %}
+<div class="modal fade hidden-print" id="prelevementbox" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+    <div class="modal-dialog" style="width: 800px;">
+        <div class="modal-content" >
+
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 style="color: {{ mycolor }};"> Vos coordonnées bancaires pour le prélèvement. </h4>
+                        <hr />
+                        <div id="prev_error_block"></div>
+                    </div>
+                    <div class="col-md-8">
+
+                        Avant de saisir les coordonnés de votre compte veuillez vous assurer que vous avez saisi votre nom et prénom correctement.<br />
+                        <label for="iban" class="control-label ">{{ "IBAN"|trans({},'messages') }} <span class="required-input" > * </span></label>
+                        <div >
+                            <input type="text" name="iban_pop" id="iban_pop" class="form-control input-sm" required="required" {% if data['iban'] is defined  %} value="{{ data['iban'] }}" {% endif %} style="border-radius:0px !important;" />
+                        </div>
+                        <label for="bic" class="control-label">{{ "BIC"|trans({},'messages') }} <span class="required-input" > * </span></label>
+                        <div >
+                            <input type="text" name="bic_pop" id="bic_pop" class="form-control input-sm" required="required" {% if data['bic'] is defined  %} value="{{ data['bic'] }}" {% endif %} style="border-radius:0px !important;"/>
+                        </div>
+                        <span style="font-size: 12px;">Vous devez être le titulaire de ce compte, ou disposer des pouvoirs nécessaires pour agir au nom du titulaire. </span><br />
+                        Pour recevoir le code SMS nécessaire à la signature du mandat, merci de confirmer le numéro de téléphone mobile .<br />
+                        <label for="telephone" class="control-label" >{{ "Téléphone mobile"|trans({},'messages') }} <span class="required-input" > * </span></label>
+                        <div class="form-inline" >
+                            <div class="form-group">
+                            + <input type="text" name="indicatif_pop" id="indicatif_pop" value="33" style="width:50px;" class="form-control input-sm" />
+                                </div>
+                            <div class="form-group">
+                            <input type="text" name="telephone_pop" id="telephone_pop" placeholder="ex : 687654320" class="form-control input-sm" required="required" {% if data['telephone'] is defined  %} value="{{ data['telephone'] }}" {% endif %} style="border-radius:0px !important;"/>
+                                </div>
+                        </div>
+                        <span style="font-size: 12px;" class="pull-right">Les champs marqué d'un * sont obligatoires.</span>
+                    </div>
+                    <div class="col-md-4">
+                        <h5 style="font-weight:bold;">Paiement Sécurisé par : </h5>
+                        <hr />
+                        <img  alt="paiement certeurope" class="img-responsive" src="{{ asset('img/certeurope.png') }}" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onClick="uncheckoption();">Annuler</button>
+                    <button type="button" class="btn btn-default" onClick="info_bank()" >Valider les informations bancaires.</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    {% javascripts '../app/Resources/Public/js/bootstrap.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/bootstrap-colorpicker.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/bootstrap-datepicker.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/docs.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/jquery.form.min.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/locales/*' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/iban.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/jquery-ui/jquery-ui.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script>
+
+        var global_choice = null;
+        var global_type = null;
+        var global_montant = null;
+        $('.datepicker').datepicker({
+            language: "fr-FR",
+            format: "dd/mm/yyyy"
+        });
+
+        $('#company_check').on('click', function(){
+            if($('#company_check').is(':checked')){
+                $("#is_company").show();
+                // Remove the required asterique in the nom field
+                $('#req-nom').text('');
+                $('#nom').removeAttr('required');
+                $('#req-prenom').text('');
+                $('#prenom').removeAttr('required');
+                $('#req-civilite').text('');
+                $("#civilite").removeAttr('required');
+                if(global_type != null && global_choice != null) {
+                    intializeDedu(1);
+                }
+            }
+            else
+            {
+                $("#is_company").hide();
+                // the name field become required when the user uncheck the company checkbox.
+                $('#req-nom').text('*');
+                $('#req-prenom').text('*');
+                $('#req-civilite').text('*');
+                $("#nom").attr('required','required');
+                $("#prenom").attr('required','required');
+                $("#civilite").attr('required','required');
+                if(global_type != null && global_choice != null) {
+                    intializeDedu(0);
+                }
+            }
+        });
+
+        function intializeDedu(iscompany)
+        {
+            var deduf
+            if(iscompany) {
+                deduf = global_choice * 0.4;
+                if(global_type == 1 )
+                $('#dedu_fiscal_p').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center>{{ "Ma cotisation après réduction fiscale"|trans({},'messages') }} : <b style="font-size:15px;">'+deduf+'€</b> </center><br /><div style="background-color: white;color:#5d5d5d;padding:5px;">{{ " après déduction fiscale de 60 % du montant du don dans la limite de 5 ‰ du chiffre d’affaires HT, excédant reportable 5 ans."|trans({},'messages') }}</div></div>');
+                else {
+                $('#dedu_fiscal_r').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center>{{ "Ma cotisation après réduction fiscale"|trans({},'messages') }} : <b style="font-size:15px;">'+deduf+'€</b> </center><br /><div style="background-color: white;color:#5d5d5d;padding:5px;">{{ " après déduction fiscale de 60 % du montant du don dans la limite de 5 ‰ du chiffre d’affaires HT, excédant reportable 5 ans."|trans({},'messages') }}</div></div>');
+                }
+            } else {
+                if(global_choice > 526)
+                    deduf = global_choice * 0.34;
+                else
+                    deduf = global_choice * 0.25;
+                if(global_type == 1 )
+                    $('#dedu_fiscal_p').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center>{{ "Ma cotisation après réduction fiscale"|trans({},'messages') }} : <b style="font-size:15px;">'+deduf+'€</b> </center><br /><div style="background-color: white;color:#5d5d5d;padding:5px;">{{ "après déduction fiscale (75 % dans la limite de 526 € (plafond 2014)). Au-delà, la réduction d’impôt est de 66 % dans la limite de 20 % de votre revenu imposable."|trans({},'messages') }}</div></div>');
+                else {
+                    $('#dedu_fiscal_r').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center>{{ "Ma cotisation après réduction fiscale"|trans({},'messages') }} : <b style="font-size:15px;">'+deduf+'€</b> </center><br /><div style="background-color: white;color:#5d5d5d;padding:5px;">{{ "après déduction fiscale (75 % dans la limite de 526 € (plafond 2014)). Au-delà, la réduction d’impôt est de 66 % dans la limite de 20 % de votre revenu imposable."|trans({},'messages') }}</div></div>');
+                }
+            }
+        }
+        {% if data['raison_sociale'] is defined and data['raison_sociale'] is not null %}
+        $("#company_check").prop( 'checked',true );
+        $("#is_company").show();
+        {% endif %}
+        function fulldon_autremontant_r_onkeyup(object){
+            //alert(object);
+            $('#fieldRadioAutreMontant_r').prop('checked', true);
+            // reset all the ponctual options
+            for (var i = 1; i < 6; i++) {
+                $('#fullMontant_p_'+i).prop('checked', false);
+            }
+            $('#fieldRadioAutreMontant_p').prop('checked', false);
+            $('#cheque').prop('checked', false);
+            $('#cheque_container').hide();
+            $('#pa_container').show();
+            var mychoice = object.value;
+
+            var deduf = 0;
+            if(mychoice > 526)
+                deduf = mychoice * 0.34;
+            else
+                deduf = mychoice * 0.25;
+
+            if($('#company_check').is(':checked')){
+                deduf = mychoice * 0.4;
+                $('#dedu_fiscal_r').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center>{{ "Ma cotisation après réduction fiscale"|trans({},'messages') }} : <b style="font-size:15px;">'+deduf+'€</b> </center><br /><div style="background-color: white;color:#5d5d5d;padding:5px;">{{ " après déduction fiscale de 60 % du montant du don dans la limite de 5 ‰ du chiffre d’affaires HT, excédant reportable 5 ans."|trans({},'messages') }}</div></div>');
+            }
+            else
+            {
+                $('#dedu_fiscal_r').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center>{{ "Ma cotisation après réduction fiscale"|trans({},'messages') }} : <b style="font-size:15px;">'+deduf+'€</b> </center><br /><div style="background-color: white;color:#5d5d5d;padding:5px;">{{ "après déduction fiscale (75 % dans la limite de 526 € (plafond 2014)). Au-delà, la réduction d’impôt est de 66 % dans la limite de 20 % de votre revenu imposable."|trans({},'messages') }}</div></div>');
+            }
+            global_choice = mychoice;
+            global_type = 2;
+            $('#dedu_fiscal_p').html('');
+        }
+        function fulldon_montant_r_onChange(object) {
+            //alert(object);
+            $('#montant_reguilier').val('');
+            // reset all the ponctual options
+            $('#fieldRadioAutreMontant_p').prop('checked', false);
+            $('#cheque').prop('checked', false);
+            $('#cheque_container').hide();
+            $('#pa_container').show();
+            var mychoice = object.value;
+            var deduf = 0;
+            if(mychoice > 526)
+                deduf = mychoice * 0.34;
+            else
+                deduf = mychoice * 0.25;
+            if($('#company_check').is(':checked')){
+                deduf = mychoice * 0.4;
+                $('#dedu_fiscal_r').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center>{{ "Ma cotisation après réduction fiscale"|trans({},'messages') }} : <b style="font-size:15px;">'+deduf+'€</b> </center><br /><div style="background-color: white;color:#5d5d5d;padding:5px;">{{ " après déduction fiscale de 60 % du montant du don dans la limite de 5 ‰ du chiffre d’affaires HT, excédant reportable 5 ans."|trans({},'messages') }}</div></div>');
+            }
+            else
+            {
+                $('#dedu_fiscal_r').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center>{{ "Ma cotisation après réduction fiscale"|trans({},'messages') }} : <b style="font-size:15px;">'+deduf+'€</b> </center><br /><div style="background-color: white;color:#5d5d5d;padding:5px;">{{ "après déduction fiscale (75 % dans la limite de 526 € (plafond 2014)). Au-delà, la réduction d’impôt est de 66 % dans la limite de 20 % de votre revenu imposable."|trans({},'messages') }}</div></div>');
+            }
+            $('#dedu_fiscal_p').html('');
+            global_choice = mychoice;
+            global_type = 2;
+
+        }
+
+
+        function cb_mp_onChange(object) {
+
+            $('#pa').prop('checked', false);
+            $('#cheque').prop('checked', false);
+
+        }
+
+        function other_mp_onChange(object) {
+
+            for (var i = 0; i < 4; i++) {
+                $('#payment_method_'+i).prop('checked', false);
+            }
+
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var elements = document.getElementsByTagName("INPUT");
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].oninvalid = function(e) {
+                    e.target.setCustomValidity("");
+                    if (!e.target.validity.valid) {
+                        e.target.setCustomValidity('{{ "Veuillez renseigner ce champ."|trans({},'messages') }}');
+                    }
+                };
+                elements[i].oninput = function(e) {
+                    e.target.setCustomValidity("");
+                };
+            }
+        })
+        {% if subscription_online == 1 %}
+                    function show_pop_relev() {
+                        if($('#pa').is(':checked')){
+                            $('#prelevementbox').modal('show');
+                        } else {
+                            $('#prelevementbox').modal('hide');
+                            $('#info_bank_block').html('');
+                        }
+
+                    }
+                    function uncheckoption() {
+                        $('#pa').prop('checked', false);
+                    }
+                    function info_bank()
+                    {
+                        var bic = $('#bic_pop').val();
+                        var iban =  $('#iban_pop').val();
+                        var telephone = $('#telephone_pop').val();
+                        var indicatif = $('#indicatif_pop').val();
+
+                        if(IBAN.isValid(iban) && validate_bic(bic) && valider_numero(telephone)) {
+                            $('#prev_error_block').html('');
+                            //Contrôle des champs
+                            $('#info_bank_block').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center><span style="font-weight:bold">{{ "Vos informations bancaires"|trans({},'messages') }}</span><br /> <span style="font-size:10px;padding-bottom:2px;">{{ "Vérifiez les informations ci-dessous"|trans({},'messages') }} <a href="#" onClick="show_pop_relev()">(Modifier)</a></span> </center><div style="background-color: white;color:#5d5d5d;padding:5px;"><b>Iban: </b><span style="font-size:12px;">'+iban+'</span><br /><b>Bic: </b><span style="font-size:12px;">'+ bic+'</span><br /><b>Téléphone : </b><span style="font-size:12px;">+'+ indicatif+telephone +'</span></div></div>');
+                            $('#prelevementbox').modal('hide');
+                            //alimenter les champs
+                            $('#bic').val(bic);
+                            $('#iban').val(iban);
+                            $('#telephone').val(telephone);
+                            $('#indicatif').val(indicatif);
+                        } else {
+                            //Initialisation des variables
+                            $('#bic').val('');
+                            $('#iban').val('');
+                            $('#telephone').val('');
+                            $('#indicatif').val('');
+                            $('#prev_error_block').html('');
+                            //Traitement
+                            var error = '';
+                            error +='<div class="alert alert-danger" role="alert" ><ul style="margin-left:10px;" >';
+                            if(IBAN.isValid(iban) == false) {
+                                error +='<li>L\'iban saisi n\'est pas valide </li>';
+                            }
+                            if(validate_bic(bic) == false) {
+                                error +='<li>Le bic saisi n\'est pas valide </li>';
+                            }
+                            if(valider_numero(telephone) == false) {
+                                error +='<li>Le numéro de téléphone n\'est pas valide </li>';
+                            }
+                            error +='</ul></div>';
+                            $('#prev_error_block').append(error);
+                        }
+
+                    }
+                    function validate_bic(swift)
+                    {
+
+                        var regSWIFT = /^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})?$/;
+                        if(regSWIFT.test(swift) == false) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+
+                    }
+                    function valider_numero(num) {
+
+                        var chiffres = new String(num);
+
+                        chiffres = chiffres.replace(/[^0-9]/g, '');
+                        if ( num == "" )
+                        {
+                            return false;
+                        }
+                        compteur = chiffres.length;
+
+                        if (compteur < 9)
+                        {
+                            return false;
+                        } else {
+                            return true;
+                        }
+
+                    }
+        // To validate the email
+        function validateEmail(email) {
+            var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+            return re.test(email);
+        }
+        var timer;
+        function setTimer() {
+            console.log('Timer'+timer);
+            if(!timer ) {
+                timer = setInterval(verifyEmail, 1000);
+            }
+        }
+
+        function verifyEmail() {
+
+            // Get the form value.
+            var valForm = $('#email').val();
+
+            // we will use verifyEmail method to test if the email is valid before using the ajax call
+            if (validateEmail(valForm)) {
+                //Réinitialisation
+                clearInterval(timer);
+                timer = null;
+                // Use Ajax to check if the email exists in the database.
+                var _urlVerif = "{{ path('fulldon_donateur_check_email') }}";
+                $.ajax({
+                    url: _urlVerif + "/" + valForm,
+                    dataType: "json"
+
+                }).done(function (data) {
+                            // if yes show a new popup.
+                            // if it's a new email
+                            console.log(data['result']);
+                            if ( data['result'] == true ) {
+                                $('#recoveryModal').modal('hide');
+                                $('#icocheck').css('color', '#329631');
+                                // Activate all fields and add an icon confirmation.
+                                $('#raison_social').removeAttr('disabled');
+                                $('#nom').removeAttr('disabled');
+                                $('#prenom').removeAttr('disabled');
+                                $('#civilite').removeAttr('disabled');
+                                $('#pays').removeAttr('disabled');
+                                $('#zipcode').removeAttr('disabled');
+                                $('#ville').removeAttr('disabled');
+                                $('#adresse1').removeAttr('disabled');
+                                $('#adresse2').removeAttr('disabled');
+                            } else {
+                                // Display the modal wi
+                                $('#recoveryModal').modal('show');
+                                $('#icocheck').css('color', '#ff0000');
+                                $('#raison_social').attr('disabled','disabled');
+                                $('#nom').attr('disabled','disabled');
+                                $('#prenom').attr('disabled','disabled');
+                                $('#civilite').attr('disabled','disabled');
+                                $('#pays').attr('disabled','disabled');
+                                $('#zipcode').attr('disabled','disabled');
+                                $('#ville').attr('disabled','disabled');
+                                $('#adresse1').attr('disabled','disabled');
+                                $('#adresse2').attr('disabled','disabled');
+                            }
+                        });
+            }
+
+        }
+        function passwordRecovery() {
+            var valForm = $('#email').val();
+            $('#content-recovery').html('<center><img src="{{ asset("img/ajax-loader.gif") }}" ><center>');
+            // we will use verifyEmail method to test if the email is valid before using the ajax call
+            if (validateEmail(valForm)) {
+                // Use Ajax to check if the email exists in the database.
+                var _urlVerif = "{{ path('fulldon_donateur_onepage_getpwd') }}";
+                $.ajax({
+                    url: _urlVerif + "/" + valForm,
+                    dataType: "json"
+
+                }).done(function (data) {
+                            // if yes show a new popup.
+                            // if it's a new email
+                            if (data['result'] == true) {
+
+                                //Hide the modal of pwd recovery
+                                $('#recoveryModal').modal('hide');
+                                //Success message
+                                $('#auth_message').html('<div class="alert alert-success">{{ "Votre mot de passe vient d'être changé et envoyé à votre email"|trans({},"messages") }} '+valForm+'</div>');
+                                //show authentification box
+                                $('#myModal').modal('show');
+                                $('#content-recovery').html('');
+                            } else {
+                                // Display error message
+                                $('#custom_errors').html('<div class="alert alert-danger">{{ "Une erreur est survenue, veuillez recharger la page"|trans({},"messages") }}</div>');
+                                $('#content-recovery').html('');
+
+                            }
+
+
+                        });
+            }
+        }
+        {% endif %}
+    </script>
+    <script>
+    // Execute the method after the first refresh.
+    verifyEmail();
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', '{{ google_analytics_code }}', 'auto');
+        ga('send', 'pageview');
+
+        var accentMap = {
+            "á": "a",
+            "à": "a",
+            "â": "a",
+            "ä": "a",
+            "ç": "c",
+            "é": "e",
+            "è": "e",
+            "ê": "e",
+            "ë": "e",
+            "î": "i",
+            "ï": "i",
+            "ô": "o",
+            "ö": "o",
+            "ù": "u",
+            "û": "u",
+            "ü": "u",
+            "'": " "
+
+        };
+        var normalize = function(term){
+            var ret = "";
+            for(var i = 0; i < term.length; i++){
+                ret += accentMap[ term.charAt(i) ] || term.charAt(i);
+            }
+            return ret;
+        };
+        var current_localite;
+        var checkZipcode = $('#zipcode').val();
+        var current_cities = new Array();
+        if(checkZipcode.length !=0 ) {
+            callCpApi(checkZipcode, '');
+
+        }
+        function callCpApi(zipcode, pays) {
+            var _urldqe = 'https://prod2.dqe-software.com/';
+            var pays = 'FRA';
+            var vliscence ='INTERSA12';
+            //DQE
+            var current_pays = $( "#pays").val();
+            if(current_pays == 'FR') {
+            $.ajax({
+
+                url:_urldqe+"CP/?Pays="+pays+"&CodePostal="+zipcode+"&Licence="+vliscence,
+
+                dataType: 'jsonp',
+
+                jsonp : "callback",
+
+                crossDomain: true,
+
+                jsonpCallback: "afficheCp"
+            }).done(function(data) {
+
+                    });
+            }
+        }
+        function callAdrApi(adresse, localite) {
+            var _urldqe = 'https://prod2.dqe-software.com/';
+            var pays = 'FRA';
+            var vliscence ='INTERSA12';
+            //DQE
+            var current_pays = $( "#pays").val();
+            if(current_pays == 'FR') {
+            $.ajax({
+
+                url:_urldqe+"ADR/?Pays="+pays+"&IDLocalite="+localite+"&Adresse="+adresse+"&Licence="+vliscence,
+
+                dataType: 'jsonp',
+
+                jsonp : "callback",
+
+                crossDomain: true,
+
+                jsonpCallback: "afficheAdr"
+            }).done(function(data) {
+
+                    });
+            }
+        }
+        var timeoutReference;
+        var timeoutReferenceAdr;
+
+        $('input#zipcode').keypress(function() {
+            var el = this; // copy of this object for further usage
+
+            if (timeoutReference) clearTimeout(timeoutReference);
+            timeoutReference = setTimeout(function() {
+                verifycp.call(el);
+            }, 3000);
+        });
+        $('input#zipcode').blur(function(){
+            verifycp.call(this);
+        });
+        $('input#adresse1').keypress(function() {
+            var el = this; // copy of this object for further usage
+            $('input#adresse1').val(normalize($('input#adresse1').val()));
+            if (timeoutReference) clearTimeout(timeoutReference);
+            timeoutReference = setTimeout(function() {
+                verifyAdr.call(el);
+            }, 400);
+
+        });
+        $('input#adresse1').blur(function(){
+            verifyAdr.call(this);
+        });
+        function verifycp(){
+            // we only want to execute if a timer is pending
+            if (!timeoutReference){
+                return;
+            }
+            // reset the timeout then continue on with the code
+            timeoutReference = null;
+
+            //
+            // Code to execute here
+            //
+            var pays = $('#pays').val();
+            var zipcode = $('#zipcode').val();
+            if(zipcode.length != 0 || pays.length !=0) {
+                // ajax
+                callCpApi(zipcode, pays);
+
+            }
+
+        }
+        function verifyAdr(){
+            // we only want to execute if a timer is pending
+            if (!timeoutReference){
+                return;
+            }
+            // reset the timeout then continue on with the code
+            timeoutReference = null;
+
+            //
+            // Code to execute here
+            //
+            var adresse = $('#adresse1').val();
+            var localite = current_localite;
+            if(adresse.length > 3 ) {
+                // ajax
+                callAdrApi(adresse,localite);
+
+            }
+        }
+        function afficheCp(RtnData) {
+            current_cities = new Array();
+            $( "input#ville" ).autocomplete({source: []});
+            _listeVilleChoix = [];
+            var repcp = eval('('+RtnData+')');
+            pos = 0;
+            var resultat=new Array();
+            $.each(repcp, function(nomRes,res) {
+                resultat[nomRes]=res;
+                _listeVilleChoix.push({label:resultat[nomRes].CodePostal+' '+resultat[nomRes].Localite+' '+resultat[nomRes].LieuDit, value:resultat[nomRes].CodePostal+''+resultat[nomRes].Localite+' '+resultat[nomRes].LieuDit, id:pos, codeville:
+                        resultat[nomRes].IDLocalite, ville: resultat[nomRes].Localite, lieudit: resultat[nomRes].LieuDit, cp:
+                        resultat[nomRes].CodePostal});
+                pos=pos+1;
+
+            });
+            if(_listeVilleChoix.length > 1) {
+                var tags =new Array();
+                for(var i=0; i < _listeVilleChoix.length ; i++) {
+                    tags[i] = _listeVilleChoix[i].ville.trim();
+                    current_cities[_listeVilleChoix[i].ville.trim()] = _listeVilleChoix[i].codeville;
+                }
+                $( "#ville" ).autocomplete({
+                    source: function( request, response ) {
+                        var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
+                        response( $.grep( tags, function( item ){
+                            return matcher.test( item );
+                        }) );
+                    },
+                    change: function() {
+                        current_localite = current_cities[$(this).val().toUpperCase()];
+                        $('#current_localite').val(current_localite);
+                    }
+                });
+            } else {
+                $( "#ville" ).autocomplete({source: [], change: []});
+                // Afficher la ville
+                current_localite = _listeVilleChoix[0].codeville;
+                $('#ville').val(_listeVilleChoix[0].ville);
+                $('#current_localite').val(current_localite);
+            }
+        }
+        function afficheAdr(RtnData) {
+            $( "#adresse1" ).autocomplete({source: [], change: []});
+            _listeAdrChoix = [];
+            var tags =new Array();
+            var repcp = eval('('+RtnData+')');
+            pos = 0;
+            var resultat=new Array();
+            $.each(repcp, function(nomRes,res) {
+                resultat[nomRes]=res;
+                _listeAdrChoix.push({label:resultat[nomRes].CodePostal+' '+resultat[nomRes].Localite+' '+resultat[nomRes].LieuDit, value:resultat[nomRes].CodePostal+''+resultat[nomRes].Localite+' '+resultat[nomRes].LieuDit, id:pos, codeville:
+                        resultat[nomRes].IDLocalite, ville: resultat[nomRes].Localite, lieudit: resultat[nomRes].LieuDit, cp:
+                        resultat[nomRes].CodePostal, adr: resultat[nomRes].Numero +" "+resultat[nomRes].Voie});
+                pos=pos+1;
+
+            });
+            if(_listeAdrChoix.length >= 1) {
+
+                for(var i=0; i < _listeAdrChoix.length ; i++) {
+                    tags[i] = _listeAdrChoix[i].adr.trim();
+                }
+
+                $( "#adresse1" ).autocomplete({
+                    source: function( request, response ) {
+                        var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
+                        response( $.grep( tags, function( item ){
+                            return matcher.test( item );
+                        }) );
+                    }
+                });
+
+            }
+        }
+
+    </script>
+{% endblock %}
+</body>
+</html>

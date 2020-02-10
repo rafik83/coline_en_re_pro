@@ -1,0 +1,5 @@
+parameters:
+    max_articles_on_listepage: '20'
+    artistes : {jeunes_cordistes:48, jeunes_pianistes:11, artistes_seniors:46}
+    hotes : {hotes:7}
+

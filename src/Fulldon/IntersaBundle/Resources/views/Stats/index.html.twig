@@ -1,0 +1,309 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+        <div class="breadcrumbs" id="breadcrumbs">
+            <script type="text/javascript">
+                try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+            </script>
+            <ol class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li class="active">Statistiques avancées</li>
+            </ol>
+        </div>
+        <div class="page-content">
+
+            <div class="col-md-12 pull-left">
+            <div class="page-header">
+                <h1>
+                    Statistiques avancées
+                </h1>
+            </div><!-- /.page-header -->
+
+                {% for flashMessage in app.session.flashbag.get('info') %}
+                    <div class="alert alert-success">
+                        {{ flashMessage }}
+                    </div>
+                {% endfor %}
+                {% for flashMessage in app.session.flashbag.get('erreur') %}
+                    <div class="alert alert-danger">
+                        <span class="glyphicon glyphicon-remove-sign"></span> {{ flashMessage }}
+                    </div>
+                {% endfor %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="widget-box widget-color-dark ui-sortable-handle">
+                            <div class="widget-header">
+
+                                <h4 class="widget-title">1.Statistiques globales par entité</h4>
+                                <div class="widget-toolbar">
+
+                                    <a href="#" data-action="collapse">
+                                        <i class="ace-icon fa fa-chevron-up"></i>
+                                    </a>
+
+                                    <a href="#" data-action="close">
+                                        <i class="ace-icon fa fa-times"></i>
+                                    </a>
+
+                                    <a href="#" data-action="fullscreen" class="orange2">
+                                        <i class="ace-icon fa fa-expand"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="widget-body">
+
+                                <form action="{{ path('intersa_advanced_stats_global') }}" method="POST">
+                                    <div class="widget-main">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label for="iban"><label for="iban" class="required">Sélectionner un intervalle de date </label></label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            {% if  app.session.flashbag.has('error_stop_date_debut')%}
+                                                {# Affichage des erreurs pour ce champ précis. #}
+                                                <div class="form-group has-error">
+                                                    <label class="control-label" for="inputError">
+                                                        {% for flashMessage in app.session.flashbag.get('error_stat_date_debut') %}
+                                                            <li>{{ flashMessage }}</li>
+                                                        {% endfor %}
+                                                    </label>
+                                                    <input type="text" id="date_stat_debut" name="date_stat_debut" {% if memo_search['date_stat_debut'] is defined and memo_search['date_stat_debut'] is not null%} value="{{ memo_search['date_stat_debut'] }}" {% endif %}  placeholder="Date début jj/mm/aaaa" class=" datepicker task_field form-control required" >
+                                                </div>
+                                            {% else %}
+                                                <input type="text" id="date_stat_debut" name="date_stat_debut" {% if memo_search['date_stat_debut'] is defined and memo_search['date_stat_debut'] is not null%} value="{{ memo_search['date_stat_debut'] }}" {% endif %} placeholder="Date début jj/mm/aaaa" class=" datepicker task_field form-control required" >
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-6">
+                                            {% if  app.session.flashbag.has('error_stop_fin')%}
+                                                {# Affichage des erreurs pour ce champ précis. #}
+                                                <div class="form-group has-error">
+                                                    <label class="control-label" for="inputError">
+                                                        {% for flashMessage in app.session.flashbag.get('error_stat_date_fin') %}
+                                                            <li>{{ flashMessage }}</li>
+                                                        {% endfor %}
+                                                    </label>
+                                                    <input type="text" id="date_stat_fin" name="date_stat_fin"   {% if memo_search['date_stat_fin'] is defined and memo_search['date_stat_fin'] is not null%} value="{{ memo_search['date_stat_fin'] }}" {% endif %}  placeholder="Date fin jj/mm/aaaa" class="datepicker task_field form-control required" >
+                                                </div>
+                                            {% else %}
+                                                <input type="text" id="date_stat_fin" name="date_stat_fin"   {% if memo_search['date_stat_fin'] is defined and memo_search['date_stat_fin'] is not null%} value="{{ memo_search['date_stat_fin'] }}" {% endif %} placeholder="Date fin jj/mm/aaaa" class="datepicker task_field form-control required" >
+                                            {% endif %}
+                                        </div>
+
+                                    <div class="col-md-12">
+                                        <br />
+                                    <label>Entité : </label>
+                                    <select name="code_entity" class="task_field form-control">
+                                        {% for en in entities %}
+                                            <option value="{{ en.code }}">{{ en.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    </div>
+                                    </div>
+                                    <br />
+                                </div>
+                                    <div class="widget-toolbox padding-8 clearfix">
+                                        <input type="submit" class="btn btn-success col-md-12" value="Générer les statistiques" >
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="widget-box widget-color-dark ui-sortable-handle">
+                            <div class="widget-header">
+
+                                <h4 class="widget-title">2.Statistiques par entité et par opération</h4>
+                                <div class="widget-toolbar">
+
+                                    <a href="#" data-action="collapse">
+                                        <i class="ace-icon fa fa-chevron-up"></i>
+                                    </a>
+
+                                    <a href="#" data-action="close">
+                                        <i class="ace-icon fa fa-times"></i>
+                                    </a>
+
+                                    <a href="#" data-action="fullscreen" class="orange2">
+                                        <i class="ace-icon fa fa-expand"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="widget-body">
+                                <form action="{{ path('intersa_advanced_stats_operation') }}" method="POST" >
+                                    <div class="widget-main">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label></h4>Code Occasion :</label>
+                                            <select name="code_occasion" class="task_field form-control">
+                                                {% for oc in occasions %}
+                                                    <option value="{{ oc.code }}">{{ oc.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <br />
+                                            <label>Entité : </label>
+                                            <select name="code_entity" class="task_field form-control">
+                                                {% for en in entities %}
+                                                    <option value="{{ en.code }}">{{ en.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <br />
+                                        </div>
+
+                                    <div class="widget-toolbox padding-8 clearfix">
+                                        <input type="submit" class="btn btn-success col-md-12" value="Générer les statistiques" >
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div  class="widget-box widget-color-dark ui-sortable-handle">
+                                <div class="widget-header">
+
+                                    <h4 class="widget-title">Statistiques d'attrition</h4>
+                                    <div class="widget-toolbar">
+
+                                        <a href="#" data-action="collapse">
+                                            <i class="ace-icon fa fa-chevron-up"></i>
+                                        </a>
+
+                                        <a href="#" data-action="close">
+                                            <i class="ace-icon fa fa-times"></i>
+                                        </a>
+
+                                        <a href="#" data-action="fullscreen" class="orange2">
+                                            <i class="ace-icon fa fa-expand"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="widget-body">
+                                    <form action="{{ path('intersa_advanced_stats_attrition') }}" method="POST" >
+                                        <div class="widget-main">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label>Code Occasion :</label>
+                                                    <select name="code_occasion" class="task_field form-control">
+                                                        {% for oc in occasions %}
+                                                            <option value="{{ oc.code }}">{{ oc.name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <br />
+                                                    <label>Entité : </label>
+                                                    <select name="code_entity" class="task_field form-control">
+                                                        {% for en in entities %}
+                                                            <option value="{{ en.code }}">{{ en.name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <br />
+                                        </div>
+                                        <div class="widget-toolbox padding-8 clearfix">
+                                            <input type="submit" class="btn btn-success col-md-12" value="Générer les statistiques" >
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <div class="widget-box widget-color-dark ui-sortable-handle">
+                                <div class="widget-header">
+
+                                    <h4 class="widget-title"> Rapport d'utilisation  </h4>
+                                    <div class="widget-toolbar">
+
+                                        <a href="#" data-action="collapse">
+                                            <i class="ace-icon fa fa-chevron-up"></i>
+                                        </a>
+
+                                        <a href="#" data-action="close">
+                                            <i class="ace-icon fa fa-times"></i>
+                                        </a>
+
+                                        <a href="#" data-action="fullscreen" class="orange2">
+                                            <i class="ace-icon fa fa-expand"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="widget-body">
+
+                                    <form action="{{ path('intersa_advanced_stats_bill') }}" method="POST">
+                                        <div class="widget-main">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label for="iban"><label for="iban" class="required">Sélectionner un intervalle de date </label></label>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    {% if  app.session.flashbag.has('error_stop_date_debut')%}
+                                                        {# Affichage des erreurs pour ce champ précis. #}
+                                                        <div class="form-group has-error">
+                                                            <label class="control-label" for="inputError">
+                                                                {% for flashMessage in app.session.flashbag.get('error_bill_stat_date_debut') %}
+                                                                    <li>{{ flashMessage }}</li>
+                                                                {% endfor %}
+                                                            </label>
+                                                            <input type="text" id="bill_date_stat_debut" name="bill_date_stat_debut" {% if memo_search['bill_date_stat_debut'] is defined and memo_search['bill_date_stat_debut'] is not null%} value="{{ memo_search['bill_date_stat_debut'] }}" {% endif %}  placeholder="Date début jj/mm/aaaa" class=" datepicker task_field form-control required" >
+                                                        </div>
+                                                    {% else %}
+                                                        <input type="text" id="bill_date_stat_debut" name="bill_date_stat_debut" {% if memo_search['bill_date_stat_debut'] is defined and memo_search['bill_date_stat_debut'] is not null%} value="{{ memo_search['bill_date_stat_debut'] }}" {% endif %} placeholder="Date début jj/mm/aaaa" class=" datepicker task_field form-control required" >
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-md-6">
+                                                    {% if  app.session.flashbag.has('error_stop_fin')%}
+                                                        {# Affichage des erreurs pour ce champ précis. #}
+                                                        <div class="form-group has-error">
+                                                            <label class="control-label" for="inputError">
+                                                                {% for flashMessage in app.session.flashbag.get('error_bill_stat_date_fin') %}
+                                                                    <li>{{ flashMessage }}</li>
+                                                                {% endfor %}
+                                                            </label>
+                                                            <input type="text" id="bill_date_stat_fin" name="bill_date_stat_fin"   {% if memo_search['bill_date_stat_fin'] is defined and memo_search['bill_date_stat_fin'] is not null%} value="{{ memo_search['bill_date_stat_fin'] }}" {% endif %}  placeholder="Date fin jj/mm/aaaa" class="datepicker task_field form-control required" >
+                                                        </div>
+                                                    {% else %}
+                                                        <input type="text" id="bill_date_stat_fin" name="bill_date_stat_fin"   {% if memo_search['bill_date_stat_fin'] is defined and memo_search['bill_date_stat_fin'] is not null%} value="{{ memo_search['bill_date_stat_fin'] }}" {% endif %} placeholder="Date fin jj/mm/aaaa" class="datepicker task_field form-control required" >
+                                                    {% endif %}
+                                                </div>
+
+
+                                            </div>
+                                            <br />
+                                        </div>
+                                        <div class="widget-toolbox padding-8 clearfix">
+                                            <input type="submit" class="btn btn-success col-md-12" value="Générer le rapport" >
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+            </div>
+
+
+
+        </div>
+    {% endblock %}
+ {% block javascripts %}
+     {{ parent() }}
+     <script>
+
+
+
+     </script>
+ {% endblock %}

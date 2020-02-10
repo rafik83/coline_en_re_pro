@@ -1,0 +1,576 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+        <style>
+            .panel-body {
+                background-color: #f6f6f6 !important;
+                border: 1px solid #eee;
+            }
+        </style>
+<div class="breadcrumbs" id="breadcrumbs">
+    <ol class="breadcrumb">
+        <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+        <li class="active">Personnalisation</li>
+    </ol>
+</div>
+        <div class="page-content" >
+
+            <div class="col-md-12 pull-left">
+            <div class="page-header">
+                <h1>
+                    Personnalisation
+                    <small>
+                        <i class="ace-icon fa fa-angle-double-right"></i>
+                        Personnalisation de l'espace donateur
+                    </small>
+                </h1>
+            </div><!-- /.page-header -->
+
+                {% for flashMessage in app.session.flashbag.get('info') %}
+                    <div class="alert alert-success">
+                        {{ flashMessage }}
+                    </div>
+                {% endfor %}
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <form action="{{ path('intersa_personnalisation') }}" method="post" {{ form_enctype(form) }}>
+
+                        <div  id="accordion" class="accordion-style1 panel-group accordion-style2">
+                            <div class="panel panel-default">
+                                <div class="panel-heading " >
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" class="accordion-toggle">
+                                            <span class="glyphicon glyphicon-picture"> </span> Design et Logo
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="collapseOne" class="panel-collapse collapse in">
+                                    <div class="panel-body">
+                                        <label for="inputEmail3" class=" control-label">{{ form_label(form.couleur, "Couleur") }}</label>
+                                        {% if form.couleur.vars.errors|length %}
+                                            {# Affichage des erreurs pour ce champ précis. #}
+                                            <div class="form-group has-error">
+                                                <label class="control-label" for="inputError">{{ form_errors(form.couleur) }}</label>
+                                                <div class="input-group couleur">
+                                                    {{ form_widget(form.couleur, {'attr': {'class': 'task_field form-control ', 'id':'inputError', 'id':'couleur', 'placeholder':'Couleur' } }) }}    <span class="input-group-addon"><i></i></span>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            {# Génération de l'input. #}
+                                            <div class="input-group couleur">
+                                                {{ form_widget(form.couleur, {'attr': {'class': 'task_field form-control', 'id':'nom', 'placeholder':'Couleur' } }) }}<span class="input-group-addon"><i></i></span>
+                                            </div>
+                                        {% endif %}
+                                        <br />
+                                        {% if perso.logo is defined and perso.logo != ''%}
+                                            <b>Logo actuel :</b> <img src="{{ asset('upload/' ~ perso.id ~'/' ~ perso.logo)}}" alt="logo" height="50" />
+                                        {% endif %}
+                                        <br /><br />
+                                        <label for="inputEmail3" class=" control-label">{{ form_label(form.logo, "Modifier le Logo :") }}</label>
+                                        {{ form_widget(form.logo)}}
+                                        <hr />
+                                        {% if perso.fondPage is defined and perso.fondPage != ''%}
+                                            <b>Fond de page actuel :</b> <img src="{{ asset('upload/' ~ perso.id ~'/' ~ perso.fondPage)}}" alt="fondPage" height="50" />
+                                        {% endif %}
+                                        <br /><br />
+                                        <label for="inputEmail3" class=" control-label">{{ form_label(form.fondPage, "Modifier le fond de la page de connexion : ") }}(Idéalement 1900 x 2000 pixels)</label>
+                                        {{ form_widget(form.fondPage)}}
+                                        <hr />
+                                        {% if perso.headerPage is defined and perso.headerPage != ''%}
+                                            <b>Header de page de don actuel :</b> <img src="{{ asset('upload/' ~ perso.id ~'/' ~ perso.headerPage)}}" alt="header page" height="50" />
+                                        {% endif %}
+                                        <br /><br />
+                                        <label for="inputEmail3" class=" control-label">{{ form_label(form.headerPage, "Modifier le l'entête de la page de don :") }} (Idéalement 940 pixels de largeur)</label>
+                                        {{ form_widget(form.headerPage)}}
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" class="accordion-toggle">
+                                           <span class="glyphicon glyphicon-font"> </span>  Personnalisation des textes sur l'espace donateur.
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="collapseTwo" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <label for="inputEmail3" class=" control-label">{{ form_label(form.presentation, "Présentation") }}</label>
+                                        {% if form.presentation.vars.errors|length %}
+                                            {# Affichage des erreurs pour ce champ précis. #}
+                                            <div class="form-group has-error">
+                                                <label class="control-label" for="inputError">{{ form_errors(form.presentation) }}</label>
+                                                <div class="input-group col-md-12">
+                                                    {{ form_widget(form.presentation, {'attr': {'class': 'task_field form-control ', 'id':'inputError', 'id':'couleur', 'placeholder':'Présentation' } }) }}
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            {# Génération de l'input. #}
+                                            <div class="input-group col-md-12">
+                                                {{ form_widget(form.presentation, {'attr': {'class': 'task_field form-control ', 'id':'nom', 'placeholder':'presentation' } }) }}
+                                            </div>
+                                        {% endif %}
+                                        <br />
+                                        <label for="inputEmail3" class=" control-label">{{ form_label(form.presentationEn, "Présentation (Anglais)") }}</label>
+                                        {% if form.presentationEn.vars.errors|length %}
+                                            {# Affichage des erreurs pour ce champ précis. #}
+                                            <div class="form-group has-error">
+                                                <label class="control-label" for="inputError">{{ form_errors(form.presentationEn) }}</label>
+                                                <div class="input-group col-md-12">
+                                                    {{ form_widget(form.presentationEn, {'attr': {'class': 'task_field form-control ', 'id':'inputError', 'id':'couleur', 'placeholder':'Présentation en anglais' } }) }}
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            {# Génération de l'input. #}
+                                            <div class="input-group col-md-12">
+                                                {{ form_widget(form.presentationEn, {'attr': {'class': 'task_field form-control ', 'id':'nom', 'placeholder':'presentation' } }) }}
+                                            </div>
+                                        {% endif %}
+                                        <br />
+
+                                        <label for="inputEmail3" class=" control-label">{{ form_label(form.rfMessage, "Message de réception des reçus fiscaux sur l'espace donateur") }}</label>
+                                        {% if form.rfMessage.vars.errors|length %}
+                                            {# Affichage des erreurs pour ce champ précis. #}
+                                            <div class="form-group has-error">
+                                                <label class="control-label" for="inputError">{{ form_errors(form.rfMessage) }}</label>
+                                                <div class="input-group col-md-12">
+                                                    {{ form_widget(form.rfMessage, {'attr': {'class': 'task_field form-control', 'id':'rfMessage', 'placeholder':'Introduction don réguilier' } }) }}
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            {# Génération de l'input. #}
+                                            <div class="input-group col-md-12">
+                                                {{ form_widget(form.rfMessage, {'attr': {'class': 'task_field form-control', 'id':'introDr', 'placeholder':'Introduction don réguilier' } }) }}
+                                            </div>
+                                        {% endif %}
+                                        <br />
+                                        <label for="inputEmail3" class=" control-label">{{ form_label(form.rfMessageEn, "Message de réception des reçus fiscaux sur l'espace donateur (En anglais) ") }}</label>
+                                        {% if form.rfMessageEn.vars.errors|length %}
+                                            {# Affichage des erreurs pour ce champ précis. #}
+                                            <div class="form-group has-error">
+                                                <label class="control-label" for="inputError">{{ form_errors(form.rfMessageEn) }}</label>
+                                                <div class="input-group col-md-12">
+                                                    {{ form_widget(form.rfMessageEn, {'attr': {'class': 'task_field form-control', 'id':'introDrEn', 'placeholder':'Introduction don réguilier en anglais' } }) }}
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            {# Génération de l'input. #}
+                                            <div class="input-group col-md-12">
+                                                {{ form_widget(form.rfMessageEn, {'attr': {'class': 'task_field form-control', 'id':'introDr', 'placeholder':'Introduction don réguilier en anglais' } }) }}
+                                            </div>
+                                        {% endif %}
+                                        <br />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" class="accordion-toggle" >
+                                            <span class="glyphicon glyphicon-map-marker"> </span> Personnalisation de l'association
+
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="collapseThree" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <label for="inputEmail3" class=" control-label">{{ form_label(form.adresseAssoc, "Adresse de l'association ") }}</label>
+                                        {% if form.adresseAssoc.vars.errors|length %}
+                                            {# Affichage des erreurs pour ce champ précis. #}
+                                            <div class="form-group has-error">
+                                                <label class="control-label" for="inputError">{{ form_errors(form.adresseAssoc) }}</label>
+                                                <div class="input-group col-md-12">
+                                                    {{ form_widget(form.adresseAssoc, {'attr': {'class': 'task_field form-control', 'id':'introDrEn', 'placeholder':'adresse de l\'association' } }) }}
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            {# Génération de l'input. #}
+                                            <div class="input-group col-md-12">
+                                                {{ form_widget(form.adresseAssoc, {'attr': {'class': 'task_field form-control', 'id':'introDr', 'placeholder':'adresse de l\'association' } }) }}
+                                            </div>
+                                        {% endif %}
+                                        <br />
+                                        <label for="inputEmail3" class=" control-label">{{ form_label(form.telephone, " Numéro de téléphone (Service donateur) ") }}</label>
+                                        {% if form.telephone.vars.errors|length %}
+                                            {# Affichage des erreurs pour ce champ précis. #}
+                                            <div class="form-group has-error">
+                                                <label class="control-label" for="inputError">{{ form_errors(form.telephone) }}</label>
+                                                <div class="input-group col-md-12">
+                                                    {{ form_widget(form.telephone, {'attr': {'class': 'task_field form-control', 'id':'introDrEn', 'placeholder':'Numéro du téléphone exemple : +330654745610' } }) }}
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            {# Génération de l'input. #}
+                                            <div class="input-group col-md-12">
+                                                {{ form_widget(form.telephone, {'attr': {'class': 'task_field form-control', 'id':'introDr', 'placeholder':'Numéro du téléphone exemple : +330654745610' } }) }}
+                                            </div>
+                                        {% endif %}
+                                        <br />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#montantCollapse" class="accordion-toggle" >
+                                           <i class="fa fa-file"></i> Page du don
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="montantCollapse" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <ul class="nav nav-tabs">
+                                            <li class="active"  ><a href="#fr_page_don" data-toggle="tab">Version Française</a>
+                                            </li>
+                                            <li   ><a href="#en_page_don" data-toggle="tab">Version Anglaise</a>
+                                            </li>
+                                        </ul>
+                                        <!-- Tab panes -->
+                                        <div class="tab-content">
+                                            <div class="tab-pane active " id="fr_page_don">
+
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label  class=" control-label">{{ form_label(form.persod.dc2title1, " Titre de la colonne 2 ") }}</label>
+                                                        {{ form_widget(form.persod.dc2title1, {'attr': {'class': 'task_field form-control'} }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persod.dc1footertitle, "Titre du footer dans la colonne 1") }}</label>
+                                                        {{ form_widget(form.persod.dc1footertitle, {'attr': {'class': 'task_field form-control' } }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persod.dc2footertitle, " Titre du footer dans la colonne 2") }}</label>
+                                                        {{ form_widget(form.persod.dc2footertitle, {'attr': {'class': 'task_field form-control' } }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persod.dc3block1, " Contenu du block de la 3 ème colonne ") }}</label>
+                                                        {{ form_widget(form.persod.dc3block1, {'attr': {'class': 'task_field form-control' } }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persod.dc3secure, "Contenu du bloc de sécurité ") }}</label>
+                                                        {{ form_widget(form.persod.dc3secure, {'attr': {'class': 'task_field form-control' } }) }}
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label  class=" control-label">{{ form_label(form.persod.dc1footer, " Contenu du footer de la colonne 1 ") }}</label>
+                                                        {{ form_widget(form.persod.dc1footer, {'attr': {'class': 'task_field form-control' } }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persod.dc2footer, " Contenu du footer de la colonne 2 ") }}</label>
+                                                        {{ form_widget(form.persod.dc2footer, {'attr': {'class': 'task_field form-control' } }) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane " id="en_page_don">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label  class=" control-label">{{ form_label(form.persod.dc2title1En, " Titre de la colonne 2 (En)") }}</label>
+                                                        {{ form_widget(form.persod.dc2title1En, {'attr': {'class': 'task_field form-control'} }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persod.dc1footertitleEn, "Titre du footer dans la colonne 1 (En)") }}</label>
+                                                        {{ form_widget(form.persod.dc1footertitleEn, {'attr': {'class': 'task_field form-control' } }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persod.dc2footertitleEn, " Titre du footer dans la colonne 2 (En)") }}</label>
+                                                        {{ form_widget(form.persod.dc2footertitleEn, {'attr': {'class': 'task_field form-control' } }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persod.dc3block1En, " Contenu du block de la 3 ème colonne (En)") }}</label>
+                                                        {{ form_widget(form.persod.dc3block1En, {'attr': {'class': 'task_field form-control' } }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persod.dc3secureEn, " Contenu du bloc de sécurité (En)") }}</label>
+                                                        {{ form_widget(form.persod.dc3secureEn, {'attr': {'class': 'task_field form-control' } }) }}
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label  class=" control-label">{{ form_label(form.persod.dc1footerEn, " Contenu du footer de la colonne 1 (En)") }}</label>
+                                                        {{ form_widget(form.persod.dc1footerEn, {'attr': {'class': 'task_field form-control' } }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persod.dc2footerEn, " Contenu du footer de la colonne 2 (En)") }}</label>
+                                                        {{ form_widget(form.persod.dc2footerEn, {'attr': {'class': 'task_field form-control' } }) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Fin Tab panes -->
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="panel panel-info">
+                                                    <div class="panel-heading">
+                                                        <h3 class="panel-title">Montants ponctuels</h3>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                    <div ><a href="#montantCollapse" class="btn btn-xs btn-info pull-right" id="addp"><i class="fa fa-plus"></i> Ajouter un montant ponctuel</a></div>
+                                                        <div id="mp_wrap">
+                                                        {% for key, mp in vmp %}
+                                                            <div id="block_mp_{{ key+1 }}"><input type="text" class="input input-sm" name="input_mp_{{ key+1 }}" value="{{ mp }}" /> <b>€</b> (<a href="#" onclick="delete_mp({{ key+1 }})"><i class="fa fa-remove red"></i></a>)<br /></div>
+                                                        {% endfor %}
+                                                        </div>
+                                                        <input type="hidden" name="max_mp" value="{{  vmp|length }} " />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="panel panel-info">
+                                                    <div class="panel-heading">
+                                                        <h3 class="panel-title">Montants réguliers</h3>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <div ><a href ="#montantCollapse" class="btn btn-xs btn-info  pull-right" id="addr"><i class="fa fa-plus"></i> Ajouter un montant régulier</a></div>
+                                                        <div id="mr_wrap">
+                                                            {% for key, mr in vmr %}
+                                                                <div id="block_mr_{{ key+1 }}"><input type="text" class="input input-sm" name="input_mr_{{ key+1 }}" value="{{ mr }}" /> <b>€</b> (<a href="#" onclick="delete_mr({{ key+1 }})"><i class="fa fa-remove red"></i></a>)<br /></div>
+                                                            {% endfor %}
+                                                        </div>
+                                                        <input type="hidden" name="max_mr" value="{{  vmr|length }} " />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#adhCollapse" class="accordion-toggle">
+                                            <i class="fa fa-file"></i> Page des adhérents
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="adhCollapse" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <ul class="nav nav-tabs">
+                                            <li class="active"  ><a href="#fr_page_adh" data-toggle="tab">Version Française</a>
+                                            </li>
+                                            <li><a href="#en_page_adh" data-toggle="tab">Version Anglaise</a>
+                                            </li>
+                                        </ul>
+                                        <!-- Tab panes -->
+                                        <div class="tab-content">
+                                            <div class="tab-pane active" id="fr_page_adh">
+                                                <div class="row">
+                                                    <div class="col-md-10">
+                                                    <label for="inputEmail3" class=" control-label">{{ form_label(form.couleurAdh, "Couleur de la page adhérent") }}</label>
+                                                    {% if form.couleurAdh.vars.errors|length %}
+                                                        {# Affichage des erreurs pour ce champ précis. #}
+                                                        <div class="form-group has-error">
+                                                            <label class="control-label" for="inputError">{{ form_errors(form.couleurAdh) }}</label>
+                                                            <div class="input-group couleur">
+                                                                {{ form_widget(form.couleurAdh, {'attr': {'class': 'task_field form-control col-md-10', 'id':'inputError', 'id':'couleur_adh', 'placeholder':'Couleur' } }) }}    <span class="input-group-addon"><i></i></span>
+                                                            </div>
+                                                        </div>
+                                                    {% else %}
+                                                        {# Génération de l'input. #}
+                                                        <div class="input-group couleur">
+                                                            {{ form_widget(form.couleurAdh, {'attr': {'class': 'task_field form-control col-md-10', 'id':'couleur_adh', 'placeholder':'Couleur' } }) }}<span class="input-group-addon"><i></i></span>
+                                                        </div>
+                                                    {% endif %}
+                                                    <br />
+                                                        </div>
+                                                    <div class="col-md-6">
+                                                        <label  class=" control-label">{{ form_label(form.persoa.ac3block1, " Contenu du block 1 de la 3 ème colonne ") }}</label>
+                                                        {{ form_widget(form.persoa.ac3block1, {'attr': {'class': 'task_field form-control' } }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persoa.ac2block1, " Contenu du block 1 de la 2 ème colonne ") }}</label>
+                                                        {{ form_widget(form.persoa.ac2block1, {'attr': {'class': 'task_field form-control' } }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persoa.ac2block2, " Contenu du block 2 de la 2 ème colonne ") }}</label>
+                                                        {{ form_widget(form.persoa.ac2block2, {'attr': {'class': 'task_field form-control' } }) }}
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label  class=" control-label">{{ form_label(form.persoa.ac2title1, " Titre de la colonne 2 ") }}</label>
+                                                        {{ form_widget(form.persoa.ac2title1, {'attr': {'class': 'task_field form-control'} }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persoa.ac1footertitle, "Titre du footer dans la colonne 1") }}</label>
+                                                        {{ form_widget(form.persoa.ac1footertitle, {'attr': {'class': 'task_field form-control' } }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persoa.ac2footertitle, " Titre du footer dans la colonne 2") }}</label>
+                                                        {{ form_widget(form.persoa.ac2footertitle, {'attr': {'class': 'task_field form-control' } }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persoa.ac1footer, " Contenu du footer de la colonne 1 ") }}</label>
+                                                        {{ form_widget(form.persoa.ac1footer, {'attr': {'class': 'task_field form-control' } }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persoa.ac2footer, " Contenu du footer de la colonne 2 ") }}</label>
+                                                        {{ form_widget(form.persoa.ac2footer, {'attr': {'class': 'task_field form-control' } }) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane " id="en_page_adh">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label  class=" control-label">{{ form_label(form.persoa.ac3block1En, " Contenu du block de la 3 ème colonne ( En) ") }}</label>
+                                                        {{ form_widget(form.persoa.ac3block1En, {'attr': {'class': 'task_field form-control' } }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persoa.ac2block1En, " Contenu du block de la 3 ème colonne ( En) ") }}</label>
+                                                        {{ form_widget(form.persoa.ac2block1En, {'attr': {'class': 'task_field form-control' } }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persoa.ac2block2En, " Contenu du block de la 3 ème colonne ( En) ") }}</label>
+                                                        {{ form_widget(form.persoa.ac2block2En, {'attr': {'class': 'task_field form-control' } }) }}
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label  class=" control-label">{{ form_label(form.persoa.ac2title1En, " Titre de la colonne 2 ( En) ") }}</label>
+                                                        {{ form_widget(form.persoa.ac2title1En, {'attr': {'class': 'task_field form-control'} }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persoa.ac1footertitleEn, "Titre du footer dans la colonne 1 ( En) ") }}</label>
+                                                        {{ form_widget(form.persoa.ac1footertitleEn, {'attr': {'class': 'task_field form-control' } }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persoa.ac2footertitleEn, " Titre du footer dans la colonne 2 ( En)") }}</label>
+                                                        {{ form_widget(form.persoa.ac2footertitleEn, {'attr': {'class': 'task_field form-control' } }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persoa.ac1footerEn, " Contenu du footer de la colonne 1 ( En) ") }}</label>
+                                                        {{ form_widget(form.persoa.ac1footerEn, {'attr': {'class': 'task_field form-control' } }) }}
+                                                        <label  class=" control-label">{{ form_label(form.persoa.ac2footerEn, " Contenu du footer de la colonne 2 ( En) ") }}</label>
+                                                        {{ form_widget(form.persoa.ac2footerEn, {'attr': {'class': 'task_field form-control' } }) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Fin Tab panes -->
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="panel panel-info">
+                                                    <div class="panel-heading">
+                                                        <h3 class="panel-title">Montants réguliers</h3>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <div ><a href ="#montantCollapse" class="btn btn-xs btn-info  pull-right" id="adhaddr"><i class="fa fa-plus"></i> Ajouter un montant régulier</a></div>
+                                                        <div id="adhmr_wrap">
+                                                            {% for key, mr in adhvmr %}
+                                                                <div id="block_adhmr_{{ key+1 }}"><input type="text" class="input input-sm" name="input_adhmr_{{ key+1 }}" value="{{ mr }}" /> <b>€</b> (<a href="#" onclick="delete_adhmr({{ key+1 }})"><i class="fa fa-remove red"></i></a>)<br /></div>
+                                                            {% endfor %}
+                                                        </div>
+                                                        <input type="hidden" name="max_adhmr" value="{{  adhvmr|length }} " />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            <div class="widget-toolbox padding-8 clearfix">
+
+                                <button class="btn btn-xs btn-success pull-right"  type="submit">
+                                    <span class="bigger-110">Modifier l'espace donateur</span>
+
+                                    <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+                                </button>
+                            </div>
+
+                            {{ form_rest(form) }}
+                        </form>
+                    </div>
+                </div>
+                </div>
+            </div>
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        {% javascripts '@FulldonIntersaBundle/Resources/public/js/*' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '../app/Resources/Public/js/ckeditor_plugins/fulldon.plugin.js' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        <script>
+
+            $('#fulldon_donateurbundle_dontype_abonnement_actif').on('click', function(){
+                if($('#fulldon_donateurbundle_dontype_abonnement_actif').is(':checked')) {
+                    $('#abo_date').show();
+                } else {
+                    $('#abo_date').hide();
+                }
+            });
+
+
+            $(function(){
+                $('.couleur').colorpicker();
+                $('.couleur_adh').colorpicker();
+            });
+
+
+            // Gestion des montants ponctuels
+            var tab_mp = new Array();
+            var limit_mp = 5;
+            {% if vmp|length >= 1 %}
+                var max_mp = {{ vmp|length}}+1;
+                {% for key, mp in vmp %}
+                    tab_mp.push({{ key+1 }});
+                {% endfor %}
+            {% else %}
+                var max_mp = 1;
+            {% endif %}
+
+            // Gestion des montants réguliers
+
+            var tab_mr = new Array();
+            var limit_mr = 5;
+            {% if vmr|length >= 1 %}
+            var max_mr = {{ vmr|length}}+1;
+            {% for key, mr in vmr %}
+            tab_mr.push({{ key+1 }});
+            {% endfor %}
+            {% else %}
+            var max_mr = 1;
+            {% endif %}
+
+            // Gestion des montants réguliers dans la page des adhérents
+            var tab_adhmr = new Array();
+            var limit_adhmr = 5;
+            {% if adhvmr|length >= 1 %}
+            var max_adhmr = {{ adhvmr|length}}+1;
+            {% for key, mr in adhvmr %}
+            tab_adhmr.push({{ key+1 }});
+            {% endfor %}
+            {% else %}
+            var max_adhmr = 1;
+            {% endif %}
+            // ponctual donation in the donation page
+            $('#addp').on('click', function(){
+                if(tab_mp.length < limit_mp) {
+                    $('#mp_wrap').append('<div id="block_mp_'+max_mp+'"><input type="text" class="input input-sm" name="input_mp_'+max_mp+'" /> <b>€</b> (<a href="#" onclick="delete_mp('+max_mp+')"><i class="fa fa-remove red"></i></a>)<br /></div>');
+                    tab_mp.push(max_mp);
+                    max_mp++;
+                    $("input[name$='max_mp']").val(max_mp-1);
+                } else {
+                    alert('Limite des champs atteinte !');
+                }
+
+            });
+
+            function delete_mp(id) {
+                //Remove the div block
+                $('#block_mp_'+id).remove();
+                // Remove the element from the js array
+                var index = tab_mp.indexOf(id);
+                if (index > -1) {
+                    tab_mp.splice(index, 1);
+                }
+            }
+
+
+            // frequent donation in the donation page
+            $('#addr').on('click', function(){
+                if(tab_mr.length < limit_mr) {
+                    $('#mr_wrap').append('<div id="block_mr_'+max_mr+'"><input type="text" class="input input-sm" name="input_mr_'+max_mr+'" /> <b>€</b> (<a href="#" onclick="delete_mr('+max_mr+')"><i class="fa fa-remove red"></i></a>)<br /></div>');
+                    tab_mr.push(max_mr);
+                    max_mr++;
+                    $("input[name$='max_mr']").val(max_mr-1);
+                } else {
+                    alert('Limite des champs atteinte !');
+                }
+
+            });
+            function delete_mr(id) {
+                //Remove the div block
+                $('#block_mr_'+id).remove();
+                // Remove the element from the js array
+                var index = tab_mr.indexOf(id);
+                if (index > -1) {
+                    tab_mr.splice(index, 1);
+                }
+            }
+            // frequent donation in the subscribers page
+                $('#adhaddr').on('click', function(){
+                    if(tab_adhmr.length < limit_adhmr) {
+                        $('#adhmr_wrap').append('<div id="block_adhmr_'+max_adhmr+'"><input type="text" class="input input-sm" name="input_adhmr_'+max_adhmr+'" /> <b>€</b> (<a href="#" onclick="delete_adhmr('+max_adhmr+')"><i class="fa fa-remove red"></i></a>)<br /></div>');
+                        tab_adhmr.push(max_adhmr);
+                        max_adhmr++;
+                        $("input[name$='max_adhmr']").val(max_adhmr-1);
+                    } else {
+                        alert('Limite des champs atteinte !');
+                    }
+
+                });
+                function delete_adhmr(id) {
+                    //Remove the div block
+                    $('#block_adhmr_'+id).remove();
+                    // Remove the element from the js array
+                    var index = tab_adhmr.indexOf(id);
+                    if (index > -1) {
+                        tab_adhmr.splice(index, 1);
+                    }
+                }
+
+
+        </script>
+
+    {% endblock %}

@@ -1,0 +1,759 @@
+fulldon_intersa_homepage:
+    pattern:  /intersa/
+    defaults: { _controller: FulldonIntersaBundle:Intersa:index }
+intersa_rf:
+    pattern:  /intersa/rf/
+    defaults: { _controller: FulldonIntersaBundle:Rf:index }
+intersa_rf_generate:
+    pattern:  /intersa/rf/generate/
+    defaults: { _controller: FulldonIntersaBundle:Rf:generate }
+
+intersa_rf_generate_ajax:
+    pattern:  /intersa/rf/ajax/generate/id/{id}/last/{last}
+    defaults: { _controller: FulldonIntersaBundle:Rf:generateRf }
+
+intersa_rf_generate_pa_ajax:
+    pattern:  /intersa/rf/ajax/generate/pa/id/{id}/somme/{somme}
+    defaults: { _controller: FulldonIntersaBundle:Rf:generateRfPa }
+
+intersa_rf_saisie_rf_ajax:
+    pattern:  /intersa/rf/ajax/saisie/rf/lot/{lot}
+    defaults: { _controller: FulldonIntersaBundle:Rf:saisieRf }
+
+intersa_donateur:
+    pattern:  /intersa/donateur
+    defaults: { _controller: FulldonIntersaBundle:Donateur:index }
+    
+#getall_emailfoyer:
+#    pattern:  /intersa-all-donateur-email
+#    defaults: { _controller: FulldonIntersaBundle:Donateur:getAllFoyerEmail }
+    
+    
+getall_emaildonateur:
+    pattern:  /intersa-all-donateur-email
+    defaults: { _controller: FulldonIntersaBundle:Donateur:getAllEmailDonateur }
+    
+    
+intersa_get_all_sauvgarde_donateur:
+    pattern: /intersa/get/donateur/critere
+    defaults: { _controller: FulldonIntersaBundle:CritereRecherche:index }
+    
+    
+    
+critere_recherche_donateur_pagination:
+    pattern: /search/donateur
+    defaults: { _controller: FulldonIntersaBundle:CritereRecherche:searchPaginate }
+    
+    
+    
+pagination_ligne_search_donateur:
+    pattern: /search/ligne/donateur
+    defaults: { _controller: FulldonIntersaBundle:CritereRecherche:paginateLigneDonateur }
+    
+    
+intersa_critere_recherche_donateur:
+    pattern: /intersa/critere/recherche/donateur
+    defaults: { _controller: FulldonIntersaBundle:CritereRecherche:superSearch }  
+    
+    
+intersa_critere_recherche_add:
+    pattern: /intersa/critere/sauvgarde/add/{section}
+    defaults: { _controller: FulldonIntersaBundle:CritereRecherche:add}
+    
+    
+    
+intersa_get_all_sauvgarde_don:
+    pattern: /intersa/get/don/critere
+    defaults: { _controller: FulldonIntersaBundle:CritereDon:index }
+    
+    
+    
+critere_recherche_don_pagination:
+    pattern: /search/don
+    defaults: { _controller: FulldonIntersaBundle:CritereDon:searchPaginate }
+    
+    
+    
+pagination_ligne_search_don:
+    pattern: /search/ligne/don
+    defaults: { _controller: FulldonIntersaBundle:CritereDon:paginateLigneDon }
+    
+    
+intersa_critere_recherche_don:
+    pattern: /intersa/critere/recherche/don
+    defaults: { _controller: FulldonIntersaBundle:CritereDon:superSearch } 
+    
+    
+intersa_critere_don_add:
+    pattern: /intersa/critere/don/add/{section}
+    defaults: { _controller: FulldonIntersaBundle:CritereDon:add}
+    
+intersa_doublon:
+    pattern: /intersa/doublon/page/{page}
+    defaults: { _controller: FulldonIntersaBundle:Doublon:index }
+
+intersa_doublon_merge:
+    pattern: /intersa/doublon
+    defaults: { _controller: FulldonIntersaBundle:Doublon:merge }
+
+intersa_doublon_infos_donateur_ajax:
+    pattern: /intersa/doublon/infos/did/{did}
+    defaults: { _controller: FulldonIntersaBundle:Doublon:infosDonateur }
+#Donateurs
+intersa_donateur_gestion:
+    pattern:  /intersa/donateur/gestion/id/{id}/cumul/{cumul}/date/{date}
+    defaults: { _controller: FulldonIntersaBundle:Donateur:gestion }
+    requirements:
+        id: "\d+"
+        cumul: ".+"
+        date:  ".+"
+#        cumul: "[a-zA-Z1-9\-_\/]+"
+#        date:  "[0-9]{4}\-[0-9]{2}\-[0-9]{2}"
+        
+        
+
+intersa_donateur_gestion_byrefdo:
+    pattern:  /intersa/donateur/gestion/refdo/{id}
+    defaults: { _controller: FulldonIntersaBundle:Donateur:gestionRefDonateur }
+
+intersa_donateur_add:
+    pattern:  /intersa/donateur/nouveau
+    defaults: { _controller: FulldonIntersaBundle:Donateur:add }
+
+intersa_donateur_ajax_exists:
+    pattern:  /intersa/donateur/ajax/exists/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Saisie:ajaxExists }
+
+intersa_donateur_ajax_exists_bynom:
+    pattern:  /intersa/donateur/ajax/exists/nom/{nom}/prenom/{prenom}
+    defaults: { _controller: FulldonIntersaBundle:Saisie:ajaxExistsByName }
+
+intersa_add_donateur_ajax_exists_bynom:
+    pattern:  /intersa/add/donateur/ajax/exists/nom/{nom}/prenom/{prenom}
+    defaults: { _controller: FulldonIntersaBundle:Saisie:ajaxAddExistsByName, nom: ''  , prenom: ''  }
+
+street_donateur_ajax_exists_bynom:
+    pattern:  /street/donateur/ajax/exists/nom/{nom}/prenom/{prenom}
+    defaults: { _controller: FulldonIntersaBundle:Saisie:ajaxExistsByName }
+
+intersa_donateur_load_stats:
+    pattern:  /intersa/donateur/stats/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Donateur:stats }
+
+#disable donateur
+intersa_donateur_disable:
+    pattern:  /intersa/donateur/disable/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Donateur:disableDonateur }
+
+intersa_donateur_ajax_disable:
+    pattern:  /intersa/ajax/donateur/disable/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Donateur:disableAjaxDonateur }
+#enable donateur
+intersa_donateur_enable:
+    pattern:  /intersa/donateur/enable/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Donateur:enableDonateur }
+
+intersa_donateur_ajax_enable:
+    pattern:  /intersa/ajax/donateur/enable/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Donateur:enableAjaxDonateur }
+
+intersa_saisie_ajax_stats:
+    pattern:  /intersa/saisie/ajax/stats/name/{name}/type/{type}
+    defaults: { _controller: FulldonIntersaBundle:Saisie:ajaxStats}
+
+intersa_anomalie_correct:
+    pattern:  /intersa/saisie/anos/correct/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Anomalie:correct }
+
+intersa_donateur_edit:
+    pattern:  /intersa/donateur/mod/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Donateur:edit }
+
+intersa_donateur_history:
+    pattern:  /intersa/donateur/history/id/{id}/page/{page}
+    defaults: { _controller: FulldonIntersaBundle:Donateur:history }
+
+intersa_donateur_history_pa:
+    pattern:  /intersa/donateur/history/pa/id/{id}/page/{page}
+    defaults: { _controller: FulldonIntersaBundle:Donateur:historyPa }
+
+intersa_donateur_history_action:
+    pattern:  /intersa/donateur/history/action/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Donateur:historyAction }
+
+intersa_donateur_history_action_ajax:
+    pattern:  /intersa/donateur/ajax/action/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Donateur:historyActionAjax }
+
+intersa_donateur_history_sollicitation:
+    pattern:  /intersa/donateur/history/sollicitation/id/{id}/page/{page}
+    defaults: { _controller: FulldonIntersaBundle:Donateur:historySollicitations}
+
+intersa_donateur_history_courrier:
+    pattern:  /intersa/donateur/history/courrier/id/{id}/page/{page}
+    defaults: { _controller: FulldonIntersaBundle:Donateur:historyCourrier}
+
+intersa_donateur_history_courrier_view:
+    pattern:  /intersa/donateur/history/courrier/view/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Donateur:historyCourrierView}
+
+
+generate_next_pa:
+    pattern:  /intersa/dons/nextpa/{id}
+    defaults: { _controller: FulldonIntersaBundle:Dons:generateNextPa }
+
+intersa_dons_rejet_prelevement:
+    pattern:  /intersa/dons/rejetprelevement/did/{did}/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Dons:rejetPrelevement }
+
+intersa_dons_disable_don:
+    pattern:  /intersa/dons/disabledon/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Dons:disableDon }
+
+intersa_dons_ajax_rejet_prelevement:
+    pattern:  /intersa/ajax/rejet/did/{did}/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Dons:rejetAjax }
+
+intersa_dons_ajax_disable:
+    pattern:  /intersa/ajax/don/disable/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Dons:disableAjaxDon }
+
+intersa_dons_stop_abo:
+    pattern:  /intersa/dons/stop/abo/
+    defaults: { _controller: FulldonIntersaBundle:Dons:stopperAbonnement }
+
+intersa_dons_start_abo:
+    pattern:  /intersa/dons/start/abo/
+    defaults: { _controller: FulldonIntersaBundle:Dons:activerAbonnement }
+
+intersa_dons_view:
+    pattern:  /intersa/dons/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Dons:show }
+
+intersa_dons_edit:
+    pattern:  /intersa/dons/edit/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Dons:edit }
+
+intersa_dons_add_redirect:
+    pattern:  /intersa/dons/add/redirect/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Dons:redirectAddDon }
+
+intersa_dons_add:
+    pattern:  /intersa/dons/add/id/{id}/type/{type}
+    defaults: { _controller: FulldonIntersaBundle:Dons:addDon }
+
+
+#Personnalisation
+intersa_personnalisation:
+    pattern:  /intersa/personalisation/
+    defaults: { _controller: FulldonIntersaBundle:Personnalisation:index }
+#Saisie en série
+intersa_saisie_serie:
+    pattern:  /intersa/saisie/
+    defaults: { _controller: FulldonIntersaBundle:Saisie:index }
+
+intersa_saisie_ano:
+    pattern:  /intersa/saisie/anomalie/
+    defaults: { _controller: FulldonIntersaBundle:Saisie:ano }
+
+intersa_saisie_anomalie:
+    pattern:  /intersa/saisie/anos/page/{page}
+    defaults: { _controller: FulldonIntersaBundle:Anomalie:index }
+
+intersa_anomalie_view:
+    pattern:  /intersa/saisie/anos/view/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Anomalie:view }
+
+intersa_saisie_serie_lot:
+    pattern:  /intersa/saisie/lot/nom/{nom}/type/{type}
+    defaults: { _controller: FulldonIntersaBundle:Saisie:saisieLot }
+
+intersa_saisie_serie_courrier_lot:
+    pattern:  /intersa/saisie/courrier/lot/{nom}
+    defaults: { _controller: FulldonIntersaBundle:Saisie:saisieLotCourrier }
+
+intersa_saisie_reserie_anomalie:
+    pattern:  /intersa/saisie/anomalie/nom/{nom}/type/{type}/anomalie/{anomalie}
+    defaults: { _controller: FulldonIntersaBundle:Saisie:saisieAnomalie }
+
+intersa_validation_transaction:
+    pattern:  /intersa/dons/validation/
+    defaults: { _controller: FulldonIntersaBundle:Dons:validation }
+
+intersa_validation_tvalid_confirm:
+    pattern:  /intersa/ajax/validate/{id}
+    defaults: { _controller: FulldonIntersaBundle:Dons:tvalid }
+
+# Cause table
+intersa_table_cause:
+    pattern:  /intersa/table/cause/page/{page}
+    defaults: { _controller: FulldonIntersaBundle:Tables:listCause }
+intersa_table_cause_edit:
+    pattern:  /intersa/table/cause/edit/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Tables:editCause }
+intersa_table_cause_new:
+    pattern:  /intersa/table/cause/new/
+    defaults: { _controller: FulldonIntersaBundle:Tables:newCause }
+intersa_table_cause_delete:
+    pattern:  /intersa/table/cause/delete/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Tables:deleteCause }
+intersa_table_cause_remove:
+    pattern:  /intersa/table/ajax/delete/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Tables:ajaxCause }
+
+# element table
+intersa_table_element:
+    pattern:  /intersa/table/{table}/page/{page}
+    defaults: { _controller: FulldonIntersaBundle:Tables:listElement }
+intersa_table_element_edit:
+    pattern:  /intersa/edit/table/{table}/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Tables:editElement }
+intersa_table_element_new:
+    pattern:  /intersa/new/table/{table}
+    defaults: { _controller: FulldonIntersaBundle:Tables:newElement }
+intersa_table_element_delete:
+    pattern:  /intersa/delete/table/{table}/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Tables:deleteElement }
+intersa_table_element_remove:
+    pattern:  /intersa/ajax/delete/table/{table}/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Tables:ajaxElement }
+
+#table stats
+intersa_table_occas_stat:
+    pattern:  /intersa/table/occas/stat/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Tables:statOccas }
+intersa_table_comp_stat:
+    pattern:  /intersa/table/comp/stat/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Tables:statComp }
+intersa_table_cause_stat:
+    pattern:  /intersa/table/cause/stat/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Tables:statCause }
+
+
+#Vérification des lots
+intersa_verif_lot:
+    pattern:  /intersa/verif/lots/page/{page}
+    defaults: { _controller: FulldonIntersaBundle:Dons:verifLots }
+intersa_verif_lot_ajax:
+    pattern:  /intersa/verif/lots/ajax/lot/{lot}
+    defaults: { _controller: FulldonIntersaBundle:Dons:verifLotsAjax }
+intersa_verif_ok_lot:
+    pattern:  /intersa/verifok/lots/lot/{lot}
+    defaults: { _controller: FulldonIntersaBundle:Dons:verifOkLot }
+intersa_verif_all_lot:
+    pattern:  /intersa/verif/all/lot/
+    defaults: { _controller: FulldonIntersaBundle:Dons:verifAllLots }
+
+
+#Affichage des codes occasions
+intersa_table_occasion_view:
+    pattern:  /intersa/table/occasion/id/{id}
+    defaults: { _controller: FulldonIntersaBundle:Dons:viewOccasion }
+
+#marketing
+intersa_marketing:
+    pattern:  /intersa/marketing/{page}
+    defaults: { _controller: FulldonIntersaBundle:Marketing:index}
+    requirements:
+        page: \d+
+        _method:  GET
+
+intersa_marketing_new:
+    pattern:  /intersa/marketing/new/{copiedCampagne}
+    defaults: { _controller: FulldonIntersaBundle:Marketing:newCampagne, copiedCampagne: null }
+    requirements:
+        copiedCampagne: \d+
+
+intersa_marketing_rejects_emailing:
+    pattern:  /intersa/reject/list/{page}
+    defaults: { _controller: FulldonIntersaBundle:Marketing:listRejects}
+    requirements:
+        page: \d+
+        _method:  GET
+intersa_marketing_disble_com:
+    pattern:  /intersa/disable/com/{id}
+    defaults: { _controller: FulldonIntersaBundle:Marketing:disableCom}
+    requirements:
+        id: \d+
+        _method:  GET
+
+intersa_marketing_ajax_disble_com:
+    pattern:  /intersa/ajax/disable/com/{id}
+    defaults: { _controller: FulldonIntersaBundle:Marketing:ajaxDisableCom}
+    requirements:
+        id: \d+
+        _method:  GET
+
+#stats
+intersa_stats:
+    pattern:  /intersa/stats/
+    defaults: { _controller: FulldonIntersaBundle:Intersa:gestion}
+intersa_stats_prod:
+    pattern:  /intersa/stats/prod/
+    defaults: { _controller: FulldonIntersaBundle:Intersa:prod}
+intersa_stats_cummule:
+    pattern:  /intersa/stats/cummule/
+    defaults: { _controller: FulldonIntersaBundle:Intersa:cummule}
+intersa_stats_saisie:
+    pattern:  /intersa/stats/saisie/
+    defaults: { _controller: FulldonIntersaBundle:Intersa:getStatsSaisie }
+
+#Advanced Stats
+intersa_advanced_stats:
+    pattern:  /intersa/advanced/stats/
+    defaults: { _controller: FulldonIntersaBundle:Stats:index}
+
+intersa_advanced_stats_bill:
+    pattern:  /intersa/advanced/stats/bill/g
+    defaults: { _controller: FulldonIntersaBundle:Stats:bill}
+
+intersa_advanced_stats_global:
+    pattern:  /intersa/advanced/stats/global/
+    defaults: { _controller: FulldonIntersaBundle:Stats:global}
+
+intersa_advanced_stats_global_pdf:
+    pattern:  /intersa/advanced/stats/global/pdf/
+    defaults: { _controller: FulldonIntersaBundle:Stats:getGlobalPdf}
+
+intersa_advanced_stats_global_excel:
+    pattern:  /intersa/advanced/stats/global/excel/
+    defaults: { _controller: FulldonIntersaBundle:Stats:getGlobalExcel}
+
+intersa_advanced_stats_bill_pdf:
+    pattern:  /intersa/advanced/stats/bill/pdf/
+    defaults: { _controller: FulldonIntersaBundle:Stats:getBillPdf}
+
+intersa_advanced_stats_bill_excel:
+    pattern:  /intersa/advanced/stats/bill/excel/
+    defaults: { _controller: FulldonIntersaBundle:Stats:getBillExcel}
+
+intersa_advanced_stats_operation:
+    pattern:  /intersa/advanced/stats/operation/
+    defaults: { _controller: FulldonIntersaBundle:Stats:operation}
+
+intersa_advanced_stats_operation_pdf:
+    pattern:  /intersa/advanced/stats/operation/pdf/
+    defaults: { _controller: FulldonIntersaBundle:Stats:getOperationPdf}
+
+intersa_advanced_stats_operation_excel:
+    pattern:  /intersa/advanced/stats/operation/excel/
+    defaults: { _controller: FulldonIntersaBundle:Stats:getOperationExcel}
+
+intersa_advanced_stats_attrition:
+    pattern:  /intersa/advanced/stats/attrition/
+    defaults: { _controller: FulldonIntersaBundle:Stats:attrition}
+
+intersa_advanced_stats_attrition_pdf:
+    pattern:  /intersa/advanced/stats/attrition/pdf/
+    defaults: { _controller: FulldonIntersaBundle:Stats:getAttritionPdf}
+
+intersa_advanced_stats_attrition_excel:
+    pattern:  /intersa/advanced/stats/attrition/excel/
+    defaults: { _controller: FulldonIntersaBundle:Stats:getAttritionExcel}
+
+#intersa_global_stat_pdf
+intersa_global_stat_pdf:
+    pattern:  /intersa/stats/global/pdf/
+    defaults: { _controller: FulldonIntersaBundle:Intersa:getGlobalPdf }
+
+intersa_global_stat_excel:
+    pattern:  /intersa/stats/global/excel/
+    defaults: { _controller: FulldonIntersaBundle:Intersa:getGlobalExcel }
+
+#Prospection
+intersa_sollicitation_upload:
+    pattern:  /intersa/sollicitation/
+    defaults: { _controller: FulldonIntersaBundle:Donateur:uploadCsvFile }
+
+#Street space
+fulldon_street_homepage:
+    pattern:  /street/
+    defaults: { _controller: FulldonIntersaBundle:Street:index }
+
+#personnalisation des Rf
+intersa_perso_rf:
+    pattern:  /intersa/perso/rfs
+    defaults: { _controller: FulldonIntersaBundle:Personnalisation:persoRfs}
+intersa_perso_form_rf:
+    pattern:  /intersa/perso/form/rfs/{code}/{identity}
+    defaults: { _controller: FulldonIntersaBundle:Personnalisation:persoFormRfs}
+
+#module d'exportation des données .
+intersa_donateur_export_emarketing:
+    pattern: /intersa/donateur/export/emarketing
+    defaults: { _controller: FulldonIntersaBundle:Export:donateurEmarketing}
+    
+intersa_donateur_export_fromdon:
+    pattern: /intersa/dons/export/donateurs
+    defaults: { _controller: FulldonIntersaBundle:Export:donsCsv}
+    
+    
+    
+intersa_export_pdf_don:
+    pattern: /intersa/dons/export/pdf
+    defaults: { _controller: FulldonIntersaBundle:Export:donsPdf}
+#    methods:  POST
+    
+    
+intersa_donateur_export_excel:
+    pattern: /intersa/donateur/export/excel
+    defaults: { _controller: FulldonIntersaBundle:Export:donateurExcel}
+intersa_donateur_export_pdf:
+    pattern: /intersa/donateur/export/pdf
+    defaults: { _controller: FulldonIntersaBundle:Export:donateurPdf}
+#Module de gestion des favoris
+intersa_donateur_favoris_add:
+    pattern: /intersa/donateur/favoris/add/{section}
+    defaults: { _controller: FulldonIntersaBundle:Favoris:add}
+
+intersa_donateur_favoris_delete:
+    pattern: /intersa/donateur/favoris/delete/{id}
+    defaults: { _controller: FulldonIntersaBundle:Favoris:delete}
+    requirements:
+        id: \d+
+        
+#Module dessin enregistrement
+intersa_donateur_dessin_add:
+    pattern: /intersa/donateur/dessin/add
+    defaults: { _controller: FulldonIntersaBundle:Dessin:addDessin}
+    
+    
+intersa_donateur_dessin_get_all:
+    pattern: /intersa/donateur/dessin/get/all
+    defaults: { _controller: FulldonIntersaBundle:Dessin:getAllDessin}
+    
+    
+intersa_donateur_paginate_dessin:
+    pattern: /intersa/donateur/pagination/dessin
+    defaults: { _controller: FulldonIntersaBundle:Dessin:paginationDessin}
+    
+    
+intersa_donateur_find_dessin:
+    pattern: /intersa/donateur/consulter/dessin
+    defaults: { _controller: FulldonIntersaBundle:Dessin:findDessinBy}
+    
+
+    
+    
+intersa_donateur_dessin_delete:
+    pattern: /intersa/donateur/dessin/delete
+#    pattern: /intersa/donateur/dessin/delete/{id}
+    defaults: { _controller: FulldonIntersaBundle:Dessin:deleteDessin}
+#    requirements:
+#        id: \d+
+        
+        
+        
+intersa_biblio_img_add:
+    pattern: /intersa/biblio/img/add
+    defaults: { _controller: FulldonIntersaBundle:Marketing:newImageBiblio}
+intersa_biblio_img_remove:
+    pattern: /intersa/biblio/img/remove/{id}
+    defaults: { _controller: FulldonIntersaBundle:Marketing:removeImageBiblio}
+
+intersa_dons_export_emarketing:
+    pattern: /intersa/dons/export/emarketing
+    defaults: { _controller: FulldonIntersaBundle:Export:donsEmarketing}
+intersa_dons_export_excel:
+    pattern: /intersa/dons/export/excel
+    defaults: { _controller: FulldonIntersaBundle:Export:donsExcel}
+    
+intersa_gestion_dons_export_pdf:
+    pattern: /intersa/export-dons/pdf
+    defaults: { _controller: FulldonIntersaBundle:Export:generationDonsPdf}
+    
+intersa_gestion_dons_export_exel:
+    pattern: /intersa/export-dons/exel
+    defaults: { _controller: FulldonIntersaBundle:Export:generationDonsExel}
+    
+    
+intersa_gestion_donateur_export_exel:
+    pattern: /intersa/export-donateur/exel
+    defaults: { _controller: FulldonIntersaBundle:Export:generationDonateurExel}
+    
+    
+    
+download_donateur_export_exel:
+    pattern: /intersa/download-donateur/exel
+    defaults: { _controller: FulldonIntersaBundle:Export:downloadDonateurExel}
+
+intersa_emarketing_stats:
+    pattern: /intersa/emarketing/stats/{tag}
+    defaults: { _controller: FulldonIntersaBundle:Marketing:getStats}
+
+intersa_emarketing_maj_contacts:
+    pattern: /intersa/emarketing/majcontacts
+    defaults: { _controller: FulldonIntersaBundle:Marketing:majContacts}
+
+intersa_emarketing_ajax_maj_contacts:
+    pattern: /intersa/emarketing/ajax/majcontacts
+    defaults: { _controller: FulldonIntersaBundle:Marketing:ajaxMajContacts}
+
+
+
+#Gestion des utilisateurs
+intersa_users:
+    pattern:  /intersa/users
+    defaults: { _controller: FulldonIntersaBundle:Users:index }
+intersa_users_edit:
+    pattern:  /intersa/users/edit/{id}
+    defaults: { _controller: FulldonIntersaBundle:Users:editUser }
+    requirements:
+        id: \d+
+intersa_users_remove:
+    pattern:  /intersa/users/delete/{id}
+    defaults: { _controller: FulldonIntersaBundle:Users:deleteUser }
+intersa_users_new:
+    pattern:  /intersa/users/new
+    defaults: { _controller: FulldonIntersaBundle:Users:newUser }
+#Ajax functions
+intersa_users_ajax_delete:
+    pattern:  /intersa/users/ajax/delete/{id}
+    defaults: { _controller: FulldonIntersaBundle:Users:deleteUserAjax }
+
+# mise à niveau de fulldon
+
+intersa_upgrade:
+    pattern:  /intersa/upgrade
+    defaults: { _controller: FulldonIntersaBundle:Upgrade:index }
+
+intersa_upgrade_confirmation:
+    pattern:  /intersa/upgrade/confirm/{level}
+    defaults: { _controller: FulldonIntersaBundle:Upgrade:confirm }
+    requirements:
+        level: \d+
+intersa_upgrade_validation:
+    pattern:  /intersa/upgrade/validation
+    defaults: { _controller: FulldonIntersaBundle:Upgrade:validation }
+
+intersa_factures:
+    pattern:  /intersa/factures
+    defaults: { _controller: FulldonIntersaBundle:Upgrade:factures }
+
+intersa_fulldon_shop:
+    pattern:  /intersa/shop
+    defaults: { _controller: FulldonIntersaBundle:Upgrade:shop }
+
+# Configuration avance
+
+intersa_conf_avance:
+    pattern:  /intersa/conf/avance
+    defaults: { _controller: FulldonIntersaBundle:Upgrade:confAvance }
+
+intersa_next_step:
+    pattern:  /next/step/{secret}
+    defaults: { _controller: FulldonIntersaBundle:Upgrade:nextStep }
+
+intersa_faq:
+    pattern: /intersa/faq
+    defaults: { _controller: FulldonIntersaBundle:Intersa:faq}
+
+
+#Events
+
+fulldon_bo_events:
+    pattern: /intersa/eventlist/{page}
+    defaults: {_controller: FulldonIntersaBundle:Event:listEvent}
+    requirements:
+        page: \d+
+
+fulldon_bo_new_event:
+    pattern: /intersa/event/new
+    defaults: {_controller: FulldonIntersaBundle:Event:newEvent}
+
+fulldon_bo_edit_event:
+    pattern: /intersa/event/edit/{id}
+    defaults: {_controller: FulldonIntersaBundle:Event:editEvent}
+    requirements:
+        id: \d+
+
+fulldon_bo_ajax_info_event:
+    pattern: /intersa/event/info/{id}
+    defaults: {_controller: FulldonIntersaBundle:Event:ajaxEvent}
+    requirements:
+        id: \d+
+
+fulldon_bo_delete_event:
+    pattern: /intersa/event/delete/{id}
+    defaults: {_controller: FulldonIntersaBundle:Event:deleteEvent}
+    requirements:
+        id: \d+
+
+fulldon_bo_enrollers_event:
+    pattern: /intersa/event/enrollers/{id}
+    defaults: {_controller: FulldonIntersaBundle:Event:enrollersEvent}
+    requirements:
+        id: \d+
+
+fulldon_bo_custom_tasks:
+    pattern:  /intersa/customtask/{page}
+    defaults: { _controller: FulldonIntersaBundle:Task:index}
+    requirements:
+        page: \d+
+        _method:  GET
+
+fulldon_bo_custom_tasks_new:
+    pattern:  /intersa/customtask/new/
+    defaults: { _controller: FulldonIntersaBundle:Task:newTask}
+
+
+datatable_post:
+    pattern:  /intersa/datatable
+    defaults: { _controller: FulldonIntersaBundle:Datatable:index}
+
+datatable_post_result:
+    pattern:  /intersa/datatable/results
+    defaults: { _controller: FulldonIntersaBundle:Datatable:indexResults}
+
+
+get_causes:
+    pattern:  /intersa/causes
+    defaults: { _controller: FulldonIntersaBundle:Intersa:getCauses}
+
+get_occasions:
+    pattern:  /intersa/occasions
+    defaults: { _controller: FulldonIntersaBundle:Intersa:getCodeOccasions}
+
+get_campagne:
+    pattern:  /intersa/campagnes
+    defaults: { _controller: FulldonIntersaBundle:Intersa:getCodeCampagnes}
+
+
+elastic_donateur:
+    pattern: /intersa/donateurs
+    defaults: { _controller: FulldonIntersaBundle:Donateur:superSearch}
+    
+    
+elastic_cumule_don_by_donateur:
+    pattern: /cumule/don/donateurs
+    defaults: { _controller: FulldonIntersaBundle:Donateur:cumuleDon}
+    
+    
+    
+    
+modification_masse_donateur:
+    pattern: /intersa/donateurs/modification/en/masse
+    defaults: { _controller: FulldonIntersaBundle:Donateur:modificationMasse}
+    
+elastic_don:
+    pattern: /intersa/dons
+    defaults: { _controller: FulldonIntersaBundle:Dons:superSearch}
+    
+    
+elastic_don2:
+    pattern: /intersa/dons2
+    defaults: { _controller: FulldonIntersaBundle:Dons:superSearch2}
+#    methods:  POST
+   
+
+export_search_donateur:
+    pattern: /intersa/export/donateurs
+    defaults: { _controller: FulldonIntersaBundle:Export:donateurs}
+
+export_search_dons:
+    pattern: /intersa/export/dons
+    defaults: { _controller: FulldonIntersaBundle:Export:dons}
+    
+search_existe_cause:
+    pattern: /intersa/export/existe-cause
+    defaults: { _controller: FulldonIntersaBundle:Export:existeCause}

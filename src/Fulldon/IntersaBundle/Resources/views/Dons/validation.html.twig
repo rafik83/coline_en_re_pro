@@ -1,0 +1,89 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+<div class="breadcrumbs" id="breadcrumbs">
+    <ol class="breadcrumb">
+        <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+        <li class="{{ path('intersa_dons') }}">Gestion des dons</li>
+        <li class="active">Validation des transactions</li>
+    </ol>
+    </div>
+        <div class="page-content" >
+
+            <div class="col-md-12 pull-left">
+                <h3 style="margin-top:5px;" class="couleur-intersa" > Gestion des dons </h3>
+                <hr />
+                {% for flashMessage in app.session.flashbag.get('info') %}
+                    <div class="alert alert-success">
+                        {{ flashMessage }}
+                    </div>
+                {% endfor %}
+
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <h4 style="margin-top:5px;" class="couleur-intersa" >Référence du don à traiter : </h4>
+                        <hr />
+                        <form action="{{ path('intersa_validation_transaction') }}" method="post">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="exampleInputEmail1" name="don_id" placeholder="#Référence" Style="" >
+                                <br />
+                                <button type="submit" class="btn btn-default pull-right"><span class="glyphicon glyphicon-filter"></span> Filtrer</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 style="margin-top:5px;" class="couleur-intersa" >le don à traiter : </h4>
+                        <hr />
+                        {% if don is defined %}
+                            {% if don.transaction.statut.code is defined and (don.transaction.statut.code =="attente" or don.transaction.statut.code =="traitement_paiement") %}
+
+                            <b>Statut : </b>
+                            {% if don.transaction.statut.code is defined %}
+                                {{ don.transaction.statut.libelle }}
+                            {% else %}
+                                Abondonné
+                            {% endif %}<br />
+                            <b>Montant  :</b>                     {{ don.montant }} Euros<br />
+                            <b>Mode de paiement : </b>{{ don.modePaiement.libelle }} <br />
+                            <b>Date de du don : </b>{{ don.createdAt|date('Y-m-d H:i:s') }}<br />
+                            <b>Type de don : </b>
+                            {% if don.ispa %}
+                                Don régulier : {% if don.abonnement.actif == 0 %}Desactivé{% else %}Activé {% endif %}
+                            {% else %}
+                                Don ponctuel
+                            {% endif %}
+                                <br />
+                                <a href="#" data-toggle="modal" data-target="#validate_don" onclick="validate_don({{ don.id }})" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-ok " ></span> Traiter le don</a>
+                            {% else %}
+                            Le don sélectionné est déjà traité ou bien abondonné, veuillez traiter que les dons en attente.
+                        {% endif %}
+                            <br />
+                        {% else %}
+                        Aucun don sélectionné
+                        {% endif %}
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="modal fade" id="validate_don" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+
+        </div><!-- /.modal -->
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        {% javascripts '@FulldonIntersaBundle/Resources/public/js/*' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        <script>
+
+            $('#fulldon_donateurbundle_dontype_abonnement_actif').on('click', function(){
+                if($('#fulldon_donateurbundle_dontype_abonnement_actif').is(':checked')) {
+                    $('#abo_date').show();
+                } else {
+                    $('#abo_date').hide();
+                }
+            });
+        </script>
+    {% endblock %}

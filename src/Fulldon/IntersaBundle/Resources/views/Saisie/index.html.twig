@@ -1,0 +1,162 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+
+<div class="breadcrumbs" id="breadcrumbs">
+    <ol class="breadcrumb">
+        <li><a href="#">Accueil</a></li>
+        <li><a href="#">saisie en série</a></li>
+    </ol>
+    </div>
+<div class="page-content">
+<div class="col-md-12">
+    <div class="page-header">
+        <h1>
+            Saisie en série
+        </h1>
+    </div>
+
+{% for flashMessage in app.session.flashbag.get('info') %}
+    <div class="alert alert-success">
+        <span class="glyphicon glyphicon-ok"></span>  {{ flashMessage }}
+    </div>
+{% endfor %}
+
+
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Lot par type de paiement
+                            <div class="pull-right"><span class="label label-primary">{{ nb_total }} Lots disponibles </span></div></h3>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="panel-group" id="accordion">
+                            {% for key, dy in display %}
+                            <div class="panel panel-default" >
+                                <div class="panel-heading" style="background-color: #FFFFFF;border:1px solid #428bca">
+                                    <h4 class="panel-title" style="height: 28px;background-color: #FFFFFF;">
+                                        <a data-toggle="collapse" class="col-md-6" data-parent="#accordion" href="#{{ dy[0] }}">
+                                            <span class="glyphicon glyphicon-collapse-down"></span> <b>{{ dy[0] }}</b>
+                                        </a>
+                                        <span class="badge " style="background-color:#CCC;margin-right: 10px;float:left;font-size: 12px;">{{ dy[2] }} Lots</span>
+                                        <div class="pull-right col-md-6" style="width: 300px;">
+
+                                            <div class="progress progress-striped">
+                                                <div id="p{{ dy[0] }}" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="200" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                                    0%
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </h4>
+                                </div>
+                                <div id="{{ dy[0] }}" class="panel-collapse collapse ">
+                                    <div class="panel-body">
+                                        {% if dy[1]|length == 0 %}
+                                            Aucun Lot à traiter
+                                        {% endif %}
+                                        <table class="table">
+                                        {% for xml in dy[1] %}
+                                         {% set file = xml['name']|split('.') %}
+                                         <tr id="{{ file[0] }}" ></tr>
+                                        {% endfor %}
+                                         </table>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div> <!-- /container -->
+
+</div>
+    </div>
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+
+            $('#fulldon_donateurbundle_dontype_abonnement_actif').on('click', function(){
+                if($('#fulldon_donateurbundle_dontype_abonnement_actif').is(':checked')) {
+                    $('#abo_date').show();
+                } else {
+                    $('#abo_date').hide();
+                }
+            });
+            var bccpt = 0;
+            var cscpt = 0;
+            var espececpt = 0;
+            var pacpt = 0;
+            var virementcpt = 0;
+            var courriercpt = 0;
+            var mixcpt = 0;
+            // fusion search
+            function getStats(name, mtype, subtotal) {
+                var progress = 0;
+                $.ajax({
+                    url: "/intersa/saisie/ajax/stats/name/"+name+"/type/"+mtype,
+                    beforeSend: function( xhr ) {
+                        ;
+                    }
+                })
+                        .done(function( data ) {
+                            switch (mtype) {
+                                case 'BC':
+                                    bccpt++;
+                                    progress = Math.round((bccpt/subtotal)*100);
+                                    break;
+                                case 'CS':
+                                    cscpt++;
+                                    progress = Math.round((cscpt/subtotal)*100);
+                                    break;
+                                case 'ESPECES':
+                                    espececpt++;
+                                    progress = Math.round((espececpt/subtotal)*100);
+                                    break;
+                                case 'PA':
+                                    pacpt++;
+                                    progress = Math.round((pacpt/subtotal)*100);
+                                    break;
+                                case 'VIREMENT':
+                                    virementcpt++;
+                                    progress = Math.round((virementcpt/subtotal)*100);
+                                    break;
+                                case 'COURRIER':
+                                    courriercpt++;
+                                    progress = Math.round((courriercpt/subtotal)*100);
+                                    break;
+                                case 'MIX':
+                                    mixcpt++;
+                                    progress = Math.round((mixcpt/subtotal)*100);
+                                    break;
+                                default :
+                                    break;
+                            }
+                            $('#p'+mtype).html(progress+'%');
+                            $('#p'+mtype).css('width',progress+'%');
+                            $('#'+name).html(data);
+
+                        });
+
+            }
+
+            function load_lots(){
+                {% for key, dy in display %}
+                {% for xml in dy[1] %}
+                {% set file = xml['name']|split('.') %}
+                getStats('{{ file[0] }}','{{ dy[0] }}',{{ dy[2] }});
+                {% endfor %}
+                {% endfor %}
+            }
+
+
+        </script>
+    {% endblock %}

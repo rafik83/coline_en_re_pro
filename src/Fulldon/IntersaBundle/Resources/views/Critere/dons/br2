@@ -1,0 +1,47 @@
+  {% for r2 in data2 %}
+                <tr id="id_ligneserach_{{r2['don_id']}}">
+                    {% for key,value in col_display %}
+                        {% for key2,value2 in value %}
+                            {% if key2 == "numdon" %}
+                                <td>{{ r2['don_id'] }}</td>
+                            {% elseif key2 ==  "nom" %}
+                                <td>{{ r2['nom'] }}</td>
+                            {% elseif key2 == "prenom" %}
+                                <td>{{ r2['prenom'] }}</td>
+
+                            {% elseif key2 == "rfs" %}
+                                <td>
+                                    {{ r2['recu_fiscale'] }} 
+                                </td>
+                            {% elseif key2 == "montant" %}
+                                <td>{{ r2['montant_don'] }}</td>
+                            {% elseif key2 == "codeactivite" %}
+                                <td>{{ r2['cause_code'] }}</td>
+                            {% elseif key2 == "statut" %}
+                                <td> 
+                                    {{ r2['satut_don'] }} 
+                                </td>
+                            {% elseif key2 == "modepaiement" %}
+                                <td>{{ r2['mode_paiement'] }}</td>
+
+                            {% elseif key2 == "typedon" %}
+                                {% if r2['ispa'] %}
+                                    <td>{{'régulier '}}</td>
+                                {% else %}
+                                      <td>{{'ponctuel '}}</td>
+                                {% endif %}
+
+                            {% elseif key2 == "codeoccasion" %}
+                                <td>{{ r2['code_occassion'] }}</td>
+                            {% elseif key2 == "codecompagne" %}
+                                <td>{{ r2['code_compagne'] }}</td>
+                            {% elseif key2 == "datefiscale" %}
+                                <td>{{ r2['date_fiscale']|date('d/m/Y') }}</td>
+                                {#% elseif key2 == "createdat" %}
+                                    <td>{{ r2['created_at']|date('d/m/Y') }#}<!--/td-->
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </tr>
+
+            {% endfor %}

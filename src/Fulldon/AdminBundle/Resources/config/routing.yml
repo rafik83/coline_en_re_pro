@@ -1,0 +1,18 @@
+fulldon_admin_homepage:
+    pattern:  /admin
+    defaults: { _controller: FulldonAdminBundle:Admin:index }
+fd_admin_user_edit:
+    pattern:  /admin/user/edit/{id}
+    defaults: { _controller: FulldonAdminBundle:Admin:editUser }
+    requirements:
+        id: \d+
+fd_admin_user_remove:
+    pattern:  /admin/user/delete/{id}
+    defaults: { _controller: FulldonAdminBundle:Admin:deleteUser }
+fd_admin_user_new:
+    pattern:  /admin/user/new
+    defaults: { _controller: FulldonAdminBundle:Admin:newUser }
+#Ajax functions
+fd_admin_ajax_delete:
+    pattern:  /admin/ajax/delete/{id}
+    defaults: { _controller: FulldonAdminBundle:Ajax:deleteUser }

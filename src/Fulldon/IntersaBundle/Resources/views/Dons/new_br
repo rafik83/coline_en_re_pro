@@ -1,0 +1,35 @@
+function flipsort(id) {
+    //alert('heerrreeee');
+    var curcn = $('#sort_' + id).attr('class');
+    if (curcn === 'fa fa-lg fa-sort') {
+        console.log('here');
+        $('#sort_' + id).removeClass(curcn);
+        $('#sort_' + id).addClass("fa fa-lg fa-sort-asc");
+        var str = "{{ path('elastic_don') }}?{{ params }}&sortelement=" + id + "&sortdirection=asc";
+        var div = document.createElement('div');
+        div.innerHTML = str
+        var decoded = div.firstChild.nodeValue;
+        window.location.href = decoded;
+    }
+    if (curcn === 'fa fa-lg fa-sort-asc') {
+        $('#sort_' + id).removeClass(curcn);
+        $('#sort_' + id).addClass('fa fa-lg fa-sort-desc');
+        var str = "{{ path('elastic_don') }}?{{ params }}&sortelement=" + id + "&sortdirection=desc";
+        var div = document.createElement('div');
+        div.innerHTML = str
+        var decoded = div.firstChild.nodeValue;
+        window.location.href = decoded;
+    }
+    if (curcn === 'fa fa-lg fa-sort-desc') {
+        $('#sort_' + id).removeClass(curcn);
+        $('#sort_' + id).addClass('fa fa-lg fa-sort-asc');
+        var str = "{{ path('elastic_don') }}?{{ params }}&sortelement=" + id + "&sortdirection=asc";
+        var div = document.createElement('div');
+        div.innerHTML = str
+        var decoded = div.firstChild.nodeValue;
+        window.location.href = decoded;
+    }
+
+}
+
+-----------------------------------------------------------------

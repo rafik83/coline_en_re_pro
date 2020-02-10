@@ -1,0 +1,98 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+<div class="breadcrumbs" id="breadcrumbs">
+    <ol class="breadcrumb">
+        <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+        <li><a href="{{ path('intersa_rf') }}">Géneration des reçus fiscaux</a></li>
+        <li class="active">Géneration des reçus fiscaux ponctuels</li>
+    </ol>
+</div>
+        <div class="page-content">
+        <div class="col-md-12">
+
+        <h3 style="margin-top:5px;" class="couleur-intersa" >Géneration des reçus fiscaux </h3>
+        <hr />
+        {% for flashMessage in app.session.flashbag.get('info') %}
+            <div class="alert alert-success">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+            {% for flashMessage in app.session.flashbag.get('warning') %}
+                <div class="alert alert-warning">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="alert alert-info">La génération des reçus fiscaux est une opération moyennement longue en fonction du nombre de lots et dons à traiter.</div>
+        Nombre total des lots à traiter : <b>{{ total_lot }}</b><br />
+        Traitement du lot : <b><span id="currlot">en cours</span></b>
+        <div class="progress progress-striped" style="height: 50px;margin-top: 20px;">
+            <div id="progress" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="200" aria-valuemin="0" aria-valuemax="100" style="width: 0%;font-size: 20px;font-weight: bold;padding-top: 15px;">
+                0%
+            </div>
+        </div>
+    </div>
+</div>
+            </div>
+        </div>
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+
+            var cpt = 0;
+            var vcpt = 0;
+
+            // fusion search
+            function getStats(id, lot) {
+                var progress = 0;
+                vcpt++
+                var last = false;
+                var valeur = vcpt/{{ total_don }};
+                if(valeur == 1) {
+                    last = true;
+                }
+                $.ajax({
+                    url: "/intersa/rf/ajax/generate/id/"+id+"/last/"+last,
+                    beforeSend: function( xhr ) {
+                        ;
+                    }
+                })
+                        .done(function( data ) {
+
+                                    cpt++;
+                                    progress = Math.round((cpt/{{ total_don }})*100);
+
+                            $('#progress').html(progress+'%');
+                            $('#progress').css('width',progress+'%');
+                            $('#currlot').html(lot);
+
+                        });
+
+            }
+            function setLotRf(lot) {
+
+                $.ajax({
+                    url: "/intersa/rf/ajax/saisie/rf/lot/"+lot,
+                    beforeSend: function( xhr ) {
+                        ;
+                    }
+                })
+                        .done(function( data ) {
+
+                        });
+
+            }
+            function load_lots(){
+                {% for key, dons in all %}
+                {% for don in dons %}
+                    getStats('{{ don.id }}', '{{ key }}');
+                {% endfor %}
+                    setLotRf('{{ key }}');
+                {% endfor %}
+            }
+
+        </script>
+    {% endblock %}

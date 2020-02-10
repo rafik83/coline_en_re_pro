@@ -1,0 +1,92 @@
+#Login for admin
+login_admin:
+    pattern:  /admin/login
+    defaults: { _controller: FulldonSecurityBundle:Security:loginAdmin}
+login_admin_check:
+    pattern:  /admin/login_check
+    defaults: { _controller: FulldonSecurityBundle:Security:loginAdminCheck}
+logout_admin:
+    pattern:  /admin/logout
+    defaults: { _controller: FulldonSecurityBundle:Security:logoutAdmin}
+#Login for associations
+login_assoc:
+    pattern:  /assoc/login
+    defaults: { _controller: FulldonSecurityBundle:Security:loginAssoc}
+login_assoc_check:
+    pattern:  /assoc/login_check
+    defaults: { _controller: FulldonSecurityBundle:Security:loginAssocCheck}
+logout_assoc:
+    pattern:  /assoc/logout
+    defaults: { _controller: FulldonSecurityBundle:Security:logoutAssoc}
+#Login for intersa
+login_intersa:
+    pattern:  /intersa/login
+    defaults: { _controller: FulldonSecurityBundle:Security:loginIntersa}
+login_intersa_check:
+    pattern:  /intersa/login_check
+    defaults: { _controller: FulldonSecurityBundle:Security:loginIntersaCheck}
+logout_intersa:
+    pattern:  /intersa/logout
+    defaults: { _controller: FulldonSecurityBundle:Security:logoutIntersa}
+#Login for donateur
+login_donateur:
+    pattern:  /donateur/login
+    defaults: { _controller: FulldonSecurityBundle:Security:loginDonateur}
+login_check_donateur:
+    pattern:  /donateur/login_check
+    defaults: { _controller: FulldonSecurityBundle:Security:loginDonateurCheck}
+logout_donateur:
+    pattern:  /donateur/logout
+    defaults: { _controller: FulldonSecurityBundle:Security:logoutDonateur}
+
+#Login for street
+
+login_street:
+    pattern:  /street/login
+    defaults: { _controller: FulldonSecurityBundle:Security:loginStreet}
+login_street_check:
+    pattern:  /street/login_check
+    defaults: { _controller: FulldonSecurityBundle:Security:loginStreetCheck}
+logout_street:
+    pattern:  /street/logout
+    defaults: { _controller: FulldonSecurityBundle:Security:logoutStreet}
+
+#files security
+assets_img:
+    pattern: /intersa/secureimg/{token}
+    defaults: { _controller: FulldonSecurityBundle:Assets:img }
+    requirements:
+        _method: GET
+assets_duplicata:
+    pattern: /intersa/duplicata/{id}/{token}
+    defaults: { _controller: FulldonSecurityBundle:Assets:duplicata, token:null }
+    requirements:
+        _method: GET
+assets_rf:
+    pattern: /intersa/generaterf/{id}
+    defaults: { _controller: FulldonSecurityBundle:Assets:rf, token:null }
+    requirements:
+        _method: GET
+assets_show_rf:
+    pattern: /donateur/showrf/{id}
+    defaults: { _controller: FulldonSecurityBundle:Assets:showRf}
+    requirements:
+        _method: GET
+assets_marketing:
+    pattern: /intersa/clientfile/{id}/{token}
+    defaults: { _controller: FulldonSecurityBundle:Assets:clientFile }
+    requirements:
+        _method: GET
+assets_mandat:
+    pattern: /file/mandat/{token}
+    defaults: { _controller: FulldonSecurityBundle:Assets:getMandat }
+    requirements:
+        _method: GET
+assets_signed_mandat:
+    pattern: /file/signed/mandat/{token}
+    defaults: { _controller: FulldonSecurityBundle:Assets:getSignedMandat }
+    requirements:
+        _method: GET
+donateur_get_villes:
+    pattern:  /villes/id/{id}
+    defaults: {_controller: FulldonSecurityBundle:Default:getVilles }

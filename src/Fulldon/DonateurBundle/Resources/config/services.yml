@@ -1,0 +1,30 @@
+parameters:
+    fulldon_donateur.listener.class: Fulldon\DonateurBundle\Listener\PublisherListener
+
+services:
+    fulldon.donateur.listener:
+        class: %fulldon_donateur.listener.class%
+        arguments: ["@service_container"]
+        tags:
+            - { name: 'kernel.event_listener', event: 'kernel.controller', method: 'onCoreController' }
+
+    fulldon.donateur.barecodes:
+        class: Fulldon\DonateurBundle\Service\Datamatrix
+
+#Social
+    fulldon.socialBarHelper:
+      class : Fulldon\DonateurBundle\Templating\Helper\SocialBarHelper
+      tags :
+        - {name : 'templating.helper', alias : 'social-buttons'}
+      arguments : [ @templating ]
+
+    twig.extension.fulldon_social_bar:
+      class: Fulldon\DonateurBundle\Twig\TwigSocialBar
+      tags:
+          - { name: 'twig.extension' }
+      arguments : [ @service_container ]
+
+    sg_datatables.don:
+        class: Fulldon\DonateurBundle\Datatables\DonDatatable
+        tags:
+            - { name: sg.datatable.view }

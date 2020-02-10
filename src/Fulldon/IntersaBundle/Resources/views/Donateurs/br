@@ -1,0 +1,86 @@
+ $('#liste_search_donateur tbody tr td ul li').each(function () {
+                var search_id_dona = $(this).attr("id");
+                var spli_id = search_id_dona.split('id_categorie_');
+                // alert(spli_id[1]);
+                ArrycategorieId.push(spli_id[1]);
+
+            });
+
+
+
+
+            // var CodePostale = $("#codepostale_dropdawn").val();
+            //var TelFixe = $("#telfixe_dropdawn").val();
+            var Entreprise = $("#entreprise_dropdawn").val();
+            //var Status = $("#status_dropdawn option:selected").text();
+            //var Adresse = $("#adresse_dropdawn").val();
+            var CategorieId = $("#categorie_dropdawn option:selected").val();
+            var PaysId = $("#pays_dropdawn option:selected").val();
+            //var VilleId = $("#ville_dropdawn").val();
+
+            var results = {"ligne": [
+                    {
+                        "entreprise": Entreprise,
+                        "categorise_id": CategorieId,
+                        "pays_id": PaysId,
+                    }], "tab_donateur_id": arr, "tab_oldcategorie_id": ArrycategorieId}
+
+
+            $.ajax({
+                url: "{{ path('modification_masse_donateur') }}", //,
+                type: "POST",
+                data: JSON.stringify(results),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                cache: false,
+                success: function (data)
+                {
+                    console.log(data);
+                    //console.log(data.responseText);
+
+
+                },
+                complete: function (com) {
+                    //console.log(com.responseText);
+                    console.log(com);
+                    //alert(com.responseText);
+
+
+
+                },
+                error: function (err) {
+                    console.log(err);
+                    //alert('err');
+                }
+            });
+            $("#addpopup-modification_masse").css('display', 'none');
+            window.location.reload();
+
+        });
+--------------------------
+
+ $(document).ready(function () {
+            $("#li_result_rechreche_don").click(function () {
+
+                //$('#page_navigation1').addClass('red-class');
+                $('#li_recherche_formulaire').removeClass('active');
+                $('#li_result_recherche_donateur').removeClass('active');
+                $('#li_result_rechreche_don').addClass('active');
+
+                //tab-pane active
+                $('#recherche').removeClass('tab-pane active');
+                $('#recherche').addClass('tab-pane');
+                $('#result').removeClass('tab-pane active');
+                $('#result').addClass('tab-pane');
+                $('#result_search_don').addClass('tab-pane active');
+                // btn visualitation
+                $("#add_donateur").css('display', 'none');
+                $("#gestion_favoris_donateur").css('display', 'none');
+                $("#reset_elastic_donateur").css('display', 'none');
+                $("#serach_btn_elastic_donateur").css('display', 'none');
+                $("#div_description").css('display', 'none');
+                $("#nbr_donateur").css('display', 'none');
+                $("#serach_btn_elastic_don").css('display', 'block');
+
+            });
+        });

@@ -1,0 +1,8 @@
+<b>Somme :</b> {{ result['somme'] }} <br />
+{% if anomalies|length > 0 %}
+<b>Anomalies :</b><br />
+    {%  for anomalie in anomalies %}
+        <a href="{{ path('intersa_anomalie_view', {'id':anomalie.id}) }}"><span class="glyphicon glyphicon-eye-open"></span> Voir #{{ anomalie.id }}</a><br />
+    {% endfor %}
+{% endif %}
+<b>Nb de dons :</b> {{ result['cpt'] }} <br />

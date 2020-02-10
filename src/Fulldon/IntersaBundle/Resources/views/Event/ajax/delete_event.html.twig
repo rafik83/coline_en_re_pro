@@ -1,0 +1,15 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="confirmDeleteLabel">Suppression de l'événement</h4>
+        </div>
+        <div class="modal-body">
+            Vous voulez vraiment supprimer Cet événement  "{{ element.titre }}" ?
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+            <a type="button" class="btn btn-primary" href="{{ path("fulldon_bo_delete_event",{'id': element.id}) }}">Supprimer</a>
+        </div>
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->

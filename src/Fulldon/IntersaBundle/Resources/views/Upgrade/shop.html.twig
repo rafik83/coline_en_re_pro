@@ -1,0 +1,57 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+        <div class="breadcrumbs" id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li class="active">Fulldon shop</li>
+            </ol>
+        </div>
+        <div class="page-content">
+            <h3>Fulldon shop</h3>
+            <hr />
+            <form action="{{ path('intersa_donateur_add') }}" method="post" class="form-group" {{ form_enctype(form) }}>
+
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail3" class=" control-label">{{ form_label(form.soldeSms, "Solde SMS : ") }}</label>
+                        <div >
+                            {# Affichage des erreurs pour ce champ précis. #}
+                            {{ form_errors(form.soldeSms) }}
+
+                            {# Génération de l'input. #}
+                            {{ form_widget(form.soldeSms, {'attr': {'class': 'task_field form-control spinbox-input '} }) }}
+                        </div>
+                        <label for="inputEmail3" class=" control-label">{{ form_label(form.soldeEmail, "Solde Email") }}</label>
+                        <div >
+                            {# Affichage des erreurs pour ce champ précis. #}
+                            {{ form_errors(form.soldeEmail) }}
+
+                            {# Génération de l'input. #}
+                            {{ form_widget(form.soldeEmail, {'attr': {'class': 'task_field form-control spinbox-input '} }) }}
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script src="{{ asset('assets/js/fuelux/fuelux.spinner.js')}}"></script>
+        <script src="{{ asset('assets/js/ace/elements.spinner.js')}}"></script>
+        <script
+           >
+
+            $('#fulldon_donateurbundle_solde_soldeSms').ace_spinner({value:0,min:0,max:200,step:10, btn_up_class:'btn-info' , btn_down_class:'btn-info'})
+                    .closest('.ace-spinner')
+                    .on('changed.fu.spinbox', function(){
+                        //alert($('#spinner1').val())
+                    });
+            $('#fulldon_donateurbundle_solde_soldeEmail').ace_spinner({value:0,min:0,max:200,step:10, btn_up_class:'btn-info' , btn_down_class:'btn-info'})
+                    .closest('.ace-spinner')
+                    .on('changed.fu.spinbox', function(){
+                        //alert($('#spinner1').val())
+                    });
+        </script>
+    {% endblock %}

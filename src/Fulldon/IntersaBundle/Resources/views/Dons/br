@@ -1,0 +1,65 @@
+if ($('#cause').val().length > 2) {
+                                                    var obj = {cause: $("#cause").val()};
+                                                    //alert($('#cause').val());
+                                                    // $("#loading-ajax_elastica").css('display', 'block');
+
+                                                    $.ajax({
+                                                        url: "{{ path('search_existe_cause') }}",//'/intersa/export/existe-cause',//search_existe_cause
+                                                        type: 'GET',
+                                                        data: obj,
+                                                        cache: false,
+                                                        beforeSend: function (send) {
+                                                            console.log('beforesend');
+                                                            console.log(send);
+                                                        },
+                                                        success: function (data) {
+                                                            //console.log('success');
+                                                            console.log(data);
+
+                                                        },
+                                                        complete: function (comp) {
+                                                            console.log('complete');
+                                                            console.log(comp);
+                                                            if (comp.responseText === 'success') {
+                                                                $("#btn_fields_generate_exel").css('display', 'block');
+                                                                $("#msg_don_succes").css('display', 'block');
+                                                                $("#msg_don_succes").html('Code Activité Valide');
+                                                                setTimeout(function () {
+                                                                    $('#msg_don_succes').hide("slow");
+                                                                }, 1000);
+
+                                                                setTimeout(function () {
+                                                                    $('#msg_don_succes').css('display', 'none');
+                                                                }, 2000);
+                                                                //$("#loading-ajax_elastica").css('display', 'none');
+
+                                                            }
+                                                            if (comp.responseText === 'warning') {
+
+                                                                $("#btn_fields_generate_exel").css('display', 'none');
+                                                                $("#msg_don_warning").css('display', 'block');  // btn_fields_generate_exel
+                                                                $("#msg_don_warning").html('vous devez saisir un Code activité Valide, Attention !!');
+                                                                //$("#cause").val('');
+                                                                setTimeout(function () {
+                                                                    $('#msg_don_warning').hide("slow");
+                                                                }, 1000);
+
+                                                                setTimeout(function () {
+                                                                    $('#msg_don_warning').css('display', 'none');
+                                                                }, 2000);
+
+                                                                //$("#loading-ajax_elastica").css('display', 'none');
+
+                                                            }
+
+
+                                                        },
+                                                        error: function (err) {
+                                                            console.log('error');
+                                                            console.log(err);
+                                                            //$("#loading-ajax_elastica").css('display', 'none');
+                                                        }
+
+                                                    })
+
+                                                }

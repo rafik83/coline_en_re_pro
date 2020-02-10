@@ -1,0 +1,17 @@
+{% if url is not defined or url == null %}
+    {% set url = app.request.uri %}
+{% endif %}
+
+{% spaceless %}
+    {# initialize facebook SDK #}
+    {% set desc =  "J'ai fais un don pour "|trans({},"messages") ~" Fulldon"  %}
+    <a href="#"
+       onclick="
+		    window.open(
+		      'https://www.facebook.com/sharer/sharer.php?u={{ url('fulldon_donateur_onepage')}}&amp;s=100&amp;p[title]={{ desc|url_encode}}',
+		      'facebook-share-dialog',
+		      'width=626,height=436');
+		    return false;">
+        Share on Facebook
+    </a>
+{% endspaceless %}

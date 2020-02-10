@@ -1,0 +1,35 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            {{ "Bonne nouvelle"|trans({},'messages') }} , <br/>
+
+            {{ "Un nouveau don a été enregistré sur l\'espace donateur, Ci-dessous les détails du don : "|trans({},'messages') }}
+            .<br/>
+            <b>Identifiant du don :</b> {{ don.id }} <br/>
+            <b>Montant du don :</b> {{ don.montant }}<br/>
+            <b>Type de don :</b>
+            {% if don.ispa %}
+                Don régulier : {% if don.abonnement.actif == 0 %}Desactivé{% else %}Activé {% endif %}
+            {% else %}
+                Don ponctuel
+            {% endif %} <br/>
+            <b>Mode de paiement : </b> {{ don.modePaiement.libelle }} <br/>
+            <b>Catégorie du donateur : </b>
+            {% if donateur.categories|length > 0 %}
+            <ul>
+                {% for r in donateur.categories %}
+                    <li>{{ r.name }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            Aucune
+            {% endif %}<br/>
+            <b>Nom du donateur :</b> {{ donateur.nom }}<br/>
+            <b>Prénom du donateur :</b> {{ donateur.prenom }}<br/>
+            <b>Date du don :</b> {{ don.createdAt|date('d/m/Y H:i:s') }}<br/>
+            <hr/>
+            {{ "Très cordialement"|trans({},'messages') }} <br/>
+            {{ "Equipe fulldon"|trans({},'messages') }}
+        </div>
+    </div>
+</div><!-- /.modal -->

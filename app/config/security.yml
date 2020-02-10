@@ -1,0 +1,92 @@
+security:
+    encoders:
+        Symfony\Component\Security\Core\User\User: plaintext
+        Fulldon\SecurityBundle\Entity\User:
+          id: fulldon.security.sha256salted_encoder
+
+    role_hierarchy:
+        ROLE_ADMIN:       ROLE_USER
+        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+
+
+    providers:
+        in_memory:
+            memory:
+                users:
+                    user:  { password: userpass, roles: [ 'ROLE_USER' ] }
+                    admin: { password: intersa115, roles: [ 'ROLE_ADMIN' ] }
+        main:
+            entity: { class: Fulldon\SecurityBundle\Entity\User }
+    firewalls:
+        dev:
+            pattern:  ^/(_(profiler|wdt)|css|images|js|duplicata)/
+            security: false
+        admin:
+            pattern: ^/admin
+            anonymous: true
+            provider: in_memory
+            form_login:
+                login_path: login_admin
+                check_path: login_admin_check
+            logout:
+                path: logout_admin
+                target: /admin
+        donateur:
+            pattern:  (^/(fr|en|de)/donateur|^/donateur)
+            anonymous: true
+            provider: main
+            form_login:
+                login_path: login_donateur
+                check_path: login_check_donateur
+            logout:
+                path: logout_donateur
+                target: login_donateur
+
+        intersa:
+            pattern: ^/intersa
+            anonymous: true
+            provider: main
+            form_login:
+                login_path: login_intersa
+                check_path: login_intersa_check
+            logout:
+                path: logout_intersa
+                target: /intersa
+
+        street:
+            pattern: ^/street
+            anonymous: true
+            provider: main
+            form_login:
+                login_path: login_street
+                check_path: login_street_check
+            logout:
+                path: logout_street
+                target: /street
+
+    access_control:
+        - { path: ^/next, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/street/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/street, roles: [ROLE_STREET] }
+        - { path: ^/intersa/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/intersa, roles: [ROLE_INTERSA_N1, ROLE_INTERSA_N2, ROLE_INTERSA_N3, ROLE_ASSOC_N1, ROLE_ASSOC_N2, ROLE_ASSOC_N3, ROLE_TRIAL] }
+        - { path: ^/secureimg/*, roles: IS_FULLY_AUTHENTICATED }
+        - { path: ^/(fr|en|de)/donateur/payments/anonymous/callback, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/(fr|en|de)/donateur/onepage, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/(fr|en|de)/donateur/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/(fr|en|de)/donateur/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/(fr|en|de)/donateur/mdpoublie, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/(fr|en|de)/donateur/paypal/validation, roles: IS_AUTHENTICATED_ANONYMOUSLY}
+        - { path: ^/(fr|en|de)/donateur, roles: ROLE_DONATEUR }
+        - { path: ^/donateur/onepage, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/donateur/onepage/unsubscribe/*, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/donateur/onepage/viewhtml/*, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/donateur/payments/anonymous/callback, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/donateur/payments/server/callback, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/donateur/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/donateur/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/donateur/mdpoublie, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/donateur/paypal/validation, roles: IS_AUTHENTICATED_ANONYMOUSLY}
+        - { path: ^/donateur, roles: ROLE_DONATEUR }

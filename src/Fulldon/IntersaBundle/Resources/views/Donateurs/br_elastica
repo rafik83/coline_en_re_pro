@@ -1,0 +1,181 @@
+//            var_dump($donateurs);
+//            die('donateur3');
+//            $type = $this->get('fos_elastica.index.coline_en_re.donateur');
+            //$type = $this->get('fos_elastica.finder.coline_en_re.donateur');
+//             $article_type->search("PADIé");
+//            $article_type = $this->get('fos_elastica.index.coline_en_re.donateur');
+            $finder_don = $this->get('fos_elastica.finder.coline_en_re.don');
+//            $search = $finder_don->search("PADIé");
+//            var_dump($search);
+//            var_dump($finder_don);
+//            die('$type_afsy');
+
+//            $queryx = new \Elastica\Query(new \Elastica\Query\MatchAll());
+////            $queryx = new \Elastica\Query\Bool();
+//            $agg = new \Elastica\Aggregation\Sum("montant");
+//            $agg->setName("montant");
+//            $agg->setField('montant');
+//            $queryx->addAggregation($agg);
+
+
+//            var_dump($agg);
+//            die('$queryx');
+            $don_id = 1;
+            $query_partx = new \Elastica\Query\Bool();
+            $query_partx->addMust(
+                        new \Elastica\Query\Match('id', $don_id)
+                );
+            
+//            die('1');
+            
+            
+            var_dump($query_partx);
+            die('2');
+            $nestedDonQueryx = new \Elastica\Query\Nested();
+            $nestedDonQueryx->setPath('don');
+            $nestedDonQueryx->setQuery($query_partx);
+            $query_partx->addMust($nestedDonQueryx);
+             die('2');
+
+//            $fieldQueryx->setFieldQuery('id', $don_id);
+//            $queryx->addMust(
+//                        new \Elastica\Query\Match('id', $don_id)
+//                );
+
+            var_dump($fieldQueryx);
+            die('$fieldQueryx');
+
+            $res = $finder_don->find($queryx, 0);
+            var_dump($res);
+            die('$res');
+
+
+            $filtersQuery = new \Elastica\Query\Bool();
+            $catQuery = new \Elastica\Query\Terms();
+            $catQuery->setTerms('categories.id', $value);
+            $catQuery->setMinimumMatch(1);
+            $filtersQuery->addMust($catQuery);
+            $nestedRfQuery = new \Elastica\Query\Nested();
+            $nestedRfQuery->setPath('categories');
+            $nestedRfQuery->setQuery($filtersQuery);
+            //adding the parameters to the main query
+            $query_part->addMust($nestedRfQuery);
+------------------------------------------------------------------
+
+
+            $montant_dont = 20.00;
+            if (isset($montant_dont) && !empty($montant_dont)) {
+                $baseQuery = true;
+                $query_part->addMust(
+                        new \Elastica\Query\Match('user.dons.montant', $montant_dont)
+                );
+//                var_dump($query_part);
+//                die('$montant_dont');
+            }
+
+------------------------
+
+
+
+foreach ($resultform as $key => $value) {
+                if (!empty($value)) {
+
+                    if (in_array($key, array('isoville', 'isopays', 'civilite', 'refDonateur', 'allowRf', 'removed', '_token'))) {
+                        var_dump("key");
+                        var_dump($key);
+                        var_dump("value");
+                        var_dump($value);
+                        $qq = $query_part->addMust(
+                                new \Elastica\Query\MatchPhrasePrefix($key, $value)
+                        );
+                        var_dump($qq);
+                        die('enter if');
+                    } else {
+
+                        var_dump("value");
+                        var_dump($value);
+                        var_dump("key");
+                        var_dump($key);
+                        die('else6');
+                    }
+                }
+            }
+
+            die('fin foreach');
+
+
+
+--------------------------search donateur-------
+foreach resultform
+
+key = 
+
+
+string 'refDonateur' (length=11)
+string 'civilite' (length=8)
+string 'nom' (length=3)
+string 'prenom' (length=6)
+string 'dateNaissance' (length=13)
+string 'nomEntreprise' (length=13)
+string 'email' (length=5)
+string 'isopays' (length=7)
+string 'zipcode' (length=7)
+string 'isoville' (length=8)
+string 'adresse3' (length=8)
+string 'adresse1' (length=8)
+string 'adresse2' (length=8)
+string 'adresse4' (length=8)
+string '_token' (length=6)
+----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        #footer{
+            position:fixed;
+            bottom:0;
+            left:0;
+            height:100px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body style="height: 1200px;width:100%;margin:0px;margin-top:100px;">
+
+<div style="text-align: left;margin-left:60%;margin-bottom: 50px;">
+    {{ donateur.id }}<br />
+    {{ donateur.civilite }} {{ donateur.prenom }} {{ donateur.nom }}<br />
+    {% if donateur.adresse1 is not null %} {{ donateur.adresse1 }}<br /> {% endif %}
+    {% if donateur.adresse2 is not null %} {{ donateur.adresse2 }}<br /> {% endif %}
+    {% if donateur.adresse3 is not null %} {{ donateur.adresse3 }}<br /> {% endif %}
+    {% if donateur.adresse4 is not null %} {{ donateur.adresse4 }}<br /> {% endif %}
+    {{ donateur.zipcode }} {{ donateur.ville.name }}<br />
+</div>
+<br />
+<div style="text-align: left;margin-left:70%;padding-top: 10px;margin-bottom: 20px;">
+    Pantin, le {{ "now"|date('d/m/Y') }}
+</div>
+
+
+<br />
+<br />
+<br />
+<div style="width: 100%;margin-bottom: 50px;font-size: 18px;">
+    Cher Madame, Monsieur, <br />
+
+    J’ai bien pris note de votre changement d'adresse et je vous remercie de m’en avoir informé. Grâce
+
+    à votre fidèle soutien, Coalition PLUS peut réaliser plus d'actions de plaidoyer, de soutien technique
+
+    et financier aux associations membres, et mener plus de projets de recherche communautaire qui
+
+    font avancer la lutte contre le sida au niveau mondial.<br /><br />
+
+    Vous pouvez consulter notre site Internet www.coalitionplus.org, ou rejoindre nos communautés
+
+    Facebook et Twitter pour suivre notre actualité.<br /><br />
+
+    Merci encore pour votre engagement à nos côtés dans la lutte contre le sida. Il reste encore
+
+    beaucoup à faire pour combattre les discriminations, informer les populations vulnérables, soutenir
+
+    les malades, favoriser l'accès aux traitements et aux soins dans les pays du sud.<br /><br />
+
+    Pour tout cela votre soutien reste primordial. Dans l'éventualité où vous souhaiteriez soutenir
+
+    davantage Coalition PLUS, je vous joins une demande de modification du montant de vos dons
+
+    réguliers, qu'il suffit de me renvoyer par mail, fax ou courrier.<br /><br />
+
+
+
+    Encore merci.
+</div>
+<div style="text-align: left;margin-left:80%;margin-bottom: 50px;">
+    Pascale Mavinga <br />
+    Service Donateurs, <br />
+    Tel : 01 77 93 97 25 - Fax 09 57 43 26 72 <br />
+    E-mail : dons@coalitionplus.org <br />
+</div>
+
+
+<div id="footer">
+    <center style="font-size:10px;" >
+
+        Association Reconnue d’Utilité Publique – Habilitée à recevoir des dons et à bénéficier de donations, assurances-vie et legs
+
+        AIDES - Tour Essor - 14, rue Scandicci - 93508 PANTIN CEDEX - Tél: 01 41 83 46 46 – Fax : 01 41 83 46 59 - www.aides.org
+
+        Labélisée « don en confiance » par le Comité de la Charte
+
+        Numéro d’ICS : FR 84 ZZZ 392 221
+    </center>
+</div>
+</body>
+</html>

@@ -1,0 +1,157 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+        <div class="breadcrumbs" id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li class="active">Gestion des tâches</li>
+            </ol>
+        </div>
+        <div class="page-content">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h1>
+                        Gestion des tâches
+                        <small>
+                            <i class="ace-icon fa fa-angle-double-right"></i>
+                            Liste des taches préprogrammé
+                        </small>
+                    </h1>
+                </div><!-- /.page-header -->
+
+                    {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') or is_granted('ROLE_TRIAL')%}
+
+                            <a href="{{ path('fulldon_bo_custom_tasks_new') }}" class="btn btn-primary btn-sm"><span
+                                        class="glyphicon glyphicon-plus-sign"></span> Planifier une nouvelle tâche </a>
+                        <a href="{{ path('export_search_dons') }}" class="btn btn-primary btn-sm"><span
+                                    class="glyphicon glyphicon-plus-sign"></span> Planifier un nouveau export dons </a>
+                        <a href="{{ path('export_search_donateur') }}" class="btn btn-primary btn-sm"><span
+                                    class="glyphicon glyphicon-plus-sign"></span> Planifier un nouveau export donateurs </a>
+                    {% endif %}
+
+                <hr/>
+
+                {% for flashMessage in app.session.flashbag.get('info') %}
+                    <div class="alert alert-success">
+                        {{ flashMessage }}
+                    </div>
+                {% endfor %}
+                {% for flashMessage in app.session.flashbag.get('warning') %}
+                    <div class="alert alert-warning">
+                        {{ flashMessage }}
+                    </div>
+                {% endfor %}
+
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Dernière execution</th>
+                        <th>Cible</th>
+                        <th>Statut</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for element in elements %}
+                        <tr>
+                            <td width="2">
+                                {% if element.action == "rf-cible" %}
+                                Génération des reçus fiscaux
+                                {% elseif element.action == "an-at" %}
+                                Changement de statut [en attente -> annulé]
+                                {% elseif element.action == "donateurs-pdf" %}
+                                <span class="label label-yellow"> <b>Export donateurs :</b> Export PDF des donateurs</span>
+                                {% elseif element.action == "donateurs-xsl" %}
+                                <span class="label label-yellow"> <b>Export donateurs :</b> Export XSL des donateurs</span>
+                                {% elseif element.action == "donateurs-csv" %}
+                                    <span class="label label-yellow"> <b>Export donateurs :</b> Export CSV des donateurs</span>
+                                {% elseif element.action == "dons-pdf" %}
+                                <span class="label label-purple"> <b>Export dons :</b> Export PDF des dons</span>
+                                {% elseif element.action == "dons-xsl" %}
+                                    <span class="label label-purple"> <b>Export dons :</b> Export XSL des dons</span>
+                                {% elseif element.action == "dons-csv" %}
+                                        <span class="label label-purple"> <b>Export dons :</b> Export CSV des dons</span>
+                                    {% else %}
+                                    Ancienne tâche
+                                {% endif %}
+
+
+                            </td>
+                            <td width="1">{{ element.lastrun|date('d/m/Y H:i:s') }}</td>
+                            <td  width="1">
+                                <ul>
+                                    {% for r in element.recherches  %}
+                                        <li> {{ r.title }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td width="1">{% if element.done is not null and element.done == true %} <span
+                                    class="label label-success"><i
+                                        class="fa fa-check"></i> Terminé </span> {% elseif element.progress == true %}
+                                <span class="label label-info"><i
+                                            class="fa fa-hdd-o"></i> En cours de traitement </span> {% else %} <span
+                                    class="label label-warning"><i
+                                        class="fa fa-clock-o"></i> En attente </span>  {% endif %}
+                                &nbsp;</td>
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <div class="modal fade" id="syncrejets" tabindex="-1" role="dialog" aria-hidden="true">
+
+                    </div>
+                    <!-- /.modal -->
+                </table>
+            </div>
+        </div>
+        <center>
+
+            {% if last_page > 1 %}
+                <ul class="pagination pull-center">
+                    <li><a href="{{ path('fulldon_bo_custom_tasks', { 'page': previous_page }) }}">&laquo;</a>
+                    </li>
+                    {% for page in 1..last_page %}
+                        {% if page >= current_page-4 and page <= current_page+4 %}
+                            {% if   page == current_page-4 or page == current_page+4 %}
+                                {% if   page == current_page-4 %}
+                                    <li><a href="{{ path('fulldon_bo_custom_tasks', {  'page': 1 }) }}">1</a>
+                                    </li>
+                                    <li class="disabled"><a href="#">...</a></li>
+                                {% else %}
+                                    <li class="disabled"><a href="#">...</a></li>
+                                    <li>
+                                        <a href="{{ path('fulldon_bo_custom_tasks', {  'page': last_page }) }}">{{ last_page }}</a>
+                                    </li>
+                                {% endif %}
+                            {% else %}
+                                {% if page == current_page %}
+                                    <li class="active"><a href="#">{{ page }}</a></li>
+                                {% else %}
+                                    <li>
+                                        <a href="{{ path('fulldon_bo_custom_tasks', {  'page': page }) }}">{{ page }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    <li><a href="{{ path('fulldon_bo_custom_tasks', {  'page': next_page }) }}">&raquo;</a>
+                    </li>
+                </ul>
+            {% endif %}
+        </center>
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+            function syncrejets() {
+                $.ajax({
+                    url: "/intersa/emarketing/ajax/majcontacts",
+                    beforeSend: function (xhr) {
+
+                    }
+                })
+                        .done(function (data) {
+                            $("#syncrejets").html(data);
+                        });
+            }
+        </script>
+    {% endblock %}

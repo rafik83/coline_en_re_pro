@@ -1,0 +1,28 @@
+<?php
+
+namespace Fulldon\DonateurBundle\Entity;
+
+use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\ORM\Mapping as ORM;
+
+
+/**
+ * @ORM\Table(name="donateur_categorydonateur")
+ * @ORM\Entity(repositoryClass="Fulldon\DonateurBundle\Entity\DonateurCategoryDonateurRepository")
+ * 
+ */
+class DonateurCategoryDonateur
+{
+    /**
+     * @ORM\Column(name="donateur_id", type="integer", length=11, nullable=false)
+     */
+    private $donateurId;
+    /**
+     * @ORM\Column(name="categorydonateur_id", type="integer", length=11, nullable=false)
+     */
+    private $categorydonateurId;
+    
+
+    
+}
+

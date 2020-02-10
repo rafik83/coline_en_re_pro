@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        #footer{
+            position:fixed;
+            bottom:0;
+            left:0;
+            height:100px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body style="height: 1200px;width:100%;margin:0px;margin-top:100px;">
+
+<div style="text-align: left;margin-left:60%;margin-bottom: 50px;">
+    {{ donateur.id }}<br />
+    {{ donateur.civilite }} {{ donateur.prenom }} {{ donateur.nom }}<br />
+    {% if donateur.adresse1 is not null %} {{ donateur.adresse1 }}<br /> {% endif %}
+    {% if donateur.adresse2 is not null %} {{ donateur.adresse2 }}<br /> {% endif %}
+    {% if donateur.adresse3 is not null %} {{ donateur.adresse3 }}<br /> {% endif %}
+    {% if donateur.adresse4 is not null %} {{ donateur.adresse4 }}<br /> {% endif %}
+    {% if donateur.zipcode is defined and donateur.zipcode is not null %}
+        {{ donateur.zipcode }}
+    {% endif %}
+    {% if donateur.isopays is defined and donateur.isopays is not null %}
+        {{ donateur.isopays|getcountryname }} <br />
+    {% endif %}
+
+</div>
+<br />
+<div style="text-align: left;margin-left:70%;padding-top: 10px;margin-bottom: 20px;">
+    Pantin, le {{ "now"|date('d/m/Y') }}
+</div>
+
+<i>Votre n° donateur </i>: {{ donateur.refDonateur }}<br />
+<i>Votre référence unique de mandat </i>: {{ don.abonnement.rum }}<br />
+<br />
+<br />
+<br />
+<div style="width: 100%;margin-bottom: 50px;font-size: 18px;">
+    Cher Madame, Monsieur, <br />
+
+    Un grand merci pour votre don en faveur de notre association.<br />
+    Votre aide contribue très utilement à la lutte que nous menons contre la pauvreté dans le monde et est pour nous
+    un formidable encouragement à poursuivre notre action.<br /><br />
+    CARE est reconnue d'utilité publique et agréée par le Comité de la Charte. Cet agrément est le garant pour vous
+    de la bonne utilisation des fonds que vous nous confiez. J'y suis moi-même personnellement très attaché.<br /><br />
+    Vous trouverez ci-dessous un reçu fiscal. Il vous permettra de déduire de votre impôt 75 % de la valeur de votre
+    don jusqu'à 521 € et 66 % au-delà, dans la limite de 20 % de votre revenu imposable.<br /><br />
+    N'hésitez pas à contacter Odile Duchêne, au 01 53 19 89 89 ou par mail duchene@carefrance.org, pour toute
+    information complémentaire.<br /><br />
+    Avec l'expression renouvelée de ma gratitude, je vous prie de croire, chère Madame, à l'assurance de mes
+    sentiments les meilleurs.<br /><br />
+
+    <h3 style="margin-top:5px;" class="couleur-intersa" >Reçu fiscal {{ rf.id }} </h3>
+    <hr />
+    Votre abonnement durant l'année a cummulé une somme de <strong>{{ somme }} €</strong> <br />
+
+    Référence du don : {{ don.id }}<br />
+    La somme cummulée  : <strong>{{ somme }} €</strong><br />
+    Code origine : {{ don.cause.libelle }}<br />
+
+    <h4>Détails de prélevements : </h4>
+    <hr />
+    <table>
+        {% for pr in prelevements %}
+            <tr class="{% if pr.rejet %}disabled{% endif %}">
+                <td>{{ pr.id }}</td>
+                <td>{{ pr.montant }} €</td>
+                <td>{{ pr.datePrelevement|date('d/m/Y') }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+</div>
+<div style="text-align: left;margin-left:80%;margin-bottom: 50px;">
+    Pascale Mavinga <br />
+    Service Donateurs, <br />
+    Tel : 01 77 93 97 25 - Fax 09 57 43 26 72 <br />
+    E-mail : dons@coalitionplus.org <br />
+</div>
+
+
+<div id="footer">
+    <center style="font-size:10px;" >
+
+        Association Reconnue d’Utilité Publique – Habilitée à recevoir des dons et à bénéficier de donations, assurances-vie et legs
+
+        AIDES - Tour Essor - 14, rue Scandicci - 93508 PANTIN CEDEX - Tél: 01 41 83 46 46 – Fax : 01 41 83 46 59 - www.aides.org
+
+        Labélisée « don en confiance » par le Comité de la Charte
+
+        Numéro d’ICS : FR 84 ZZZ 392 221
+    </center>
+</div>
+</body>
+</html>

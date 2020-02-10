@@ -1,0 +1,505 @@
+{% extends "FulldonIntersaBundle::layout.html.twig" %}
+{% block title %}Espace Intersa{% endblock %}
+{% block body %}
+
+    <div id="sidebar" class="sidebar                  responsive">
+        <script type="text/javascript">
+            try {
+                ace.settings.check('sidebar', 'fixed')
+            } catch (e) {
+            }
+        </script>
+
+        <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+            <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+                <button class="btn btn-primary" style="width: 300px;">
+                    {% if is_granted('ROLE_TRIAL') %}
+                        Il vous reste {{ left_time.getLeftTime() }} jours ...
+                    {% else %}
+                        Mettre à niveau votre FULLDON
+                    {% endif %}
+                </button>
+                <!-- /section:basics/sidebar.layout.shortcuts -->
+            </div>
+
+            <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+                <span class="btn btn-success"></span>
+
+                <span class="btn btn-info"></span>
+
+                <span class="btn btn-warning"></span>
+
+                <span class="btn btn-danger"></span>
+            </div>
+        </div>
+        <!-- /.sidebar-shortcuts -->
+
+        <ul class="nav nav-list">
+            <li class="{% if
+    app.request.get('_route') == 'fulldon_intersa_homepage' %}active{% endif %}  ">
+                <a href="{{ path('fulldon_intersa_homepage') }}">
+                    <i class="menu-icon fa fa-tachometer"></i>
+                    <span class="menu-text"> Tableau de bord </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+            <li class="{% if
+        app.request.get('_route') == 'elastic_donateur' or
+        app.request.get('_route') == 'intersa_donateur_add' or
+        app.request.get('_route') == 'intersa_donateur_edit' or
+        app.request.get('_route') == 'intersa_donateur_gestion' or
+        app.request.get('_route') == 'intersa_donateur_history' or
+        app.request.get('_route') == 'intersa_donateur_history_pa' or
+        app.request.get('_route') == 'intersa_donateur_history_action' %}active{% endif %}  ">
+                <a href="{{ path('elastic_donateur') }}">
+                    <i class="menu-icon fa fa-users"></i>
+                    <span class="menu-text"> Gestion des donateurs </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+            <li class="{% if
+        app.request.get('_route') == 'elastic_don' or
+        app.request.get('_route') == 'intersa_dons_view' %}active{% endif %}">
+                <a href="{{ path('elastic_don') }}">
+                    <i class="menu-icon fa fa-money"></i>
+                    <span class="menu-text">  Gestion des dons </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+            {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_INTERSA_N2') %}
+                <li class="{% if app.request.get('_route') == 'intersa_saisie_serie' %}active{% endif %}">
+                    <a href="{{ path('intersa_saisie_serie') }}">
+
+                        <i class="menu-icon fa fa-pencil-square"></i>
+                        <span class="menu-text">Saisie en série
+                            <span class="badge pull-right orange-bg " id="val_stats_saisie2">
+                                <img id="load_stats_saisie2" src="{{ asset('img/ajax-loader.gif') }}"/></span> </span>
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+            {% endif %}
+            {% if is_granted('ROLE_INTERSA_N1') %}
+                <li class="{% if
+        app.request.get('_route') == 'intersa_prospection_upload' %}active{% endif %}">
+                    <a href="{{ path('intersa_sollicitation_upload') }}">
+                        <i class="menu-icon fa fa-bullseye"></i>
+                        <span class="menu-text"> Gestion des sollicitations externes </span>
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+            {% endif %}
+            {% if is_granted('ROLE_INTERSA_N1') %}
+                <li class="{% if app.request.get('_route') == 'intersa_saisie_anomalie' %}active{% endif %}">
+                    <a href="{{ path('intersa_saisie_anomalie',{'page':1}) }}"
+                       >
+                        <i class="menu-icon fa fa-warning"></i>
+                        <span class="menu-text"> Gestion des anomalies <span class="badge pull-right orange-bg" id="val_stats_anos">
+                                <img id="load_stats_anos" src="{{ asset('img/ajax-loader.gif') }}"/></span></span>
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+            {% endif %}
+            <li class="{% if
+    app.request.get('_route') == 'intersa_doublon' or
+    app.request.get('_route') == 'intersa_doublon_merge' %}active{% endif %}">
+                <a href="{{ path('intersa_doublon',{'page':1} ) }} ">
+                    <i class="menu-icon fa fa-list-alt"></i>
+                    <span class="menu-text"> Gestion des doublons
+                        <span class="badge pull-right orange-bg " id="val_stats_doublons">
+                            <img id="load_stats_doublons" src="{{ asset('img/ajax-loader.gif') }}"/></span></span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+
+
+            <li class="{% if
+app.request.get('_route') == 'intersa_critere_recherche_donateur' or
+    app.request.get('_route') == 'intersa_get_all_sauvgarde_donateur' %}active{% endif %}">
+                <a href="{{ path('intersa_get_all_sauvgarde_donateur' ) }} ">
+                    <i class="menu-icon fa fa-list-alt"></i>
+                    <span class="menu-text"> Requete donateur
+                        <!--span class="badge pull-right orange-bg " id="val_stats_critere_recherche"-->
+                                <!--img id="load_stats_critere_recherche" src="{#{ asset('img/ajax-loader.gif') }#}"/></span></span-->
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+            
+            
+            
+            
+            
+            <!--li class="{#% if
+app.request.get('_route') == 'intersa_critere_recherche_don' or
+    app.request.get('_route') == 'intersa_get_all_sauvgarde_don' %}active{% endif %#}">
+                <a href="{#{ path('intersa_get_all_sauvgarde_don' ) }#} ">
+                    <i class="menu-icon fa fa-list-alt"></i>
+                    <span class="menu-text"> Critère de recherche Dons
+                        <!--span class="badge pull-right orange-bg " id="val_stats_critere_recherche"-->
+                                <!--img id="load_stats_critere_recherche" src="{#{ asset('img/ajax-loader.gif') }#}"/></span></span-->
+                <!--/a>
+
+                <b class="arrow"></b>
+            </li-->
+
+
+
+
+            {% if is_granted('ROLE_INTERSA_N1') %}
+                <li class="{% if app.request.get('_route') == 'intersa_verif_lot' %}active{% endif %}">
+                    <a href="{{ path('intersa_verif_lot',{'page':1} ) }} ">
+                        <i class="menu-icon fa fa-check"></i>
+                        <span class="menu-text"> Vérification des lots <span class="badge pull-right  orange-bg"
+                                                                             id="val_stats_verif">
+                                <img id="load_stats_verif" src="{{ asset('img/ajax-loader.gif') }}"/></span> </span>
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+            {% endif %}
+
+
+
+            {% if is_granted('ROLE_INTERSA_N1') %}
+                <li class="{% if
+        app.request.get('_route') == 'intersa_stats' %}active{% endif %}">
+                    <a href="{{ path('intersa_stats') }} ">
+                        <i class="menu-icon fa fa-pie-chart"></i>
+                        <span class="menu-text">
+                            Statistiques Intersa
+                        </span>
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+            {% endif %}
+            {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') %}
+                <li class="{% if app.request.get('_route') == 'intersa_advanced_stats' %}active{% endif %}">
+                    <a href="{{ path('intersa_advanced_stats') }} ">
+                        <i class="menu-icon fa fa-bar-chart"></i>
+                        <span class="menu-text">
+                            Statistiques avancées
+                        </span>
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+            {% endif %}
+            {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') or is_granted('ROLE_TRIAL') %}
+                <li class="{% if app.request.get('_route') == 'intersa_marketing' %}active{% endif %}">
+                    <a href="{{ path('intersa_marketing',{'page':1}) }} ">
+                        <i class="menu-icon fa fa-bullhorn"></i>
+                        <span class="menu-text">
+                            eMarketing
+                        </span>
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+            {% endif %}
+            {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') or is_granted('ROLE_TRIAL') %}
+                <li class="{% if app.request.get('_route') == 'fulldon_bo_custom_tasks' %}active{% endif %}">
+                    <a href="{{ path('fulldon_bo_custom_tasks',{'page':1}) }} ">
+                        <i class="menu-icon fa fa-tasks"></i>
+                        <span class="menu-text">
+                            Gestion des tâches
+                        </span>
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+            {% endif %}
+            {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') %}
+                <li class="{% if app.request.get('_route') == 'intersa_users' %}active{% endif %}">
+                    <a href="{{ path('intersa_users') }} ">
+                        <i class="menu-icon fa fa-lock"></i>
+                        <span class="menu-text">
+                            Gestion des utilisateurs et rôles
+                        </span>
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+            {% endif %}
+            {% if is_granted('ROLE_INTERSA_N1') %}
+                <li class="{% if app.request.get('_route') matches '/^intersa_perso*/' %}active{% endif %}">
+                    <a href="#" class="dropdown-toggle">
+                        <i class="menu-icon fa fa-cogs"></i>
+                        <span class="menu-text">
+                            Forfaits & facturation
+                        </span>
+
+                        <b class="arrow fa fa-angle-down"></b>
+                    </a>
+
+                    <b class="arrow"></b>
+
+                    <ul class="submenu">
+                        <li class="{% if app.request.get('_route') == 'intersa_upgrade' %}active{% endif %}">
+                            <a href="{{ path('intersa_upgrade') }}"
+                               >
+                                <i class="menu-icon fa fa-cloud-upload"></i>
+
+                                Mise à niveau de fulldon
+                            </a>
+
+                            <b class="arrow"></b>
+
+                        </li>
+                        <li class="{% if app.request.get('_route') == 'intersa_factures' %}active{% endif %}">
+                            <a href="{{ path('intersa_factures') }}">
+                                <i class="menu-icon fa fa-file-text"></i>
+
+                                Factures
+
+                            </a>
+
+                            <b class="arrow"></b>
+
+                        </li>
+                        <li class="{% if app.request.get('_route') == 'intersa_fulldon_shop' %}active{% endif %}">
+                            <a href="{{ path('intersa_fulldon_shop') }}">
+                                <i class="menu-icon fa fa-shopping-cart"></i>
+
+                                Fulldon shop
+
+                            </a>
+
+                            <b class="arrow"></b>
+
+                        </li>
+                    </ul>
+                </li>
+            {% endif %}
+
+            <li class="{% if app.request.get('_route') matches '/^intersa_perso*/' or app.request.get('_route') == 'intersa_conf_avance' or app.request.get('_route') == 'fulldon_bo_events' %}active{% endif %}">
+                <a href="#" class="dropdown-toggle">
+                    <i class="menu-icon fa fa-desktop"></i>
+                    <span class="menu-text">
+                        Configuration & personnalisation
+                    </span>
+
+                    <b class="arrow fa fa-angle-down"></b>
+                </a>
+
+                <b class="arrow"></b>
+
+                <ul class="submenu">
+                    {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') %}
+                        <li class="{% if app.request.get('_route') == 'intersa_personnalisation' %}active{% endif %}">
+                            <a href="{{ path('intersa_personnalisation') }}"
+                               >
+                                <i class="menu-icon fa fa-caret-right"></i>
+
+                                Configuration générales
+
+                            </a>
+
+                            <b class="arrow"></b>
+
+                        </li>
+                    {% endif %}
+                    {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') or is_granted('ROLE_TRIAL')  %}
+                        <li class="{% if app.request.get('_route') == 'intersa_perso_rf' %}active{% endif %}">
+                            <a href="{{ path('intersa_perso_rf') }}">
+                                <i class="menu-icon fa files-o"></i>
+
+                                Personnalisation des reçus fiscaux
+
+                            </a>
+
+                            <b class="arrow"></b>
+
+                        </li>
+                    {% endif %}
+                    {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1')  %}
+                        <li class="{% if app.request.get('_route') == 'intersa_conf_avance' %}active{% endif %}">
+                            <a href="{{ path('intersa_conf_avance') }}">
+                                <i class="menu-icon fa fa-cog"></i>
+
+                                Configuration avancée
+
+                            </a>
+
+                            <b class="arrow"></b>
+
+                        </li>
+                    {% endif %}
+                    {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1')  %}
+                        <li class="{% if app.request.get('_route') == 'fulldon_bo_events' %}active{% endif %}">
+                            <a href="{{ path('fulldon_bo_events', {'page': 1}) }}">
+                                <i class="menu-icon fa fa-flag"></i>
+                                Gestion des événements
+
+                            </a>
+
+                            <b class="arrow"></b>
+
+                        </li>
+                    {% endif %}
+
+                </ul>
+            </li>
+            <li class="{% if app.request.get('_route') == 'intersa_faq' %}active{% endif %}">
+                <a href="{{ path('intersa_faq') }} ">
+                    <i class="menu-icon fa fa-support"></i>
+                    <span class="menu-text">
+                        FAQ
+                    </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+
+            {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') or is_granted('ROLE_TRIAL') %}
+                <li class="{% if app.request.get('_route') matches '/^intersa_table*/' %}active{% endif %}">
+                    <a href="#" class="dropdown-toggle">
+                        <i class="menu-icon fa fa-cubes"></i>
+                        <span class="menu-text">
+                            Gestion des tables
+                        </span>
+
+                        <b class="arrow fa fa-angle-down"></b>
+                    </a>
+
+                    <b class="arrow"></b>
+
+                    <ul class="submenu">
+                        <li class="{% if
+                ( app.request.get('_route') == 'intersa_table_element' and app.request.get('table') == 'compagne') or
+                ( app.request.get('_route') == 'intersa_table_element_edit' and app.request.get('table') == 'compagne') or
+                ( app.request.get('_route') == 'intersa_table_element_new' and app.request.get('table') == 'compagne') %}active{% endif %} ">
+                            <a href="{{ path('intersa_table_element',{'table':'compagne','page':1}) }}#">
+                                <i class="menu-icon fa fa-caret-right"></i>
+
+                                Codes Campagnes
+
+                            </a>
+
+                            <b class="arrow"></b>
+
+                        </li>
+                        <li class="{% if
+                ( app.request.get('_route') == 'intersa_table_element' and app.request.get('table') == 'occasion') or
+                ( app.request.get('_route') == 'intersa_table_element_edit' and app.request.get('table') == 'occasion') or
+                ( app.request.get('_route') == 'intersa_table_element_new' and app.request.get('table') == 'occasion') %}active{% endif %} ">
+                            <a href="{{ path('intersa_table_element',{'table':'occasion','page':1}) }}#">
+                                <i class="menu-icon fa files-o"></i>
+
+                                Codes Occasions
+
+                            </a>
+
+                            <b class="arrow"></b>
+
+                        </li>
+                        <li class="{% if
+                app.request.get('_route') == 'intersa_table_cause' or
+                app.request.get('_route') == 'intersa_table_cause_new' or
+                app.request.get('_route') == 'intersa_table_cause_edit' %}active{% endif %}">
+                            <a href="{{ path('intersa_table_cause',{'page':1}) }}">
+                                <i class="menu-icon fa files-o"></i>
+
+                                Codes activités
+
+                            </a>
+
+                            <b class="arrow"></b>
+
+                        </li>
+                        <li class="{% if
+                ( app.request.get('_route') == 'intersa_table_element' and app.request.get('table') == 'periodicite') or
+                ( app.request.get('_route') == 'intersa_table_element_edit' and app.request.get('table') == 'periodicite') or
+                ( app.request.get('_route') == 'intersa_table_element_new' and app.request.get('table') == 'periodicite') %}active{% endif %} ">
+                            <a href="{{ path('intersa_table_element',{'table':'periodicite','page':1}) }}#">
+                                <i class="menu-icon fa files-o"></i>
+
+                                Periodicités des Prélèvements
+
+                            </a>
+
+                            <b class="arrow"></b>
+
+                        </li>
+                        <li class="{% if
+                ( app.request.get('_route') == 'intersa_table_element' and app.request.get('table') == 'analytique') or
+                ( app.request.get('_route') == 'intersa_table_element_edit' and app.request.get('table') == 'analytique') or
+                ( app.request.get('_route') == 'intersa_table_element_new' and app.request.get('table') == 'analytique') %}active{% endif %} ">
+                            <a href="{{ path('intersa_table_element',{'table':'analytique','page':1}) }}#">
+                                <i class="menu-icon fa files-o"></i>
+
+                                Codes Analytiques
+                            </a>
+
+                            <b class="arrow"></b>
+
+                        </li>
+                        <li class="{% if
+                ( app.request.get('_route') == 'intersa_table_element' and app.request.get('table') == 'entity') or
+                ( app.request.get('_route') == 'intersa_table_element_edit' and app.request.get('table') == 'entity') or
+                ( app.request.get('_route') == 'intersa_table_element_new' and app.request.get('table') == 'entity') %}active{% endif %} ">
+                            <a href="{{ path('intersa_table_element',{'table':'entity','page':1}) }}#">
+                                <i class="menu-icon fa files-o"></i>
+
+                                Gestion des entités
+
+                            </a>
+
+                            <b class="arrow"></b>
+
+                        </li>
+                        <li class="{% if
+                ( app.request.get('_route') == 'intersa_table_element' and app.request.get('table') == 'cat') or
+                ( app.request.get('_route') == 'intersa_table_element_edit' and app.request.get('table') == 'cat') or
+                ( app.request.get('_route') == 'intersa_table_element_new' and app.request.get('table') == 'cat') %}active{% endif %} ">
+                            <a href="{{ path('intersa_table_element',{'table':'cat','page':1}) }}#">
+                                <i class="menu-icon fa files-o"></i>
+
+                                Gestion des catégories
+
+                            </a>
+
+                            <b class="arrow"></b>
+
+                        </li>
+                    </ul>
+                </li>
+            {% endif %}
+
+
+        </ul>
+        <!-- /.nav-list -->
+
+        <!-- #section:basics/sidebar.layout.minimize -->
+        <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+            <i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left"
+               data-icon2="ace-icon fa fa-angle-double-right"></i>
+        </div>
+
+        <!-- /section:basics/sidebar.layout.minimize -->
+        <script type="text/javascript">
+            try {
+                ace.settings.check('sidebar', 'collapsed')
+            } catch (e) {
+            }
+        </script>
+    </div>
+
+
+
+    <div class="main-content">
+        <div class="main-content-inner">
+        {% block coque_intersa %}{% endblock %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends "FulldonDonateurBundle:Donateur:coque_donateur.html.twig" %}
+    {% block coque_donateur %}
+        <div class="row" >
+
+        <div class="col-md-12" >
+        <h1  class="couleur-donateur" >{{ "Mon adhésion"|trans({},'messages') }} {{ "à"|trans({},'messages') }} {{ "Coline-en-Ré"|trans({},'messages') }} <div class="pull-right" ><img src="{{ asset('barecode/'~datamatrix~'.png') }}" /></div> </h1>
+            <hr />
+            <br />
+            {% for flashMessage in app.session.flashbag.get('info') %}
+                <div class="alert alert-success hidden-print">
+                    {{ flashMessage|trans({},'messages') }}
+                </div>
+            {% endfor %}
+            {{ "Merci d’avoir adhérer,"|trans({},'messages') }} <br />
+            {{ "Pour que le montant de la cotisation mensuelle que vous avez    choisie soit prélevé mensuellement, merci de compléter le formulaire ci-dessous et de l’adresser à :"|trans({},'messages') }}<br />
+            <center>
+                {%  set params = app.request.attributes.get('_route_params') %}
+                {% if init['perso'] is defined and init['perso'] is not null %}
+                    {{ init['perso'].adresseAssoc | raw }}
+                {% endif %}
+            </center>
+            <hr />
+            <table>
+                <tr><td width="250"><b class="couleur-donateur"  >{{ "Référence du don"|trans({},'messages') }}:</b></td><td> {{ don.id }}<br /></td></tr>
+                {% if donateur.nom  is defined and donateur.nom  is not null %}
+                    <tr><td> <b class="couleur-donateur" >{{ "Nom" }} :</b></td><td> {{ donateur.nom  }}<br /></td></tr>
+                {% endif %}
+                {% if donateur.prenom  is defined and donateur.prenom  is not null %}
+                    <tr><td> <b class="couleur-donateur" >{{ "Prénom" }} :</b> </td><td> {{ donateur.prenom  }}<br /></td></tr>
+                {% endif %}
+                <tr><td>   <b class="couleur-donateur"> {{ "Adresse" }} :</b></td><td> {{ donateur.adresse1 }} {{ donateur.adresse2 }} {{ donateur.adresse3 }}<br /></td></tr>
+                {% if donateur.isoville  is defined and donateur.isoville  is not null %}
+                    <tr><td>    <b class="couleur-donateur">{{ "Ville" }} : </b></td><td> {{ donateur.isoville  }}<br /></td></tr>
+                {% endif %}
+                {% if donateur.isopays  is defined and donateur.isopays  is not null %}
+                    <tr><td>   <b class="couleur-donateur">{{ "Pays" }} :</b></td><td> {{ donateur.isopays  }}<br /></td></tr>
+                {% endif %}
+                <tr><td><b class="couleur-donateur">{{ "Référence unique de mandat" }} :</b></td>
+                    <td>
+                        {{ don.abonnement.rum }}
+                    </td>
+                </tr>
+                </table>
+            <hr />
+            <table>
+                <tr><td style="width: 120px;"><b class="couleur-donateur" >{{ "Nom Banque" }} :</b></td>
+                    <td>
+                        ..........................................
+                    </td>
+                </tr>
+                <tr><td><b class="couleur-donateur"> BIC * :</b></td>
+                    <td>
+                        {% image '@CustomFulldonExtDonateurBundle/Resources/public/images/bic_form.jpg' %}
+                        <img src="{{ asset_url }}" alt="BIC" style="width: 200px;"  />
+                        {% endimage %}
+                    </td>
+                </tr>
+                <tr><td><b class="couleur-donateur"> IBAN * :</b></td>
+                    <td>
+                        {% image '@CustomFulldonExtDonateurBundle/Resources/public/images/iban_form.jpg' %}
+                        <img src="{{ asset_url }}" alt="IBAN" style="width: 550px;" />
+                        {% endimage %}
+                        <br /><span style="font-size:12px;">* ces informations figurent sur votre RIB – relevé d’identité bancaire</span>
+                    </td>
+                </tr>
+            </table>
+            <br />
+            <br />
+            <span class="couleur-donateur" style="float:right;font-weight: bold;">{{ "Date & Signature"|trans({},'messages') }} :</span>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+
+            {%  set params = app.request.attributes.get('_route_params') %}
+            {% if init['perso'] is defined %}
+                {% if params['_locale'] == 'fr' %}
+                    {{ init['perso'].rfMessage | raw }}
+                {% elseif params['_locale'] == 'en' %}
+                    {{ init['perso'].rfMessageEn | raw }}
+                {% endif %}
+            {% endif %}
+        </div>
+
+        </div>
+        <div class="modal fade hidden-print" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+            <div class="modal-dialog" style="width:300px;">
+                <div class="modal-content" >
+
+                    <div class="modal-body">
+                        <center><a href="javascript:window.print()" class="btn btn-primary"><span class="glyphicon glyphicon-print"></span> {{ "Imprimer cette page"|trans({},'messages') }}</a></center>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <br />
+
+
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+        $(document).ready(function(){
+        $('#myModal').modal('show');
+
+        });
+        </script>
+    {% endblock %}

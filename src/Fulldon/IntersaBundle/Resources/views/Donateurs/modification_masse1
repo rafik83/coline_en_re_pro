@@ -1,0 +1,1529 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+    {% stylesheets '../app/Resources/Public/css/global/jquery-ui/*' %}
+    <link rel="stylesheet" type="text/css" charset="UTF-8" media="all" href="{{ asset_url }}"/>
+    {% endstylesheets %}
+{% endblock %}
+{% block coque_intersa %}
+    <div class="breadcrumbs" id="breadcrumbs">
+        <script type="text/javascript">
+            try {
+                ace.settings.check('breadcrumbs', 'fixed')
+            } catch (e) {
+            }
+        </script>
+        <ol class="breadcrumb">
+            <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+            <li class="active">Gestion des donateurs</li>
+        </ol>
+    </div>
+    <div class="page-content">
+
+        <!-- PAGE CONTENT BEGINS -->
+        <div class="page-header">
+            <h1>
+                Gestion des donateurs
+                <small>
+                    <i class="ace-icon fa fa-angle-double-right"></i>
+                    Recherche avancée
+                </small>
+            </h1>
+        </div>
+        <!-- /.page-header -->
+
+        {% for flashMessage in app.session.flashbag.get('info') %}
+            <div class="alert alert-success">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('warning') %}
+            <div class="alert alert-warning">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('success') %}
+            <div class="alert alert-success">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('erreur') %}
+            <div class="alert alert-danger">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+
+
+        <div class="pull-right">
+            {% if last_page >= 1 %}
+                <div class="pagination_desc"><strong>{{ total_donateur }}</strong> Donateur(s)
+                </div>
+            {% endif %}
+        </div>
+
+        <form action="{{ path('elastic_donateur') }}" method="get" class="form-group"
+              onsubmit="show_result()" {{ form_enctype(form) }}>
+            <ul class="nav nav-tabs">
+                <li {% if total_donateur == 0  %}class="active"{% endif %} ><a href="#recherche" data-toggle="tab">Recherche</a>
+                </li>
+                <li {% if total_donateur > 0 %}class="active"{% endif %}><a href="#result" data-toggle="tab">Resultat de
+                        recherche</a></li>
+            </ul>
+            <div class="widget-toolbox padding-8 clearfix">
+                <div class="pull-left">
+                    {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') or is_granted('ROLE_TRIAL') %}
+
+                        <a href="{{ path('intersa_donateur_add') }}" class="btn btn-success btn-xs "><span
+                                class="fa fa-plus"></span> Ajouter un donateur </a>
+
+
+                        {% if result is not empty %}
+
+                            <div class="btn-group" style="margin-right: 20px;">
+                                <button type="button" class="btn btn-warning dropdown-toggle btn-sm" data-toggle="dropdown"
+                                        aria-expanded="false">
+                                    <i class="fa fa-star"></i> Gestion des favoris <i
+                                        class="ace-icon fa fa-angle-down icon-on-right"></i>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+
+                                    <li><a data-toggle="modal" data-target="#addRecherche" href="#"><i class="fa fa-plus"></i>
+                                            Ajouter cette recherche aux favoris</a></li>
+
+                                    <li><a data-toggle="modal" data-target="#addSauvgardeCritere" href="#"><i class="fa fa-plus"></i>
+                                            Ajouter cette selection</a></li>
+                                    <li><a data-toggle="modal" data-target="#listRecherche" href="#"><i class="fa fa-list"></i>
+                                            Afficher les recherches favorites</a></li>
+                                            {#<li><a href="#"><i class="fa fa-file-excel-o"></i> Export excel</a></li>#}
+                                            {#<li><a href="#"><i class="fa fa-file-pdf-o"></i> Export pdf</a></li>#}
+
+                                </ul>
+                            </div>
+                            <br>
+
+
+                        {% else %}
+
+                            <div class="btn-group " style="margin-right: 20px;">
+                                <button type="button" class="btn btn-warning dropdown-toggle btn-sm" data-toggle="dropdown"
+                                        aria-expanded="false">
+                                    <i class="fa fa-star"></i> Gestion des favoris <i
+                                        class="ace-icon fa fa-angle-down icon-on-right"></i>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a data-toggle="modal" data-target="#listRecherche" href="#"><i class="fa fa-list"></i>
+                                            Afficher les recherches favorites</a></li>
+                                            {#<li><a href="#"><i class="fa fa-file-excel-o"></i> Export excel</a></li>#}
+                                            {#<li><a href="#"><i class="fa fa-file-pdf-o"></i> Export pdf</a></li>#}
+                                </ul>
+                            </div>
+
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+
+
+
+
+                <div class="miftah-form">
+                    <div class="element"
+                         style="background-color: #F78D1E;float:left;margin-right:5px;border: 1px solid #000;"></div>
+                    <div style="float:left;margin-right:10px;">Champs inclus dans le résultat</div><br />
+                    <div class="element"
+                         style="background-color: #393939;float:left;margin-right:5px;border: 1px solid #000;"></div>
+                    <div style="float:left;margin-right:10px;">Champs non inclus dans le résultat</div>
+                </div>
+
+                <button class="btn btn-xs btn-success pull-right" type="submit">
+                    <span class="bigger-110">Rechercher</span>
+
+                    <i class="ace-icon fa fa-search icon-on-right"></i>
+                </button>
+                <button class="btn btn-xs btn-default pull-right" type="reset">
+                    <span class="bigger-110">Réinitialiser </span>
+
+                    <i class="ace-icon fa fa-remove icon-on-right"></i>
+                </button>
+            </div>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane {% if total_donateur == 0  %}active{% endif %}" id="recherche">
+                    <br/>
+
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-5">
+                            <div class="widget-box">
+                                <div class="widget-header">
+                                    <h4 class="widget-title title-plus">Informations générales</h4>
+
+
+                                </div>
+
+                                <div class="widget-body">
+                                    <div class="widget-main">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label for="inputEmail3"
+                                                       class="control-label">{{ form_label(form.refDonateur, "N° donateur") }}</label>
+
+                                                <div>
+                                                    {{ form_widget(form.refDonateur, {'attr': {'class': 'task_field form-control', 'id':'nom', 'placeholder':'Identifiant' } }) }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6" >
+                                                <label for="inputEmail3"
+                                                       class=" control-label">{{ form_label(form.civilite, "Civilité") }}</label>
+
+                                                <div>
+                                                    {# Affichage des erreurs pour ce champ précis. #}
+                                                    {{ form_errors(form.civilite) }}
+
+                                                    {# Génération de l'input. #}
+                                                    {{ form_widget(form.civilite, {'attr': {'class': 'task_field form-control input-sm', 'id':'civilite'} }) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label for="inputEmail3" class=" control-label">{{ form_label(form.nom, "Nom") }}  </label>
+
+                                                <div>
+                                                    {% if form.nom.vars.errors|length %}
+                                                        {# Affichage des erreurs pour ce champ précis. #}
+                                                        <div class="form-group has-error">
+                                                            <label class="control-label"
+                                                                   for="inputError"> {{ form_errors(form.nom) }}</label>
+                                                            {{ form_widget(form.nom, {'attr': {'class': 'task_field form-control input-sm', 'id':'inputError', 'placeholder':'Nom' } }) }}
+                                                        </div>
+                                                    {% else %}
+                                                        {# Génération de l'input. #}
+                                                        {{ form_widget(form.nom, {'attr': {'class': 'task_field form-control input-sm', 'id':'nom', 'placeholder':'Nom' } }) }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="inputEmail3"
+                                                       class=" control-label">{{ form_label(form.prenom, "Prénom") }}</label>
+
+                                                <div>
+                                                    {% if form.prenom.vars.errors|length %}
+                                                        {# Affichage des erreurs pour ce champ précis. #}
+                                                        <div class="form-group has-error">
+                                                            <label class="control-label"
+                                                                   for="inputError"> {{ form_errors(form.prenom) }}</label>
+                                                            {{ form_widget(form.prenom, {'attr': {'class': 'task_field form-control input-sm', 'id':'prenom', 'placeholder':'Prénom' } }) }}
+                                                        </div>
+                                                    {% else %}
+                                                        {# Génération de l'input. #}
+                                                        {{ form_widget(form.prenom, {'attr': {'class': 'task_field form-control input-sm', 'id':'prenom', 'placeholder':'Prénom' } }) }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6" >
+                                                <label for="inputEmail3"
+                                                       class=" control-label">{{ form_label(form.dateNaissance, "Date de naissance") }}</label>
+
+                                                <div>
+                                                    {% if form.dateNaissance.vars.errors|length %}
+                                                        {# Affichage des erreurs pour ce champ précis. #}
+                                                        <div class="form-group has-error">
+                                                            <label class="control-label"
+                                                                   for="inputError"> {{ form_errors(form.date_naissance) }}</label>
+                                                            {{ form_widget(form.dateNaissance, {'attr': { 'id':'dateNaissance', 'placeholder':'jj/mm/aaaa', 'class': 'task_field form-control input-sm' } }) }}
+                                                        </div>
+                                                    {% else %}
+                                                        {# Génération de l'input. #}
+                                                        {{ form_widget(form.dateNaissance, {'attr': { 'id':'nom', 'placeholder':'jj/mm/aaaa', 'class': 'task_field form-control input-sm' } }) }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6" >
+                                                <label for="inputEmail3"
+                                                       class="control-label">{{ form_label(form.nom, "Nom Entreprise") }}</label>
+
+                                                <div>
+                                                    {{ form_widget(form.nomEntreprise, {'attr': {'class': 'task_field form-control', 'id':'nom_entreprise', 'placeholder':'Nom Entreprise' } }) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class=" control-label">{{ form_label(form.email, "Email") }}</label>
+
+                                            <div>
+                                                {{ form_widget(form.email, {'attr': { 'class': 'task_field form-control', 'id':'email'} }) }}
+                                            </div>
+                                            <div id="div_message_error_mail" style="display: none"></div>
+                                        </div>
+                                        <div>
+                                            <label for="inputEmail3"
+                                                   class=" control-label">{{ form_label(form.categories, "Catégorie") }}</label>
+                                            <div class="form-group col-md-12">
+
+
+                                            </div>
+                                            <div  id="cat_list">
+                                                {# Affichage des erreurs pour ce champ précis. #}
+                                                {{ form_errors(form.categories) }}
+
+                                                {# Génération de l'input. #}
+                                                {{ form_widget(form.categories, {'attr': { 'class': 'task_field form-control input-sm', 'id':'cat_don'} }) }}
+                                            </div>
+                                        </div>
+
+                                        <div >
+                                            <label for="inputEmail3" class="col-sm-5 control-label">Filtre par type de PND : </label>
+
+                                            <div >
+                                                <select name="pnd" class="task_field form-control">
+                                                    <option value=""></option>
+                                                    <option value="npai1"> NPAI1</option>
+                                                    <option value="npai2"> NPAI2</option>
+                                                    <option value="npai3"> NPAI3</option>
+                                                    <option value="refuse1"> Refusé 1</option>
+                                                    <option value="refuse2"> Refusé 2</option>
+                                                    <option value="refuse3"> Refusé 3</option>
+                                                    <option value="decede"> Décédé</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <br />
+
+
+                                        <label> Exceptions : </label><br />
+                                        <div class="row">
+                                            <div class=" col-md-6">
+                                                <div class="form-group ">
+                                                    <label class=" control-label">Paramètres email</label>
+
+                                                    <div>
+                                                        <div class="radio-inline">
+                                                            <label>
+                                                                <input type="radio" name="withemail" id="withemailyes" value="true" {% if memo_search['withemail'] == 'true' %} checked {% endif %}>
+                                                                Avec
+                                                            </label>
+                                                        </div>
+                                                        <div class="radio-inline">
+                                                            <label>
+                                                                <input type="radio" name="withemail" id="withemailno" value="false" {% if memo_search['withemail'] == 'false' %} checked {% endif %}>
+                                                                Sans
+                                                            </label>
+                                                        </div>
+                                                        <div class="radio-inline">
+                                                            <label>
+                                                                <input type="radio" name="withemail" id="withemailind" value="ind" >
+                                                                indifférent
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class=" col-md-6">
+                                                <div class="form-group ">
+                                                    <label class=" control-label">Paramètres téléphone</label>
+
+                                                    <div>
+                                                        <div class="radio-inline">
+                                                            <label>
+                                                                <input type="radio" name="withtel" id="withtelyes" value="true" {% if memo_search['withtel'] == 'true' %} checked {% endif %} >
+                                                                Avec
+                                                            </label>
+                                                        </div>
+                                                        <div class="radio-inline">
+                                                            <label>
+                                                                <input type="radio" name="withtel" id="withtelno" value="false" {% if memo_search['withtel'] == 'false' %} checked {% endif %}>
+                                                                Sans
+                                                            </label>
+                                                        </div>
+
+                                                        <div class="radio-inline">
+                                                            <label>
+                                                                <input type="radio" name="withtel" id="withtelind" value="ind" >
+                                                                indifférent
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group ">
+                                                    <label class=" control-label">Paramètres catégorie</label>
+
+                                                    <div>
+                                                        <div class="radio-inline">
+                                                            <label>
+                                                                <input type="radio" name="withcat" id="withcat" value="true" {% if memo_search['withcat'] == 'true' %} checked {% endif %} >
+                                                                Avec
+                                                            </label>
+                                                        </div>
+                                                        <div class="radio-inline">
+                                                            <label>
+                                                                <input type="radio" name="withcat" id="withcat" value="false" {% if memo_search['withcat'] == 'false' %} checked {% endif %}>
+                                                                Sans
+                                                            </label>
+                                                        </div>
+                                                        <div class="radio-inline">
+                                                            <label>
+                                                                <input type="radio" name="withcat" id="withcatlind" value="ind" >
+                                                                indifférent
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group ">
+                                                    <label class=" control-label">Statut du donateur</label>
+
+                                                    <div>
+                                                        <div class="radio-inline">
+                                                            <label>
+                                                                <input type="radio" name="statut_donateur" id="std1" value="on" {% if memo_search['statut_donateur'] == 'on' %} checked {% endif %}>
+                                                                activé
+                                                            </label>
+                                                        </div>
+                                                        <div class="radio-inline">
+                                                            <label>
+                                                                <input type="radio" name="statut_donateur" id="std2" value="off" {% if memo_search['statut_donateur'] == 'off' %} checked {% endif %}>
+                                                                désactivé
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <br />
+                                        <div>
+                                            {{ form_errors(form.allowRf) }}
+
+                                            {# Génération de l'input. #}
+                                            {{ form_widget(form.allowRf, {'attr': {'class': ' checkbox-inline', 'id':'active'} }) }}{{ form_label(form.allowRf, "Donateurs souhaitent recevoir les reçus fiscaux ? ") }}
+                                            <br/>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- /.span -->
+
+                        <div class="col-xs-12 col-sm-5">
+                            <div class="widget-box">
+                                <div class="widget-header">
+                                    <h4 class="widget-title title-plus">Adresse postale</h4>
+
+                                </div>
+
+                                <div class="widget-body">
+                                    <div class="widget-main">
+
+                                        <div>
+                                            <label for="inputEmail3"
+                                                   class=" label-plus">{{ form_label(form.isopays, "Pays") }}</label>
+
+                                            <div>
+                                                {# Affichage des erreurs pour ce champ précis. #}
+                                                {{ form_errors(form.isopays) }}
+
+                                                {# Génération de l'input. #}
+                                                {{ form_widget(form.isopays, {'attr': { 'class': 'task_field form-control input-sm', 'id':'pays'} }) }}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label for="inputEmail3"
+                                                   class=" label-plus">{{ form_label(form.zipcode, "Code postal ") }}</label>
+
+                                            <div>
+                                                {% if form.zipcode.vars.errors|length %}
+                                                    {# Affichage des erreurs pour ce champ précis. #}
+                                                    <div class="form-group has-error">
+                                                        <label class="label-plus"
+                                                               for="inputError"> {{ form_errors(form.zipcode) }}</label>
+                                                        {{ form_widget(form.zipcode, {'attr': { 'class': 'task_field form-control', 'id':'codepostal'} }) }}
+                                                    </div>
+                                                {% else %}
+                                                    {# Génération de l'input. #}
+                                                    {{ form_widget(form.zipcode, {'attr': { 'class': 'task_field form-control', 'id':'zipcode'} }) }}
+                                                {% endif %}
+
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label for="inputEmail3"
+                                                   class=" label-plus">{{ form_label(form.isoville, "Ville") }}</label>
+
+                                            <div>
+                                                {# Affichage des erreurs pour ce champ précis. #}
+                                                {{ form_errors(form.isoville) }}
+
+                                                {# Génération de l'input. #}
+                                                {{ form_widget(form.isoville, {'attr': { 'class': 'task_field form-control', 'id':'ville'} }) }}
+                                            </div>
+                                        </div>
+
+
+                                        <div>
+                                            <label for="inputEmail3"
+                                                   class=" label-plus">{{ form_label(form.adresse3, "Numéro + libellé de la voie (rue, avenue...) ") }}</label>
+                                            <div>
+                                                {% if form.adresse3.vars.errors|length %}
+                                                    {# Affichage des erreurs pour ce champ précis. #}
+                                                    <div class="form-group has-error">
+                                                        <label class="label-plus"
+                                                               for="inputError"> {{ form_errors(form.adresse3) }}</label>
+                                                        {{ form_widget(form.adresse3, {'attr': { 'class': 'task_field form-control', 'id':'adresse3'} }) }}
+                                                    </div>
+                                                {% else %}
+                                                    {# Génération de l'input. #}
+                                                    {{ form_widget(form.adresse3, {'attr': { 'class': 'task_field form-control', 'id':'adresse3'} }) }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label for="inputEmail3"
+                                                   class=" label-plus">{{ form_label(form.adresse1, "N° appartement ou boîte aux lettres - étage - couloir - escalier ") }}</label>
+
+                                            <div>
+                                                {% if form.adresse1.vars.errors|length %}
+                                                    {# Affichage des erreurs pour ce champ précis. #}
+                                                    <div class="form-group has-error">
+                                                        <label class="label-plus"
+                                                               for="inputError"> {{ form_errors(form.adresse1) }}</label>
+                                                        {{ form_widget(form.adresse1, {'attr': { 'class': 'task_field form-control', 'id':'adresse1'} }) }}
+                                                    </div>
+                                                {% else %}
+                                                    {# Génération de l'input. #}
+                                                    {{ form_widget(form.adresse1, {'attr': { 'class': 'task_field form-control', 'id':'adresse1'} }) }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label for="inputEmail3"
+                                                   class=" label-plus">{{ form_label(form.adresse2, "Entrée - bâtiment - immeuble - résidence ") }}</label>
+
+                                            <div>
+                                                {% if form.adresse2.vars.errors|length %}
+                                                    {# Affichage des erreurs pour ce champ précis. #}
+                                                    <div class="form-group has-error">
+                                                        <label class="label-plus"
+                                                               for="inputError"> {{ form_errors(form.adresse2) }}</label>
+                                                        {{ form_widget(form.adresse2, {'attr': { 'class': 'task_field form-control', 'id':'adresse2'} }) }}
+                                                    </div>
+                                                {% else %}
+                                                    {# Génération de l'input. #}
+                                                    {{ form_widget(form.adresse2, {'attr': { 'class': 'task_field form-control', 'id':'adresse2'} }) }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+
+                                        <div>
+                                            <label for="inputEmail3"
+                                                   class=" label-plus">{{ form_label(form.adresse4, "BP - Lieu dit ") }}</label>
+
+                                            <div>
+                                                {% if form.adresse4.vars.errors|length %}
+                                                    {# Affichage des erreurs pour ce champ précis. #}
+                                                    <div class="form-group has-error">
+                                                        <label class="label-plus"
+                                                               for="inputError"> {{ form_errors(form.adresse4) }}</label>
+                                                        {{ form_widget(form.adresse4, {'attr': { 'class': 'task_field form-control', 'id':'adresse4'} }) }}
+                                                    </div>
+                                                {% else %}
+                                                    {# Génération de l'input. #}
+                                                    {{ form_widget(form.adresse4, {'attr': { 'class': 'task_field form-control', 'id':'adresse4'} }) }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.span -->
+
+                        <div class="col-xs-12 col-sm-2">
+                            <div class="widget-box">
+                                <div class="widget-header">
+                                    <h4 class="widget-title title-plus">Champs</h4>
+
+                                </div>
+
+                                <div class="widget-body no-overflow" >
+                                    <div class="widget-main">
+
+                                        <input type="hidden" name="columns" id="columns"
+                                               value="{% if columns is not null  %}{{ columns }}{% endif %}"/>
+                                        <div style="height:250px;" class="row">
+                                            <div class="col-md-12">
+                                                <ul id="sortable2" class="connectedSortable maincol" >
+
+                                                    {% for col in col_display %}
+                                                        {% if col == "numdonateur" %}
+                                                            <li id="list_numdonateur" class="ui-state-highlight"><i class="fa fa-cube"></i> <b>Numéro du donateur</b>
+                                                            </li>
+                                                        {% elseif col ==  "nom" %}
+                                                            <li id="list_nom" class="ui-state-highlight"><i class="fa fa-cube"></i> <b>Nom </b>
+                                                            </li>
+                                                        {% elseif col == "prenom" %}
+                                                            <li id="list_prenom" class="ui-state-highlight"><i class="fa fa-cube"></i> <b> Prénom </b>
+                                                            </li>
+                                                        {% elseif col == "statut" %}
+                                                            <li id="list_statut" class="ui-state-highlight"><i
+                                                                    class="fa fa-cube"></i> <b>Statut</b>
+                                                            </li>
+                                                        {% elseif col == "nomentreprise" %}
+                                                            <li id="list_nomentreprise" class="ui-state-highlight"><i class="fa fa-cube"></i> <b>Nom d'entreprise</b>
+                                                            </li>
+                                                        {% elseif col == "email" %}
+                                                            <li id="list_email" class="ui-state-highlight"><i class="fa fa-cube"></i> <b>Email</b>
+                                                            </li>
+                                                        {% elseif col == "birthday" %}
+                                                            <li id="list_birthday" class="ui-state-highlight"><i class="fa fa-cube"></i>
+                                                                <b>Date de naissance </b>
+                                                            </li>
+                                                        {% elseif col == "telmobile" %}
+                                                            <li id="list_telmobile" class="ui-state-highlight"><i
+                                                                    class="fa fa-cube"></i> <b>Téléphone mobile</b>
+                                                            </li>
+                                                        {% elseif col == "telfixe" %}
+                                                            <li id="list_telfixe" class="ui-state-highlight"><i class="fa fa-cube"></i>
+                                                                <b>Téléphone fixe</b>
+                                                            </li>
+                                                        {% elseif col == "cat" %}
+                                                            <li id="list_cat" class="ui-state-highlight"><i
+                                                                    class="fa fa-cube"></i> <b>Catégories</b>
+                                                            </li>
+                                                        {% elseif col == "adresse" %}
+                                                            <li id="list_adresse" class="ui-state-highlight"><i
+                                                                    class="fa fa-cube"></i> <b>Adresse</b>
+                                                            </li>
+
+                                                        {% elseif col == "ville" %}
+                                                            <li id="list_ville" class="ui-state-highlight"><i
+                                                                    class="fa fa-cube"></i> <b>Ville</b>
+                                                            </li>
+                                                        {% elseif col == "pays" %}
+                                                            <li id="list_pays" class="ui-state-highlight"><i class="fa fa-cube"></i>
+                                                                <b>Pays</b>
+                                                            </li>
+                                                        {% elseif col == "zipcode" %}
+
+                                                            <li id="list_zipcode" class="ui-state-highlight"><i class="fa fa-cube"></i>
+                                                                <b>Code postal</b>
+                                                            </li>
+                                                        {% elseif col == "createdat" %}
+                                                            <li id="list_createdat" class="ui-state-highlight"><i class="fa fa-cube"></i>
+                                                                <b>Date de creation </b>
+                                                            </li>
+                                                        {% endif %}
+                                                    {% endfor %}
+
+
+
+
+
+
+
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <ul id="sortable1" class="connectedSortable">
+
+                                                    {% for col in rest_cols %}
+                                                        {% if col == "numdonateur" %}
+                                                            <li id="list_numdonateur" class="ui-state-default"><i class="fa fa-cube"></i> <b>Numéro du donateur</b>
+                                                            </li>
+                                                        {% elseif col ==  "nom" %}
+                                                            <li id="list_nom" class="ui-state-default"><i class="fa fa-cube"></i> <b>Nom </b>
+                                                            </li>
+                                                        {% elseif col == "prenom" %}
+                                                            <li id="list_prenom" class="ui-state-default"><i class="fa fa-cube"></i> <b> Prénom </b>
+                                                            </li>
+                                                        {% elseif col == "statut" %}
+                                                            <li id="list_statut" class="ui-state-default"><i
+                                                                    class="fa fa-cube"></i> <b>Statut</b>
+                                                            </li>
+                                                        {% elseif col == "nomentreprise" %}
+                                                            <li id="list_nomentreprise" class="ui-state-default"><i class="fa fa-cube"></i> <b>Nom d'entreprise</b>
+                                                            </li>
+                                                        {% elseif col == "email" %}
+                                                            <li id="list_email" class="ui-state-default"><i class="fa fa-cube"></i> <b>Email</b>
+                                                            </li>
+                                                        {% elseif col == "birthday" %}
+                                                            <li id="list_birthday" class="ui-state-default"><i class="fa fa-cube"></i>
+                                                                <b>Date de naissance </b>
+                                                            </li>
+                                                        {% elseif col == "telmobile" %}
+                                                            <li id="list_telmobile" class="ui-state-default"><i
+                                                                    class="fa fa-cube"></i> <b>Téléphone mobile</b>
+                                                            </li>
+                                                        {% elseif col == "telfixe" %}
+                                                            <li id="list_telfixe" class="ui-state-default"><i class="fa fa-cube"></i>
+                                                                <b>Téléphone fixe</b>
+                                                            </li>
+                                                        {% elseif col == "cat" %}
+                                                            <li id="list_cat" class="ui-state-default"><i
+                                                                    class="fa fa-cube"></i> <b>Catégories</b>
+                                                            </li>
+                                                        {% elseif col == "adresse" %}
+                                                            <li id="list_adresse" class="ui-state-default"><i
+                                                                    class="fa fa-cube"></i> <b>Adresse</b>
+                                                            </li>
+
+                                                        {% elseif col == "ville" %}
+                                                            <li id="list_ville" class="ui-state-default"><i
+                                                                    class="fa fa-cube"></i> <b>Ville</b>
+                                                            </li>
+                                                        {% elseif col == "pays" %}
+                                                            <li id="list_pays" class="ui-state-default"><i class="fa fa-cube"></i>
+                                                                <b>Pays</b>
+                                                            </li>
+                                                        {% elseif col == "zipcode" %}
+
+                                                            <li id="list_zipcode" class="ui-state-default"><i class="fa fa-cube"></i>
+                                                                <b>Code postal</b>
+                                                            </li>
+                                                        {% elseif col == "createdat" %}
+                                                            <li id="list_createdat" class="ui-state-default"><i class="fa fa-cube"></i>
+                                                                <b>Date de creation </b>
+                                                            </li>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+
+                                        </div>
+                                        <!-- /section:plugins/input.chosen -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.span -->
+                    </div>
+
+                    {{ form_rest(form) }}
+                    </form>
+                </div>
+                <div class="tab-pane {% if total_donateur > 0  %}active{% endif %} " id="result">
+                    <br/>
+
+                    <table class="table table-condensed" id="liste_search_donateur">
+                        <thead>
+                            <tr>
+                                {% for col in col_display %}
+                                    {% set sortcols = { 'numdonateur':'#REF','nom':'Nom','prenom':'Prénom','statut':'Statut',
+                            'nomentreprise':'Nom d\'entreprise','email':'Email','birthday':'Date de naissance',
+                             'telmobile':'Téléphone mobile','telfixe':'Téléphone fixe',
+                             'adresse':'Adresse','ville':'Ville','pays':'Pays','zipcode':'Code postal','createdat':'Date de création'} %}
+                                    {% set cols = { 'numdonateur':'#REF','nom':'Nom','prenom':'Prénom','statut':'Statut',
+                            'nomentreprise':'Nom d\'entreprise','email':'Email','birthday':'Date de naissance',
+                             'telmobile':'Téléphone mobile','telfixe':'Téléphone fixe','cat':'Catégories',
+                             'adresse':'Adresse','ville':'Ville','pays':'Pays','zipcode':'Code postal','createdat':'Date de création'} %}
+                                    {% if col in cols|keys %}
+                                        <th>{{ cols[col] }} 
+                                            {% if col in sortcols|keys %} 
+                                                <a href="#" onclick="flipsort('{{ col }}')" class="pull-right sort" ><i id="sort_{{ col }}" class="{% if col == sortelement %}{% if sortdirection == 'desc' %}fa fa-lg fa-sort-desc{% else %}fa fa-lg fa-sort-asc{% endif %}{% else %}fa fa-lg fa-sort{% endif %}"></i>
+                                                </a>
+                                                {#{dump(cols[col])}#}
+
+                                            {% endif %}
+                                        </th>
+                                    {% endif %}
+                                {% endfor %}
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                    {% for col in col_display %}
+                                        {% if col == "cat" %}
+                                        <th> 
+                                            <select id="categorie_dropdawn"  class="task_field form-control input-sm">
+                                                <option></option>
+                                                {% for categorie in categories %}
+                                                    <option value="{{categorie.Id}}">{{categorie.Name}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </th>
+                                    {% elseif col ==  "nomentreprise" %}
+                                        <th>
+                                            <select id="entreprise_dropdawn"  class="task_field form-control input-sm">
+                                                <option></option>
+                                                {% for key,value in entreprises %}
+                                                    <option value="{{key}}">{{value}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </th>
+                                    {% elseif col == "telfixe" %}
+                                        <th> 
+                                            <select id="telfixe_dropdawn"  class="task_field form-control input-sm">
+                                                <option></option>
+                                                {% for key,value in allTelFixe %}
+                                                    <option value="{{key}}">{{value}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </th>
+                                    {% elseif col == "adresse" %}
+                                        <th> 
+                                            <select id="adresse_dropdawn"  class="task_field form-control input-sm">
+                                                <option></option>
+                                                {% for key,value in allAdresses %}
+                                                    <option value="{{key}}">{{value}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </th>
+                                    {% elseif col == "pays" %} 
+                                        <th> 
+                                            <select id="pays_dropdawn"  class="task_field form-control input-sm">
+                                                <option></option>
+                                                {% for pay in pays %}
+                                                    <option value="{{pay.Id}}">{{pay.Name}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </th>
+                                    {% elseif col == "ville" %}
+                                        <th> 
+                                            <select id="ville_dropdawn"  class="task_field form-control input-sm">
+                                                <option></option>
+                                                {% for ville in villes %}
+                                                    <option value="{{ville.Id}}">{{ville.Name}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </th>
+                                    {% elseif col == "zipcode" %}
+                                        <th> 
+                                           
+                                            <select id="codepostale_dropdawn"  class="task_field form-control input-sm">
+                                                <option></option>
+                                                {% for key,value in allZipCodes %}
+                                                    <option value="{{key}}">{{value}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </th>
+                                    {% elseif col == "statut" %}
+                                        <th> 
+                                            <select id="status_dropdawn"  class="task_field form-control input-sm">
+                                                <option></option>
+                                                {% for key,value in status %}
+                                                    <option value="{{key}}">{{value}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </th> 
+
+                                    {% endif %}
+                                {% endfor %}
+                                <th>
+                                    <div>
+                                        <a id="btn_modification_masse" class="btn btn-xs btn-default" data-toggle="modal" data-target="#addpopup-modification_masse" href="#">
+                                            <span class="glyphicon glyphicon-edit"></span>
+                                            Modification en Masse 
+                                        </a>  
+
+                                    </div>
+
+
+                                </th>
+                            </tr>
+
+
+                        </thead>
+
+                        <tbody id="content">
+                            {#{dump(pays)}#}
+                            {#{dump(villes)}#}
+                            {#{dump(categories)}#}
+                            {#{dump(status)}#}
+                            {#{dump(entreprises)}#}
+                            {#{dump(allTelFixe)}#}
+                            {#{dump(allAdresses)}#}
+                            {#{dump(allZipCodes)}#}
+                            {% for r in result %}
+                                {% if r.removed == false %}
+                                    <tr id="id_donateur_{{r.id}}">
+                                        {% for col in col_display %}
+                                            {% if col == "numdonateur" %}
+                                                <td>{{ r.refDonateur }}</td>
+                                            {% elseif col ==  "nom" %}
+                                                <td>{{ r.nom }}</td>
+                                            {% elseif col == "prenom" %}
+                                                <td>{{ r.prenom }}</td>
+                                            {% elseif col == "statut" %}
+                                                <td> {% if r.removed %}<span
+                                                        class="label label-danger arrowed-in arrowed-in-right">Désactivé</span> {% else %}
+                                                    <span class="label label-success arrowed-in arrowed-in-right">Actif</span>{% endif %}
+                                                </td>
+                                            {% elseif col == "nomentreprise" %}
+                                                <td>{% if r.nomEntreprise is defined and r.nomEntreprise is not null %}{{ r.nomEntreprise }}{% else %} N/A{% endif %}</td>
+                                            {% elseif col == "email" %}
+                                                <td>{{ r.email }}</td>
+                                            {% elseif col == "birthday" %}
+                                                <td>{{ r.dateNaissance|date('d/m/Y') }}</td>
+                                            {% elseif col == "telmobile" %}
+                                                <td>{{ r.telephoneMobile }}</td>
+                                            {% elseif col == "telfixe" %}
+                                                <td>{{ r.telephoneFixe }}</td>
+                                            {% elseif col == "cat" %}
+                                                <td><ul>
+                                                        {% for cat in r.categories %}
+                                                            <li id="id_categorie_{{cat.id}}">{{ cat.name }}</li>
+                                                            {% endfor %}
+                                                    </ul></td>
+                                                {% elseif col == "adresse" %}
+                                                <td>{{ r.adresse3 }}</td>
+                                            {% elseif col == "ville" %}
+
+                                                <td>{{ r.isoville }}</td>
+                                            {% elseif col == "pays" %}
+                                                <td>{{ r.isopays|getcountryname }}</td>
+                                                {#{ r.isopays|getcountryname }#}
+                                            {% elseif col == "zipcode" %}
+                                                <td>{{ r.zipcode }}</td>
+                                            {% elseif col == "createdat" %}
+                                                <td>{{ r.createdAt|date('d/m/Y') }}</td>
+                                            {% endif %}
+                                        {% endfor %}
+
+
+
+
+
+                                        <td><a href="{{ path('intersa_donateur_gestion',{'id':r.id}) }}" class="btn btn-default btn-xs"><span
+                                                    class="glyphicon glyphicon-wrench"></span>&nbsp; Gestion</a></td>
+
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+                    <center>
+                        {% if last_page > 1 %}
+                            {% set state = '' %}
+                            <ul class="pagination pull-center">
+                                {% if result2.hasPreviousPage %}
+                                    {% set state = 'paginate_button first' %}
+                                    <li class="{{ state }}">
+                                        <a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ result2.getCurrentPage() -1 }}" style="cursor: pointer">&laquo;&nbsp;{{ 'Précédent'|trans }}</a>
+
+                                    </li>
+                                {% else %}
+                                    <li class="disabled">
+                                        <span>&laquo;&nbsp;{{ 'Précédent'|trans }}</span>
+                                    </li>
+                                {% endif %}
+                                <!--li><a href="{#{ path('elastic_donateur') }}?{{ params }}&page={{ previous_page }#}">&laquo;</a>
+                                </li-->
+                                {% for page in 1..last_page %}
+                                    {% if page >= current_page-4 and page <= current_page+4 %}
+                                        {% if   page == current_page-4 or page == current_page+4 %}
+                                            {% if   page == current_page-4 %}
+                                                <li><a href="{{ path('elastic_donateur') }}?{{ params }}&page=1">1</a></li>
+                                                <li class="disabled"><a href="#">...</a></li>
+                                                {% else %}
+                                                <li class="disabled"><a href="#">...</a></li>
+                                                <li>
+                                                    <a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ last_page }}">{{ last_page }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% else %}
+                                            {% if page == current_page %}
+                                                <li class="active"><a href="#">{{ page }}</a></li>
+                                                {% else %}
+                                                <li>
+                                                    <a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ page }}">{{ page }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% set state = '' %}
+                                {% if result2.hasNextPage %}
+                                    <li class="{{ state }}" ><a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ result2.getCurrentPage() +1}}" style="cursor: pointer">{{ 'Suivant'|trans }}&nbsp;&raquo;</a></li>
+                                    {% else %}
+                                    <li class="disabled">
+                                        <span>&laquo;&nbsp;{{ 'Suivant'|trans }}</span>
+                                    </li>
+                                {% endif %}
+                                <!--li><a href="{#{ path('elastic_donateur') }}?{{ params }}&page={{ next_page }#}">&raquo;</a></li-->
+                            </ul>
+                        {% endif %}
+                    </center>
+
+                </div>
+            </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="addRecherche" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Ajouter cette recherche aux favoris</h4>
+                </div>
+                <form action="{{ path('intersa_donateur_favoris_add', {'section': 'donateurs'}) }}" method="POST">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class=" control-label">Titre de la recherche</label>
+                                <input class="form-control" name="title" required="required"/>
+                                <br/>
+                                <label class=" control-label">Description de la recherche</label>
+                                <textarea name="description" class="form-control"></textarea>
+                                <input id="url" class="form-control" name="url" required="required" type="hidden"
+                                       value="{{ params }}" readonly="readonly"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Sauvegarder la recherche</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!------------------------ Start POPUP Sauvgarde Critere Recherche -------------------------------------------->
+    <div class="modal fade" id="addSauvgardeCritere" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Ajouter cette selection</h4>
+                </div>
+                <form action="{{ path('intersa_critere_recherche_add', {'section': 'donateurs'}) }}" method="POST">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class=" control-label">Titre de la selection</label>
+                                <input class="form-control" name="title" required="required"/>
+                                <br/>
+                                <label class=" control-label">Description de la selection</label>
+                                <textarea name="description" class="form-control"></textarea>
+                                <input id="url" class="form-control" name="url" required="required" type="hidden"
+                                       value="{{ params }}" readonly="readonly"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Sauvegarder</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--------------------------------- End POPUP Sauvgarde Critere Recherche --------------------------------------->
+
+
+    <!------------------------ Start POPUP Modification en Masse -------------------------------------------->
+    <div class="modal fade" id="addpopup-modification_masse" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Modification en Masse</h4>
+                </div>
+                <form action="" method="GET">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class=" control-label" style="font-size: 20px">voulez-vous vraiment  &nbsp&nbsp  exécuter cette tache ??</label>
+                                <br/>
+                                <label class=" control-label"> </label>
+                                <br/>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                        <button id="valider_modif_masse_popup" type="button" class="btn btn-primary">Valider</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--------------------------------- End POPUP Modification en Masse --------------------------------------->
+
+
+
+
+    <div class="modal fade" id="listRecherche" tabindex="-1" role="dialog" aria-labelledby="listRecherche"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="listRechercheLabel">Liste des favoris</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-hover">
+                                <thead>
+                                <th>Informations sur la recherche</th>
+                                <th>Actions</th>
+                                </thead>
+                                <tbody>
+                                    {% for f in favoris %}
+                                        <tr>
+                                            <td>{{ f.title }}<br/><span
+                                                    style="font-size: 10px;">{{ f.description }}</span></td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-xs btn-default dropdown-toggle"
+                                                            data-toggle="dropdown" aria-expanded="false">
+                                                        Actions <span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu" role="menu">
+                                                        <li><a href="{{ path('elastic_donateur') }}?{{ f.url }}"
+                                                               target="_blank"><i class="fa fa-search"></i> Lancer la
+                                                                recherche</a></li>
+                                                        <li>
+                                                            <a href="{{ path('intersa_donateur_favoris_delete', {'id': f.id}) }}"><i
+                                                                    class="fa fa-trash-o"></i> Supprimer la
+                                                                recherche</a></li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts '../app/Resources/Public/js/jquery-ui/jquery-ui.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script>
+
+        function flipsort(id) {
+            var curcn = $('#sort_' + id).attr('class');
+            if (curcn === 'fa fa-lg fa-sort') {
+                console.log('here');
+                $('#sort_' + id).removeClass(curcn);
+                $('#sort_' + id).addClass("fa fa-lg fa-sort-asc");
+                var str = "{{ path('elastic_donateur') }}?{{ params }}&sortelement=" + id + "&sortdirection=asc";
+                var div = document.createElement('div');
+                div.innerHTML = str
+                var decoded = div.firstChild.nodeValue;
+                window.location.href = decoded;
+
+            }
+            if (curcn === 'fa fa-lg fa-sort-asc') {
+                $('#sort_' + id).removeClass(curcn);
+                $('#sort_' + id).addClass('fa fa-lg fa-sort-desc');
+                var str = "{{ path('elastic_donateur') }}?{{ params }}&sortelement=" + id + "&sortdirection=desc";
+                var div = document.createElement('div');
+                div.innerHTML = str
+                var decoded = div.firstChild.nodeValue;
+                window.location.href = decoded;
+            }
+            if (curcn === 'fa fa-lg fa-sort-desc') {
+                $('#sort_' + id).removeClass(curcn);
+                $('#sort_' + id).addClass('fa fa-lg fa-sort-asc');
+                var str = "{{ path('elastic_donateur') }}?{{ params }}&sortelement=" + id + "&sortdirection=asc";
+                var div = document.createElement('div');
+                div.innerHTML = str
+                var decoded = div.firstChild.nodeValue;
+                window.location.href = decoded;
+            }
+
+        }
+
+
+
+        $(document).ready(function () {
+
+            if ($('input[type=radio][name=withcat]:checked').val() == 'true') {
+                $('#fulldon_donateurbundle_donateursearchtype_categories').prop('disabled', false);
+            } else if ($('input[type=radio][name=withcat]:checked').val() == 'false') {
+                $('#fulldon_donateurbundle_donateursearchtype_categories').attr('disabled', 'disabled');
+            }
+            $('input[type=radio][name=withcat]').change(function () {
+                if (this.value == 'true') {
+                    $('#fulldon_donateurbundle_donateursearchtype_categories').prop('disabled', false);
+                } else if (this.value == 'false') {
+                    $('#fulldon_donateurbundle_donateursearchtype_categories').attr('disabled', 'disabled');
+                }
+            });
+
+        });
+        $(document).ready(function () {
+            if ($('input[type=radio][name=withemail]:checked').val() == 'true') {
+                $('#fulldon_donateurbundle_donateursearchtype_email').prop('disabled', false);
+            } else if ($('input[type=radio][name=withemail]:checked').val() == 'false') {
+                $('#fulldon_donateurbundle_donateursearchtype_email').attr('disabled', 'disabled');
+            }
+            $('input[type=radio][name=withemail]').change(function () {
+                if (this.value == 'true') {
+                    $('#fulldon_donateurbundle_donateursearchtype_email').prop('disabled', false);
+                } else if (this.value == 'false') {
+                    $('#fulldon_donateurbundle_donateursearchtype_email').attr('disabled', 'disabled');
+                }
+            });
+        });
+
+
+        function validateEmail(email) {
+            var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(email);
+        }
+
+
+
+        function validate() {
+
+            var email = $("#fulldon_donateurbundle_donateursearchtype_email").val();
+            if (validateEmail(email)) {
+                $("#div_message_error_mail").css('display', 'block');
+                $("#div_message_error_mail").css('background-color', '#f2dede');
+                $("#div_message_error_mail").css('border-color', '#ebcccc');
+                //$("#div_message_error_mail").css('color', '#a94442');
+                $("#div_message_error_mail").css('color', 'green');
+                $("#div_message_error_mail").html('Email valid');
+            } else {
+                $("#div_message_error_mail").css('display', 'block');
+                $("#div_message_error_mail").css('background-color', '#f2dede');
+                $("#div_message_error_mail").css('border-color', '#ebcccc');
+                //$("#div_message_error_mail").css('color', '#a94442');
+                $("#div_message_error_mail").css('color', 'red');
+                $("#div_message_error_mail").html('Vous devez saisir un email valid');
+            }
+            return false;
+        }
+
+        $("#fulldon_donateurbundle_donateursearchtype_email").bind("blur", validate);
+        //$("#fulldon_donateurbundle_donateursearchtype_email").bind("click", validate);
+
+
+
+        $('#fulldon_donateurbundle_dontype_abonnement_actif').on('click', function () {
+            if ($('#fulldon_donateurbundle_dontype_abonnement_actif').is(':checked')) {
+                $('#abo_date').show();
+            } else {
+                $('#abo_date').hide();
+            }
+        });
+        $(document).ready(function () {
+
+            $.getJSON("/villes/id/" + $("#fulldon_donateurbundle_donateursearchtype_pays").val()).done(function (vj) {
+                var options = '';
+                for (var i = 0; i < vj.length; i++) {
+                    options += '<option value="' + vj[i].id + '">' + vj[i].name + '</option>';
+                }
+                $("#ville").html(options);
+            });
+        });
+        $("#fulldon_donateurbundle_donateursearchtype_pays").on('change', function () {
+            $.getJSON("/villes/id/" + $(this).val()).done(function (vj) {
+                var options = '';
+                for (var i = 0; i < vj.length; i++) {
+                    options += '<option value="' + vj[i].id + '">' + vj[i].name + '</option>';
+                }
+                $("#ville").html(options);
+            });
+        });
+        $(document).ready(function () {
+
+            $(function () {
+                $("#sortable1, #sortable2").sortable({
+                    connectWith: ".connectedSortable",
+                    update: function () {
+                        var order = $('#sortable2').sortable('serialize');
+                        var res = order.split("&");
+                        for (var i in res) {
+                            var formatid = res[i];
+                            var myid = formatid.substring(7, formatid.length);
+                            $('#list_' + myid).removeClass('ui-state-default');
+                            $('#list_' + myid).addClass('ui-state-highlight');
+                        }
+                        $('#columns').val(order);
+                        var orderdisable = $('#sortable1').sortable('serialize');
+                        var res = orderdisable.split("&");
+                        for (var i in res) {
+                            var formatid = res[i];
+                            var myid = formatid.substring(7, formatid.length);
+                            $('#list_' + myid).addClass('ui-state-default');
+                            $('#list_' + myid).removeClass('ui-state-highlight');
+                        }
+                    }
+
+                }).disableSelection();
+            });
+        });
+
+        $("#valider_modif_masse_popup").click(function () {
+            var arr = [];
+            var ArrycategorieId = [];
+            $('#liste_search_donateur tbody tr').each(function () {
+                var search_id_dona = $(this).attr("id");
+                var spli_id = search_id_dona.split('id_donateur_');
+                arr.push(spli_id[1]);
+
+            });
+
+
+            $('#liste_search_donateur tbody tr td ul li').each(function () {
+                var search_id_dona = $(this).attr("id");
+                var spli_id = search_id_dona.split('id_categorie_');
+                // alert(spli_id[1]);
+                ArrycategorieId.push(spli_id[1]);
+
+            });
+
+
+
+
+            var CodePostale = $("#codepostale_dropdawn option:selected").text();
+            var TelFixe = $("#telfixe_dropdawn option:selected").text();
+            var Entreprise = $("#entreprise_dropdawn option:selected").text();
+            var Status = $("#status_dropdawn option:selected").text();
+            var Adresse = $("#adresse_dropdawn option:selected").text();
+            var CategorieId = $("#categorie_dropdawn option:selected").val();
+            var PaysId = $("#pays_dropdawn option:selected").val();
+            var VilleId = $("#ville_dropdawn option:selected").val();
+
+            var results = {"ligne": [
+                    {
+                        "codepostale": CodePostale,
+                        "telfixe": TelFixe,
+                        "entreprise": Entreprise,
+                        "status": Status,
+                        "adresse": Adresse,
+                        "categorise_id": CategorieId,
+                        "pays_id": PaysId,
+                        "ville_id": VilleId
+                    }], "tab_donateur_id": arr, "tab_oldcategorie_id": ArrycategorieId}
+
+
+            $.ajax({
+                url: "{{ path('modification_masse_donateur') }}", //,
+                type: "POST",
+                data: JSON.stringify(results),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                cache: false,
+                success: function (data)
+                {
+                    console.log(data);
+                    //console.log(data.responseText);
+
+
+                },
+                complete: function (com) {
+                    //console.log(com.responseText);
+                    console.log(com);
+                    //alert(com.responseText);
+
+
+
+                },
+                error: function (err) {
+                    console.log(err);
+                    //alert('err');
+                }
+            });
+            $("#addpopup-modification_masse").css('display', 'none');
+            window.location.reload();
+
+        });
+
+
+
+
+    </script>
+{% endblock %}
+
+-------------------------------------------------------
+
+    public function modificationMasseAction(Request $request) {
+
+        $em = $this->getDoctrine()->getManager();
+        $json = $this->getRequest()->getContent();
+        $data = json_decode($json, true);
+
+        $codepostale = $data["ligne"][0]["codepostale"];
+        $entreprise = $data["ligne"][0]["entreprise"];
+        $status = $data["ligne"][0]["status"];
+        $telfixe = $data["ligne"][0]["telfixe"]; //adresse
+        $adresse = $data["ligne"][0]["adresse"];
+        $VilleId = $data["ligne"][0]["ville_id"];
+
+        $CategoriId = $data["ligne"][0]["categorise_id"];
+        $PaysId = $data["ligne"][0]["pays_id"];
+        $array_donateur_id = $data['tab_donateur_id'];
+        $oldCategorieId = ""; //$data['tab_oldcategorie_id'];
+        $repDonateur = $em->getRepository('FulldonDonateurBundle:Donateur');
+        $Categories = NULL;
+        $OldCategoriesDelete = NULL;
+        $Pays = NULL;
+        $Ville = NULL;
+        $Donateur = NULL;
+        $IsoVille = NULL;
+        $IsoPays = NULL;
+        $Categorie_inDonateur = NULL;
+        $array_Old_Categorie = NULL;
+      
+
+    
+
+
+
+
+        if ($CategoriId != "") {
+            $Categories = $em->getRepository('FulldonDonateurBundle:CategoryDonateur')->find($CategoriId);
+        }
+
+        if ($PaysId != "") {
+            $Pays = $em->getRepository('FulldonDonateurBundle:Pays')->find($PaysId); //46 france
+//             $Pays = $em->getRepository('FulldonDonateurBundle:Pays')->findOneBy(array('id' => $PaysId));
+            if ($Pays) {
+                $IsoPays = $Pays->getCode();
+            }
+        }
+
+
+
+        if ($VilleId != "") {
+            $Ville = $em->getRepository('FulldonDonateurBundle:Ville')->find($VilleId);
+            if ($Ville) {
+                $IsoVille = $Ville->getName();
+            }
+        }
+
+        foreach ($array_donateur_id as $key => $value) {
+            $Donateur = $repDonateur->find($value);
+            if ($Donateur) {
+
+
+
+
+                if (count($data['tab_oldcategorie_id']) == 1) {
+                    $oldCategorieId = $data['tab_oldcategorie_id'][0];
+                    if ($oldCategorieId != "") {
+                        $OldCategoriesDelete = $em->getRepository('FulldonDonateurBundle:CategoryDonateur')->find($oldCategorieId);
+                        if ($OldCategoriesDelete) {
+                            $Donateur->removeCategory($OldCategoriesDelete);
+                        }
+                    }
+                } elseif (count($data['tab_oldcategorie_id']) > 1) {
+
+                    $array_Old_Categorie = $data['tab_oldcategorie_id'];
+
+                    foreach ($array_Old_Categorie as $key => $value) {
+//                        $response = new JsonResponse(array("mytab" => var_dump($value)));
+//                        return $response;
+                        $OldCategoriesDelete = $em->getRepository('FulldonDonateurBundle:CategoryDonateur')->find($value);
+                        if ($OldCategoriesDelete) {
+                            $Donateur->removeCategory($OldCategoriesDelete);
+                        }
+                    }
+                }
+
+                if ($codepostale != "") {
+                    $Donateur->setZipcode($codepostale);
+                }
+                if ($entreprise != "") {
+                    $Donateur->setNomEntreprise($entreprise);
+                }
+                if ($status != "") {
+                    //$Donateur->setRemoved($status);
+                    if ($status == "Actif") {
+                        $Donateur->setRemoved(false);
+                    }
+                    if ($status == "Désactivé") {
+                        $Donateur->setRemoved(true);
+                    }
+                }
+                if ($telfixe != "") {
+                    $Donateur->setTelephoneFixe($telfixe);
+                }
+                if ($adresse != "") {
+                    $Donateur->setAdresse3($adresse);
+                }
+
+                if ($IsoVille != NULL) {
+                    $Donateur->setIsoville($IsoVille);
+                }
+
+                if ($IsoPays != NULL) {
+                    $Donateur->setIsopays($IsoPays);
+                }
+                if ($Pays != NULL) {
+                    $Donateur->setPays($Pays);
+                }
+                if ($Ville != NULL) {
+
+                    $Donateur->setVille($Ville);
+
+//                    if ($Pays != NULL) {
+//                        $Ville->setPays($Pays);
+//                        $em->persist($Ville);
+//                    }
+                }
+
+                if ($Categories) {
+                    $Donateur->addCategory($Categories);
+                } else {
+                    if (count($data['tab_oldcategorie_id']) == 1) {
+                        $oldCategorieId = $data['tab_oldcategorie_id'][0];
+                        if ($oldCategorieId != "") {
+                            $OldCategoriesDelete = $em->getRepository('FulldonDonateurBundle:CategoryDonateur')->find($oldCategorieId);
+                            if ($OldCategoriesDelete) {
+                                $Donateur->addCategory($OldCategoriesDelete);
+                            }
+                        }
+                    } elseif (count($data['tab_oldcategorie_id']) > 1) {
+
+                        $array_Old_Categorie = $data['tab_oldcategorie_id'];
+                        foreach ($array_Old_Categorie as $key => $value) {
+                            $OldCategoriesDelete = $em->getRepository('FulldonDonateurBundle:CategoryDonateur')->find($value);
+                            if ($OldCategoriesDelete) {
+                                $Donateur->addCategory($OldCategoriesDelete);
+                            }
+                        }
+                    }
+                }
+
+                $em->persist($Donateur);
+            }
+        }// end foreach
+        $em->flush();
+
+        // 
+
+
+        $response = new JsonResponse(array("mytab" => "modification en masse avec succée")); //"modification en masse avec succée"
+        return $response;
+    }

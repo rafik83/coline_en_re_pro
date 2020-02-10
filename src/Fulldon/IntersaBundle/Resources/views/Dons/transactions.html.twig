@@ -1,0 +1,94 @@
+{% extends "FulldonDonateurBundle:Donateur:coque_donateur.html.twig" %}
+    {% block coque_intersa %}
+
+        <div class="page-content" >
+
+            <div class="col-md-12 pull-left">
+                <h3 style="margin-top:5px;" class="couleur-donateur" >Historique des donation : </h3>
+                <hr />
+                {% for flashMessage in app.session.flashbag.get('info') %}
+                    <div class="alert alert-success">
+                        {{ flashMessage }}
+                    </div>
+                {% endfor %}
+                    <div class="pagination_desc"><strong>{{ total_dons }}</strong> dons dans l'historique
+                        {% if last_page > 1 %}
+                            - page <strong>{{ current_page }}/{{ last_page }}</strong>
+                            <br />
+                        {% endif %}
+                    </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Montant (en €)</th>
+                        <th>Etat</th>
+                        <th>Abonnement</th>
+                        <th>Mode de paiement</th>
+                        <th>Cause</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for don in dons %}
+                        <tr {% if don.transaction.statut.code is defined %}
+                                {% if don.transaction.statut.code == "attente" %}class="warning"{% endif %}
+                                {% if don.transaction.statut.code == "traitement_paiement" %}class="alert-info"{% endif %}
+                                {% if don.transaction.statut.code == "paiement_valide" %}class="success"{% endif %}
+                                {% if don.transaction.statut.code == "paiement_annule" %}class="danger"{% endif %}
+                            {% else %}
+                                class="danger"
+                            {% endif %}
+                                >
+                            <td>{{ don.id }}</td>
+                            <td>{{ don.createdAt | date('Y-m-d H:i:s') }}</td>
+                            <td>{{ don.montant }}</td>
+                            <td>{% if don.transaction.statut.libelle is defined %}{{ don.transaction.statut.libelle  }}{% else %}Abondonné{% endif %}</td>
+                            <td>
+                                {% if don.ispa %}
+                                Don régulier : {% if don.abonnement.actif == 0 %}Desactivé{% else %}Activé {% endif %}
+                                {% else %}
+                                    Don ponctuel
+                                {% endif %}
+                            </td>
+
+                            <td>{{ don.modePaiement.libelle }}</td>
+                            <td>{{ don.cause.libelle }}</td>
+                            <td><a href="{{ path('donateur_don_view', {'id':don.id}) }}"><span class="glyphicon glyphicon-eye-open"></span>  Voir</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <center>
+        {% if last_page > 1 %}
+            <ul class="pagination pull-center">
+                <li><a href="{{ path('donateur_history', { 'page': previous_page }) }}">&laquo;</a></li>
+                {% for page in 1..last_page %}
+                    {% if page == current_page %}
+                    <li class="active"><a href="#">{{ page }}</a></li>
+                    {% else %}
+                    <li><a href="{{ path('donateur_history', { 'page': page }) }}">{{ page }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                <li><a href="{{ path('donateur_history', { 'page': next_page }) }}">&raquo;</a></li>
+            </ul>
+            {% endif %}
+        </center>
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+
+            $('#fulldon_donateurbundle_dontype_abonnement_actif').on('click', function(){
+                if($('#fulldon_donateurbundle_dontype_abonnement_actif').is(':checked')) {
+                    $('#abo_date').show();
+                } else {
+                    $('#abo_date').hide();
+                }
+            });
+        </script>
+    {% endblock %}

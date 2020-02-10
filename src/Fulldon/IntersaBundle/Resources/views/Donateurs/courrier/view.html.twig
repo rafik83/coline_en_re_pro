@@ -1,0 +1,55 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+<div class="breadcrumbs" id="breadcrumbs">
+    <ol class="breadcrumb">
+        <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+        <li><a href="{{ path('intersa_donateur') }}">Gestion des donateurs</a></li>
+        <li ><a href="{{ path('intersa_donateur_gestion', {'id':traitement.donateur.id,'cumul':cumul,'date':date}) }}">Gestion du donateur #{{ traitement.donateur.id }}</a></li>
+        <li ><a href="{{ path('intersa_donateur_history_courrier', {'id':traitement.donateur.id, 'page':1}) }}">Historique des courriers</a></li>
+        <li class="active">Contenu du courrier #{{ traitement.id }}</li>
+    </ol>
+    </div>
+        <div class="page-content" >
+
+            <div class="col-md-12 pull-left">
+
+                <h3 style="margin-top:5px;" class="couleur-intersa" >Contenu du courrier #{{ traitement.id }} : </h3>
+                <hr />
+                {% for flashMessage in app.session.flashbag.get('info') %}
+                    <div class="alert alert-success">
+                        {{ flashMessage }}
+                    </div>
+                {% endfor %}
+
+                <ul class="nav nav-tabs">
+                    {% for key,img in courrier %}
+                        <li {% if key == 0 %} class="active" {% endif %}><a href="#image{{ key }}" data-toggle="tab">Document #{{ key+1 }}</a></li>
+                    {% endfor %}
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    {% for key,img in courrier %}
+                        <div class="tab-pane {% if key == 0 %} active {% endif %}" id="image{{ key }}">
+                            <img src="{{ path('assets_img',{'token': img.nom}) }}" style="width: 100%;" />
+                        </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+
+
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+
+            $('#fulldon_donateurbundle_dontype_abonnement_actif').on('click', function(){
+                if($('#fulldon_donateurbundle_dontype_abonnement_actif').is(':checked')) {
+                    $('#abo_date').show();
+                } else {
+                    $('#abo_date').hide();
+                }
+            });
+        </script>
+    {% endblock %}

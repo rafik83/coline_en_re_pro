@@ -1,0 +1,120 @@
+ $mod2 = '?fulldon_donateurbundle_donateursearchtype[refDonateur]=11762';
+        $mod = array(0 => $mod2);
+//         var_dump($mod);
+//        die;
+        $url = $this->modify_url($mod);
+
+        $_SERVER['REQUEST_URI'] = $url ;
+        var_dump($request);
+        die;
+
+var_dump( $_SERVER['REQUEST_URI']);
+        var_dump($request);
+        die('REQUEST_URI');
+        $tt = "fulldon_donateurbundle_donateursearchtype[refDonateur]=11762&fulldon_donateurbundle_donateursearchtype[civilite]=&fulldon_donateurbundle_donateursearchtype[nom]=&fulldon_donateurbundle_donateursearchtype[prenom]=&fulldon_donateurbundle_donateursearchtype[dateNaissance]=&fulldon_donateurbundle_donateursearchtype[nomEntreprise]=&fulldon_donateurbundle_donateursearchtype[email]=&pnd=&fulldon_donateurbundle_donateursearchtype[isopays]=FR&fulldon_donateurbundle_donateursearchtype[zipcode]=&fulldon_donateurbundle_donateursearchtype[isoville]=&fulldon_donateurbundle_donateursearchtype[adresse3]=&fulldon_donateurbundle_donateursearchtype[adresse1]=&fulldon_donateurbundle_donateursearchtype[adresse2]=&fulldon_donateurbundle_donateursearchtype[adresse4]=&columns=list[]%3Dnumdonateur%26list[]%3Dnom%26list[]%3Dprenom%26list[]%3Dnomentreprise%26list[]%3Dstatut&fulldon_donateurbundle_donateursearchtype[_token]=V_Iq8wEblnkDHObY8_ZCQskqLeNADtJ8nsZjbYxBwo4";
+        $request = Request::create($tt);
+        $REQUEST_URI = $request->server->get('REQUEST_URI'); 
+        $resultform = $request->server->get('REQUEST_URI'); //$request->get('fulldon_donateurbundle_donateursearchtype');
+       
+//        $QUERY_STRING = $request->server->get('QUERY_STRING');
+        var_dump($resultform);
+        die;
+        $query = parse_url($QUERY_STRING, PHP_URL_QUERY);
+
+        $url = 'http://colinepromai.dev/app_dev.php/intersa/donateurs';
+        $url2 = 'http://colinepromai.dev/app_dev.php/intersa/donateurs';
+        $url3 = '?fulldon_donateurbundle_donateursearchtype[refDonateur]=11762';
+        if ($query == null) {
+
+            //$url .= '&fulldon_donateurbundle_donateursearchtype[refDonateur]=11762'; lorque query est not  null
+
+            $url .= '?fulldon_donateurbundle_donateursearchtype[refDonateur]=11762';
+
+            $QUERY_STRING = $url;
+
+//          $gg =   http_build_query(array_merge($request, array('?fulldon_donateurbundle_donateursearchtype[refDonateur]' => '11762')));
+//            $queryString = http_build_query($url2, array('?fulldon_donateurbundle_donateursearchtype[refDonateur]' => '11762'));
+//            $queryString = http_build_query($url2, $url3);
+//            var_dump($queryString);
+            var_dump($request);
+
+            die('$queryString');
+        }
+        var_dump($query);
+        die;
+        $resultform = $request->get('fulldon_donateurbundle_donateursearchtype');
+        var_dump($resultform);
+        die('$resultform');
+
+
+ $params = $_GET;
+        unset($params["test"]);
+        $params["test"] = "testvalue";
+        $new_query_string = http_build_query($params);
+        $_SERVER['REQUEST_URI'] .='?fulldon_donateurbundle_donateursearchtype[refDonateur]=11762';
+        $tt="fulldon_donateurbundle_donateursearchtype[refDonateur]=11762";
+        if (empty($_GET['fulldon_donateurbundle_donateursearchtype[refDonateur]'])) {
+            header('Location: ' . $_SERVER['REQUEST_URI'] . '?fulldon_donateurbundle_donateursearchtype[refDonateur]=11762');
+            exit;
+        }
+
+---------------------------------------------------------
+
+{% if criterecherche is defined and criterecherche is not null %}
+
+
+        {% if last_page > 1 %}
+            {% set state = '' %}
+            <ul class="pagination pull-center">
+                {% if result2.hasPreviousPage %}
+                    {% set state = 'paginate_button first' %}
+                    <li class="{{ state }}">
+                        <a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ result2.getCurrentPage() -1 }}" style="cursor: pointer">&laquo;&nbsp;{{ 'Précédent'|trans }}</a>
+
+                    </li>
+                {% else %}
+                    <li class="disabled">
+                        <span>&laquo;&nbsp;{{ 'Précédent'|trans }}</span>
+                    </li>
+                {% endif %}
+                <!--li><a href="{#{ path('elastic_donateur') }}?{{ params }}&page={{ previous_page }#}">&laquo;</a>
+                </li-->
+                {% for page in 1..last_page %}
+                    {% if page >= current_page-4 and page <= current_page+4 %}
+                        {% if   page == current_page-4 or page == current_page+4 %}
+                            {% if   page == current_page-4 %}
+                                <li><a href="{{ path('elastic_donateur') }}?{{ params }}&page=1">1</a></li>
+                                <li class="disabled"><a href="#">...</a></li>
+                                {% else %}
+                                <li class="disabled"><a href="#">...</a></li>
+                                <li>
+                                    <a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ last_page }}">{{ last_page }}</a>
+                                </li>
+                            {% endif %}
+                        {% else %}
+                            {% if page == current_page %}
+                                <li class="active"><a href="#">{{ page }}</a></li>
+                                {% else %}
+                                <li>
+                                    <a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ page }}">{{ page }}</a>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                {% set state = '' %}
+                {% if result2.hasNextPage %}
+                    <li class="{{ state }}" ><a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ result2.getCurrentPage() +1}}" style="cursor: pointer">{{ 'Suivant'|trans }}&nbsp;&raquo;</a></li>
+                    {% else %}
+                    <li class="disabled">
+                        <span>&laquo;&nbsp;{{ 'Suivant'|trans }}</span>
+                    </li>
+                {% endif %}
+                <!--li><a href="{#{ path('elastic_donateur') }}?{{ params }}&page={{ next_page }#}">&raquo;</a></li-->
+            </ul>
+        {% endif %}
+    {% endif %}
+
+
+------------------------------------------
+

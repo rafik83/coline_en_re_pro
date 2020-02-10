@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        .couleur-titre {
+            color:#d58512;
+        }
+        th {
+        }
+        .sub_total {
+            background-color: #1AC5EC;
+            font-weight: bold;
+            color:white;
+        }
+        table {
+            border-width:1px;
+            border-style:solid;
+            border-color:black;
+            width:900px;;
+            text-align:center;
+            table-layout : fixed;
+        }
+        td {
+            border-width:1px;
+            border-style:solid;
+            border-color: #838383;
+            width:50%;
+        }
+        .verticalTableHeader {
+            text-align:center;
+            white-space:nowrap;
+            g-origin:50% 50%;
+            -webkit-transform: rotate(90deg);
+            -moz-transform: rotate(90deg);
+            -ms-transform: rotate(90deg);
+            -o-transform: rotate(90deg);
+            transform: rotate(90deg);
+
+        }
+        .verticalTableHeader p {
+            margin:0 -100% ;
+            display:inline-block;
+        }
+        .verticalTableHeader p:before{
+            content:'';
+            width:0;
+            padding-top:110%;/* takes width as reference, + 10% for faking some extra padding */
+            display:inline-block;
+            vertical-align:middle;
+        }
+
+    </style>
+</head>
+<body>
+<center>
+<h1 style="margin-top:5px;" class="couleur-intersa" >Facture de production </h1>
+    <hr style="margin:5px 0px 5px 0px;" />
+<b>Date : </b>{{ date_debut|date('d/m/Y H:i:s') }} - {{ date_fin|date('d/m/Y H:i:s') }}
+</center>
+<hr />
+{% set total_new_donateur = 0 %}
+{% set total_dons_ponc = 0 %}
+{% set total_dons_pa = 0 %}
+{% set total_dons_cs = 0 %}
+{% set total_dons_bc = 0 %}
+{% set total_dons_espece = 0 %}
+{% set total_topages = 0 %}
+{% set total_emails = 0 %}
+{% set total_duplicatas = 0 %}
+{% set total_rf = 0 %}
+{% set total_maj_donateur = 0 %}
+{% set total_maj_dons = 0 %}
+
+<div class="row">
+    <div class=" col-md-12">
+        <table class="table table-condensed">
+            <thead>
+            <tr>
+                <th class="verticalTableHeader" width="100"><p>Jour</p></th>
+                <th class="verticalTableHeader" ><p>Nb nouveaux donateurs</p></th>
+                <th class="verticalTableHeader" ><p>Nb des dons ponctuels</p></th>
+                <th class="verticalTableHeader" ><p>Nb des dons prélèvements</p></th>
+                <th class="verticalTableHeader" ><p>Nb des dons CS</p></th>
+                <th class="verticalTableHeader" ><p>Nb des dons BC</p></th>
+                <th class="verticalTableHeader" ><p>Nb des dons espèce</p></th>
+                <th class="verticalTableHeader" ><p>Nb des topages</p> </th>
+                <th class="verticalTableHeader" ><p>Nb des emails </p></th>
+                <th class="verticalTableHeader" ><p>Nb des duplicatas </p></th>
+                <th class="verticalTableHeader" ><p>Nb des Rfs </p></th>
+                <th class="verticalTableHeader" ><p>Nb MAJ donateurs </p></th>
+                <th class="verticalTableHeader"><p>Nb MAJ dons </p></th>
+            </tr>
+            </thead>
+            <tbody id="content">
+            {% for r in data['result'] %}
+                <tr class="">
+                    <td>{{ r.created_at | date('d/m/Y') }}</td>
+                    <td>{{ r.nb_new_donateur|test_val  }}</td>
+                    <td>{{ r.nb_don_ponctuel|test_val  }}</td>
+                    <td>{{ r.nb_don_prelevement|test_val  }}</td>
+                    <td>{{ r.nb_cs|test_val  }}</td>
+                    <td>{{ r.nb_bc|test_val  }}</td>
+                    <td>{{ r.nb_espece|test_val  }}</td>
+                    <td>{{ r.nb_topage|test_val  }}</td>
+                    <td>{{ r.nb_email|test_val  }}</td>
+                    <td>{{ r.nb_duplicata|test_val  }}</td>
+                    <td>{{ r.nb_rf|test_val  }}</td>
+                    <td>{{ r.maj_donateur|test_val  }}</td>
+                    <td>{{ r.maj_don|test_val  }}</td>
+
+                </tr>
+                {% set total_new_donateur = total_new_donateur + r.nb_new_donateur %}
+                {% set total_dons_ponc = total_dons_ponc + r.nb_don_ponctuel %}
+                {% set total_dons_pa = total_dons_pa  + r.nb_don_prelevement %}
+                {% set total_dons_cs = total_dons_cs + r.nb_cs %}
+                {% set total_dons_bc = total_dons_bc + r.nb_bc %}
+                {% set total_dons_espece = total_dons_espece + r.nb_espece %}
+                {% set total_topages = total_topages + r.nb_topage %}
+                {% set total_emails = total_emails + r.nb_email %}
+                {% set total_duplicatas = total_duplicatas + r.nb_duplicata %}
+                {% set total_rf = total_rf + r.nb_rf %}
+                {% set total_maj_donateur = total_maj_donateur + r.maj_donateur %}
+                {% set total_maj_dons = total_maj_dons + r.maj_don %}
+
+            {% endfor %}
+            {# total #}
+            <tr class="label-info" style="font-weight: bold;color:blue;">
+                <td > TOTAL</td>
+                <td>{{ total_new_donateur }}</td>
+                <td>{{ total_dons_ponc }}</td>
+                <td>{{ total_dons_pa }}</td>
+                <td>{{ total_dons_cs }}</td>
+                <td>{{ total_dons_bc }}</td>
+                <td>{{ total_dons_espece }}</td>
+                <td>{{ total_topages }}</td>
+                <td>{{ total_emails }}</td>
+                <td>{{ total_duplicatas }}</td>
+                <td>{{ total_rf }}</td>
+                <td>{{ total_maj_donateur }}</td>
+                <td>{{ total_maj_dons }}</td>
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+{% extends "FulldonDonateurBundle:Donateur:coque_donateur.html.twig" %}
+    {% block coque_donateur %}
+        <div class="row" >
+
+        <div class="col-md-12" >
+        <h1  class="couleur-donateur" >Reglement du don</h1>
+        <hr />
+        <div class="alert alert-info">Afin de finaliser votre don veuillez saisir les coordonnées de paiement:</div>
+        {% for flashMessage in app.session.flashbag.get('info') %}
+            <div class="alert alert-success">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+
+        </div>
+            </div>
+    {% endblock %}
+    {% block javascripts %}
+    {{ parent() }}
+
+{% endblock %}

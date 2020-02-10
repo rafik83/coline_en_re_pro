@@ -1,0 +1,32 @@
+{% extends "FulldonSecurityBundle::layout.html.twig" %}
+{% block body %}
+    <div class="backstretch" style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px; height: 2000px; width: 1903px; z-index: -999999; position: fixed;">
+        <img style="position: absolute; margin: 0px; padding: 0px; border: none; width: 1903px; height: 2000px; max-width: none; z-index: -999999; left: 0px; top: -500px;" src="{{ asset('img/bg_login.jpg') }}">
+    </div>
+    {# Le formulaire, avec URL de soumission vers la route « login_check » comme on l'a vu #}
+    <div class="container console-auth">
+
+        <form class="form-signin console-form-auth" role="form" action="{{ path('login_admin_check') }}" method="post">
+            <div class="logo-access">
+                <img src="{{ asset('img/logo_admin_big.png') }}"  />
+            </div>
+            {# S'il y a une erreur, on l'affiche dans un joli cadre #}
+            {% if error %}
+                <div class="alert alert-danger">{{ error.message|trans({},'messages') }}</div>
+            {% endif %}
+            <div class="input-group">
+                <div class="input-group-addon"><i class="fa fa-user"></i></div>
+            <input type="text" name="_username" class="form-control" placeholder="login" required autofocus>
+                </div>
+                <br />
+                <div class="input-group">
+                    <div class="input-group-addon"><i class="fa fa-lock"></i></div>
+            <input type="password" name="_password" class="form-control" placeholder="Mot de passe" style="margin:0px;" required>
+                    </div>
+
+            <br />
+            <button class="btn btn-lg btn-primary btn-block" type="submit" style="border-radius: 0px !important;" >Connexion</button>
+        </form>
+
+    </div> <!-- /container -->
+{% endblock %}

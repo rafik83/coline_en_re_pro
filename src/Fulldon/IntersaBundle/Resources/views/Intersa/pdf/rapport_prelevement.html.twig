@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+<center>
+    <h1>Rapport des prélèvements</h1>
+    Edition du {{ "now"|date('d/m/Y') }}
+    <hr style="margin:5px 0px 5px 0px;" />
+</center>
+<h2 >Nouveaux prélèvements  :</h2>
+<hr />
+{% if sums['first']['nb'] > 0 %}
+<b>Somme : </b>{{ sums['first']['somme'] }} €<br/>
+<b>Nombre de dons : </b> {{ sums['first']['nb'] }}<br/>
+<h3> Liste des donateurs </h3>
+<ul>
+{% for element in details['dons_f'] %}
+    <li>{{ element[0].nom~' '~element[0].prenom  }} : {{ element[1].montant }} €</li>
+{% endfor %}
+</ul>
+{% else %}
+    Pas de nouveaux prélèvements.
+{% endif %}
+<h2 > prélèvements récurrents :</h2>
+<hr />
+{% if sums['recur']['nb'] > 0 %}
+<b>Somme : </b>{{ sums['recur']['somme'] }} €<br/>
+<b>Nombre de dons : </b> {{ sums['recur']['nb'] }}<br/>
+<h3> Liste des donateurs </h3>
+<ul>
+    {% for element in details['dons_r'] %}
+        <li>{{ element[0].nom~' '~element[0].prenom  }} : {{ element[1].montant }} €</li>
+    {% endfor %}
+</ul>
+{% else %}
+    Pas de prélèvements récurrents.
+{% endif %}
+
+
+</body>
+</html>

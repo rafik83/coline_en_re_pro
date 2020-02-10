@@ -1,0 +1,635 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block stylesheets %}
+        {{ parent() }}
+        <style>
+            label {
+                font-size: 12px !important;
+                font-weight: bold !important;
+                padding: 2px !important;
+                margin: 0 !important;
+            }
+        </style>
+    {% endblock %}
+    {% block coque_intersa %}
+        <div class="breadcrumbs" id="breadcrumbs">
+            <script type="text/javascript">
+                try {
+                    ace.settings.check('breadcrumbs', 'fixed')
+                } catch (e) {
+                }
+            </script>
+            <ol class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li class="active">Gestion des donateurs</li>
+            </ol>
+        </div>
+        <div class="page-content">
+
+        <!-- PAGE CONTENT BEGINS -->
+        <div class="page-header">
+            <h1>
+                Gestion des donateurs
+                <small>
+                    <i class="ace-icon fa fa-angle-double-right"></i>
+                    Recherche avancée
+                </small>
+            </h1>
+        </div>
+        <!-- /.page-header -->
+
+        {% for flashMessage in app.session.flashbag.get('info') %}
+            <div class="alert alert-success">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('warning') %}
+            <div class="alert alert-warning">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('success') %}
+            <div class="alert alert-success">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('erreur') %}
+            <div class="alert alert-danger">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') or is_granted('ROLE_TRIAL') %}
+
+            <a href="{{ path('intersa_donateur_add') }}" class="btn btn-success btn-sm "><span
+                        class="glyphicon glyphicon-plus-sign"></span> Ajouter un donateur </a>
+
+            {% if result is not empty %}
+
+                <!-- Single button -->
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"
+                            aria-expanded="false">
+                        <i class="fa fa-download"></i> Exporter le résultat <i
+                                class="ace-icon fa fa-angle-down icon-on-right"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-success dropdown-menu-right" role="menu">
+                        <li><a href="{{ path('intersa_donateur_export_emarketing') }}?{{ params }}"><i
+                                        class="fa fa-file-archive-o"></i> Export pour emarketing</a></li>
+                        {#<li><a href="#"><i class="fa fa-file-excel-o"></i> Export excel</a></li>#}
+                        {#<li><a href="#"><i class="fa fa-file-pdf-o"></i> Export pdf</a></li>#}
+                    </ul>
+                </div>
+                <div class="btn-group" style="margin-right: 20px;">
+                    <button type="button" class="btn btn-warning dropdown-toggle btn-sm" data-toggle="dropdown"
+                            aria-expanded="false">
+                        <i class="fa fa-star"></i> Gestion des favoris <i
+                                class="ace-icon fa fa-angle-down icon-on-right"></i>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+
+                        <li><a data-toggle="modal" data-target="#addRecherche" href="#"><i class="fa fa-plus"></i>
+                                Ajouter cette recherche aux favoris</a></li>
+                        <li><a data-toggle="modal" data-target="#listRecherche" href="#"><i class="fa fa-list"></i>
+                                Afficher les recherches favorites</a></li>
+                        {#<li><a href="#"><i class="fa fa-file-excel-o"></i> Export excel</a></li>#}
+                        {#<li><a href="#"><i class="fa fa-file-pdf-o"></i> Export pdf</a></li>#}
+
+                    </ul>
+                </div>
+            {% else %}
+
+                <div class="btn-group " style="margin-right: 20px;">
+                    <button type="button" class="btn btn-warning dropdown-toggle btn-sm" data-toggle="dropdown"
+                            aria-expanded="false">
+                        <i class="fa fa-star"></i> Gestion des favoris <i
+                                class="ace-icon fa fa-angle-down icon-on-right"></i>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a data-toggle="modal" data-target="#listRecherche" href="#"><i class="fa fa-list"></i>
+                                Afficher les recherches favorites</a></li>
+                        {#<li><a href="#"><i class="fa fa-file-excel-o"></i> Export excel</a></li>#}
+                        {#<li><a href="#"><i class="fa fa-file-pdf-o"></i> Export pdf</a></li>#}
+                    </ul>
+                </div>
+
+            {% endif %}
+        {% endif %}
+        <hr/>
+        <div class="pull-right">
+            {% if last_page >= 1 %}
+                <div class="pagination_desc"><strong>{{ total_donateur }}</strong> Donateur(s)
+                </div>
+            {% endif %}
+        </div>
+        <ul class="nav nav-tabs">
+            <li {% if result is  empty %}class="active"{% endif %} ><a href="#recherche" data-toggle="tab">Recherche</a>
+            </li>
+            <li {% if result is not empty %}class="active"{% endif %}><a href="#result" data-toggle="tab">Resultat de
+                    recherche</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+        <div class="tab-pane {% if result is  empty %}active{% endif %}" id="recherche">
+        <br/>
+
+        <form action="{{ path('elastic_donateur') }}" method="get" class="form-group"
+              onsubmit="show_result()" {{ form_enctype(form) }}>
+        <div class="widget-toolbox padding-8 clearfix">
+
+
+            <button class="btn btn-xs btn-success pull-right" type="submit">
+                <span class="bigger-110">Rechercher</span>
+
+                <i class="ace-icon fa fa-search icon-on-right"></i>
+            </button>
+        </div>
+        <div class="row">
+        <div class="col-xs-12 col-sm-4">
+            <div class="widget-box">
+                <div class="widget-header">
+                    <h4 class="widget-title title-plus">Informations générales</h4>
+
+
+                </div>
+
+                <div class="widget-body">
+                    <div class="widget-main">
+                        <div>
+                            <label for="inputEmail3"
+                                   class="control-label">{{ form_label(form.refDonateur, "N° donateur") }}</label>
+
+                            <div>
+                                {{ form_widget(form.refDonateur, {'attr': {'class': 'task_field form-control', 'id':'nom', 'placeholder':'Identifiant' } }) }}
+                            </div>
+                        </div>
+                        <div>
+                            <label for="inputEmail3"
+                                   class=" control-label">{{ form_label(form.civilite, "Civilité") }}</label>
+
+                            <div>
+                                {# Affichage des erreurs pour ce champ précis. #}
+                                {{ form_errors(form.civilite) }}
+
+                                {# Génération de l'input. #}
+                                {{ form_widget(form.civilite, {'attr': {'class': 'task_field form-control input-sm', 'id':'civilite'} }) }}
+                            </div>
+                        </div>
+                        <div>
+                            <label for="inputEmail3" class=" control-label">{{ form_label(form.nom, "Nom") }} </label>
+
+                            <div>
+                                {% if form.nom.vars.errors|length %}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="control-label"
+                                               for="inputError"> {{ form_errors(form.nom) }}</label>
+                                        {{ form_widget(form.nom, {'attr': {'class': 'task_field form-control input-sm', 'id':'inputError', 'placeholder':'Nom' } }) }}
+                                    </div>
+                                {% else %}
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.nom, {'attr': {'class': 'task_field form-control input-sm', 'id':'nom', 'placeholder':'Nom' } }) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div>
+                            <label for="inputEmail3"
+                                   class=" control-label">{{ form_label(form.prenom, "Prénom") }}</label>
+
+                            <div>
+                                {% if form.prenom.vars.errors|length %}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="control-label"
+                                               for="inputError"> {{ form_errors(form.prenom) }}</label>
+                                        {{ form_widget(form.prenom, {'attr': {'class': 'task_field form-control input-sm', 'id':'prenom', 'placeholder':'Prénom' } }) }}
+                                    </div>
+                                {% else %}
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.prenom, {'attr': {'class': 'task_field form-control input-sm', 'id':'prenom', 'placeholder':'Prénom' } }) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div>
+                            <label for="inputEmail3"
+                                   class=" control-label">{{ form_label(form.dateNaissance, "Date de naissance") }}</label>
+
+                            <div>
+                                {% if form.dateNaissance.vars.errors|length %}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="control-label"
+                                               for="inputError"> {{ form_errors(form.date_naissance) }}</label>
+                                        {{ form_widget(form.dateNaissance, {'attr': { 'id':'dateNaissance', 'placeholder':'jj/mm/aaaa', 'class': 'task_field form-control input-sm' } }) }}
+                                    </div>
+                                {% else %}
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.dateNaissance, {'attr': { 'id':'nom', 'placeholder':'jj/mm/aaaa', 'class': 'task_field form-control input-sm' } }) }}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="inputEmail3"
+                                   class="control-label">{{ form_label(form.nom, "Nom Entreprise") }}</label>
+
+                            <div>
+                                {{ form_widget(form.nomEntreprise, {'attr': {'class': 'task_field form-control', 'id':'nom_entreprise', 'placeholder':'Nom Entreprise' } }) }}
+                            </div>
+                        </div>
+                        <div>
+                            <label class=" control-label">{{ form_label(form.email, "Email") }}</label>
+
+                            <div>
+                                {{ form_widget(form.email, {'attr': { 'class': 'task_field form-control', 'id':'email'} }) }}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.span -->
+
+        <div class="col-xs-12 col-sm-4">
+            <div class="widget-box">
+                <div class="widget-header">
+                    <h4 class="widget-title title-plus">Adresse postale</h4>
+
+                </div>
+
+                <div class="widget-body">
+                    <div class="widget-main">
+
+                        <div>
+                            <label for="inputEmail3"
+                                   class=" label-plus">{{ form_label(form.isopays, "Pays") }}</label>
+
+                            <div>
+                                {# Affichage des erreurs pour ce champ précis. #}
+                                {{ form_errors(form.isopays) }}
+
+                                {# Génération de l'input. #}
+                                {{ form_widget(form.isopays, {'attr': { 'class': 'task_field form-control input-sm', 'id':'pays'} }) }}
+                            </div>
+                        </div>
+                        <div>
+                            <label for="inputEmail3"
+                                   class=" label-plus">{{ form_label(form.zipcode, "Code postal ") }}</label>
+
+                            <div>
+                                {% if form.zipcode.vars.errors|length %}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="label-plus"
+                                               for="inputError"> {{ form_errors(form.zipcode) }}</label>
+                                        {{ form_widget(form.zipcode, {'attr': { 'class': 'task_field form-control', 'id':'codepostal'} }) }}
+                                    </div>
+                                {% else %}
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.zipcode, {'attr': { 'class': 'task_field form-control', 'id':'zipcode'} }) }}
+                                {% endif %}
+
+                            </div>
+                        </div>
+                        <div>
+                            <label for="inputEmail3"
+                                   class=" label-plus">{{ form_label(form.isoville, "Ville") }}</label>
+
+                            <div>
+                                {# Affichage des erreurs pour ce champ précis. #}
+                                {{ form_errors(form.isoville) }}
+
+                                {# Génération de l'input. #}
+                                {{ form_widget(form.isoville, {'attr': { 'class': 'task_field form-control', 'id':'ville'} }) }}
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <label for="inputEmail3"
+                                   class=" label-plus">{{ form_label(form.adresse3, "Numéro + libellé de la voie (rue, avenue...) ") }}</label>
+
+                            <div>
+                                {% if form.adresse3.vars.errors|length %}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="label-plus"
+                                               for="inputError"> {{ form_errors(form.adresse3) }}</label>
+                                        {{ form_widget(form.adresse3, {'attr': { 'class': 'task_field form-control', 'id':'adresse3'} }) }}
+                                    </div>
+                                {% else %}
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.adresse3, {'attr': { 'class': 'task_field form-control', 'id':'adresse3'} }) }}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="inputEmail3"
+                                   class=" label-plus">{{ form_label(form.adresse1, "N° appartement ou boîte aux lettres - etage - couloir - escalier ") }}</label>
+
+                            <div>
+                                {% if form.adresse1.vars.errors|length %}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="label-plus"
+                                               for="inputError"> {{ form_errors(form.adresse1) }}</label>
+                                        {{ form_widget(form.adresse1, {'attr': { 'class': 'task_field form-control', 'id':'adresse1'} }) }}
+                                    </div>
+                                {% else %}
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.adresse1, {'attr': { 'class': 'task_field form-control', 'id':'adresse1'} }) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div>
+                            <label for="inputEmail3"
+                                   class=" label-plus">{{ form_label(form.adresse2, "Entrée - bâtiment - immeuble - résidence ") }}</label>
+
+                            <div>
+                                {% if form.adresse2.vars.errors|length %}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="label-plus"
+                                               for="inputError"> {{ form_errors(form.adresse2) }}</label>
+                                        {{ form_widget(form.adresse2, {'attr': { 'class': 'task_field form-control', 'id':'adresse2'} }) }}
+                                    </div>
+                                {% else %}
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.adresse2, {'attr': { 'class': 'task_field form-control', 'id':'adresse2'} }) }}
+                                {% endif %}
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <label for="inputEmail3"
+                                   class=" label-plus">{{ form_label(form.adresse4, "BP - Lieu dit ") }}</label>
+
+                            <div>
+                                {% if form.adresse4.vars.errors|length %}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="label-plus"
+                                               for="inputError"> {{ form_errors(form.adresse4) }}</label>
+                                        {{ form_widget(form.adresse4, {'attr': { 'class': 'task_field form-control', 'id':'adresse4'} }) }}
+                                    </div>
+                                {% else %}
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.adresse4, {'attr': { 'class': 'task_field form-control', 'id':'adresse4'} }) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.span -->
+
+        <div class="col-xs-12 col-sm-4">
+            <div class="widget-box">
+                <div class="widget-header">
+                    <h4 class="widget-title title-plus">Configuration</h4>
+
+                </div>
+
+                <div class="widget-body">
+                    <div class="widget-main">
+
+                        <div>
+                            <label for="inputEmail3"
+                                   class=" control-label">{{ form_label(form.categories, "Catégorie") }}</label>
+                            <div>
+                                {# Affichage des erreurs pour ce champ précis. #}
+                                {{ form_errors(form.categories) }}
+
+                                {# Génération de l'input. #}
+                                {{ form_widget(form.categories, {'attr': { 'class': 'task_field form-control input-sm', 'id':'cat_don'} }) }}
+                            </div>
+                        </div>
+
+                        <div>
+                            {{ form_errors(form.allowRf) }}
+
+                            {# Génération de l'input. #}
+                            {{ form_widget(form.allowRf, {'attr': {'class': ' checkbox-inline', 'id':'active'} }) }}{{ form_label(form.allowRf, "Donateurs souhaitent recevoir les reçus fiscaux ? ") }}
+                            <br/>
+                            {{ form_widget(form.removed, {'attr': {'class': ' checkbox-inline', 'id':'removed'} }) }}{{ form_label(form.removed, "Donateurs désactivés ? ") }}
+                        </div>
+                        <div >
+                            <label for="inputEmail3" class="col-sm-5 control-label">Filtre par type de PND : </label>
+
+                            <div >
+                                <select name="pnd" class="task_field form-control">
+                                    <option value=""></option>
+                                    <option value="npai1"> NPAI1</option>
+                                    <option value="npai2"> NPAI2</option>
+                                    <option value="npai3"> NPAI3</option>
+                                    <option value="refuse1"> Refusé 1</option>
+                                    <option value="refuse2"> Refusé 2</option>
+                                    <option value="refuse3"> Refusé 3</option>
+                                    <option value="decede"> Décédé</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- /section:plugins/input.chosen -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.span -->
+        </div>
+
+        {{ form_rest(form) }}
+        </form>
+        </div>
+        <div class="tab-pane {% if result is not empty %}active{% endif %} " id="result">
+            <br/>
+
+            <table class="table table-condensed">
+                <thead>
+                <tr>
+                    <th>#REF</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Nom de l'entreprise</th>
+                    <th>Statut</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id="content">
+                {% for r in result %}
+                    <tr>
+
+                        <td>{{ r.refDonateur }}</td>
+                        <td>{{ r.nom }}</td>
+                        <td>{{ r.prenom }}</td>
+                        <td>{% if r.nomEntreprise is defined and r.nomEntreprise is not null %}{{ r.nomEntreprise }}{% else %} N/A{% endif %}</td>
+                        <td> {% if r.removed %}<span
+                                    class="label label-danger arrowed-in arrowed-in-right">Désactivé</span> {% else %}
+                                <span class="label label-success arrowed-in arrowed-in-right">Actif</span>{% endif %}
+                        </td>
+                        <td><a href="{{ path('intersa_donateur_gestion',{'id':r.id,'cumul':cumul,'date':date|date('d/m/Y')}) }}" class="btn btn-default btn-xs"><span
+                                        class="glyphicon glyphicon-wrench"></span>&nbsp; Gestion</a></td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <center>
+                {% if last_page > 1 %}
+                    <ul class="pagination pull-center">
+                        <li><a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ previous_page }}">&laquo;</a>
+                        </li>
+                        {% for page in 1..last_page %}
+                            {% if page >= current_page-4 and page <= current_page+4 %}
+                                {% if   page == current_page-4 or page == current_page+4 %}
+                                    {% if   page == current_page-4 %}
+                                        <li><a href="{{ path('intersa_dons') }}?{{ params }}&page=1">1</a></li>
+                                        <li class="disabled"><a href="#">...</a></li>
+                                    {% else %}
+                                        <li class="disabled"><a href="#">...</a></li>
+                                        <li>
+                                            <a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ last_page }}">{{ last_page }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% else %}
+                                    {% if page == current_page %}
+                                        <li class="active"><a href="#">{{ page }}</a></li>
+                                    {% else %}
+                                        <li>
+                                            <a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ page }}">{{ page }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        <li><a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ next_page }}">&raquo;</a></li>
+                    </ul>
+                {% endif %}
+            </center>
+
+        </div>
+        </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="addRecherche" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Ajouter cette recherche aux favoris</h4>
+                    </div>
+                    <form action="{{ path('intersa_donateur_favoris_add', {'section': 'donateurs'}) }}" method="POST">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label class=" control-label">Titre de la recherche</label>
+                                    <input class="form-control" name="title" required="required"/>
+                                    <br/>
+                                    <label class=" control-label">Description de la recherche</label>
+                                    <textarea name="description" class="form-control"></textarea>
+                                    <br/>
+                                    <label class=" control-label">Lien de la recherche</label>
+                                    <input id="url" class="form-control" name="url" required="required"
+                                           value="{{ params }}" readonly="readonly"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary">Sauvegarder la recherche</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="listRecherche" tabindex="-1" role="dialog" aria-labelledby="listRecherche"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="listRechercheLabel">Liste des favoris</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <th>Informations sur la recherche</th>
+                                    <th>Actions</th>
+                                    </thead>
+                                    <tbody>
+                                    {% for f in favoris %}
+                                        <tr>
+                                            <td>{{ f.title }}<br/><span
+                                                        style="font-size: 10px;">{{ f.description }}</span></td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-xs btn-default dropdown-toggle"
+                                                            data-toggle="dropdown" aria-expanded="false">
+                                                        Actions <span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu" role="menu">
+                                                        <li><a href="{{ path('elastic_donateur') }}?{{ f.url }}"
+                                                               target="_blank"><i class="fa fa-search"></i> Lancer la
+                                                                recherche</a></li>
+                                                        <li>
+                                                            <a href="{{ path('intersa_donateur_favoris_delete', {'id': f.id}) }}"><i
+                                                                        class="fa fa-trash-o"></i> Supprimer la
+                                                                recherche</a></li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+
+            $('#fulldon_donateurbundle_dontype_abonnement_actif').on('click', function () {
+                if ($('#fulldon_donateurbundle_dontype_abonnement_actif').is(':checked')) {
+                    $('#abo_date').show();
+                } else {
+                    $('#abo_date').hide();
+                }
+            });
+            $(document).ready(function () {
+
+                $.getJSON("/villes/id/" + $("#fulldon_donateurbundle_donateursearchtype_pays").val()).done(function (vj) {
+                    var options = '';
+                    for (var i = 0; i < vj.length; i++) {
+                        options += '<option value="' + vj[i].id + '">' + vj[i].name + '</option>';
+                    }
+                    $("#ville").html(options);
+                });
+            });
+
+            $("#fulldon_donateurbundle_donateursearchtype_pays").on('change', function () {
+                $.getJSON("/villes/id/" + $(this).val()).done(function (vj) {
+                    var options = '';
+                    for (var i = 0; i < vj.length; i++) {
+                        options += '<option value="' + vj[i].id + '">' + vj[i].name + '</option>';
+                    }
+                    $("#ville").html(options);
+                });
+            });
+        </script>
+    {% endblock %}

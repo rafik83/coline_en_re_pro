@@ -1,0 +1,24 @@
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="confirmDeleteLabel">Don #{{ don.id }} : changement de statut</h4>
+        </div>
+        <div class="modal-body">
+            <div class="alert alert-warning alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <strong>Attention !</strong> La modification du statut engendre la génération d'un reçu fiscal
+            </div>
+            <form method="post" action="{{ path('intersa_validation_tvalid_confirm',{'id':don.id}) }}">
+                Statut de la transaction :
+                <select name="code_statut">
+                    {% for st in stats %}
+                        <option value="{{ st.code }}">{{ st.libelle }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary">Valider le traitement</button>
+            </form>
+        </div>
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->

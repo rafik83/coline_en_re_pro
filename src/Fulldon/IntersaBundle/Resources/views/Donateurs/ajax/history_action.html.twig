@@ -1,0 +1,26 @@
+
+                {% for action in actions %}
+                    <tr {% if action.typelog is defined %}
+                        {% if action.typelog.id == "1" %} style="background-color:#B4AF91 !important;"{% endif %}
+                        {% if action.typelog.id == "2" %} class="alert-info"{% endif %}
+                        {% if action.typelog.id == "3" %} style="background-color:#BD8D46 !important;"  {% endif %}
+                        {% if action.typelog.id == "4" %}style="background-color:#4BB5C1 !important;"  {% endif %}
+                        {% if action.typelog.id == "5" %} style="background-color:#88d685 !important;"{% endif %}
+                        {% if action.typelog.id == "6" %} style="background-color:#b485a6 !important;"{% endif %}
+                        {% if action.typelog.id == "7" %} style="background-color:#bda607 !important;"  {% endif %}
+                        {% if action.typelog.id == "8" %}style="background-color:#b7b7b7 !important;"  {% endif %}
+                    {% else %}
+                        class="danger"
+                            {% endif %}>
+
+                        <td>{{ action.id }}</td>
+                        <td>{{ action.typelog.name }}</td>
+                        {% if action.user is not null %}
+                        <td>{{ action.user.username }}</td>
+                        {% else %}
+                        <td>AUTOMATIQUE</td>
+                        {% endif %}
+                        <td style="width: 25%;"  >{{ action.createdAt | date('Y-m-d H:i:s') }}</td>
+                        <td>{{ action.descAction|nl2br }}</td>
+                    </tr>
+                {% endfor %}

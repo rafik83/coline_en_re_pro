@@ -1,0 +1,191 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        .couleur-titre {
+            color:#d58512;
+        }
+    </style>
+</head>
+<body>
+<center>
+    <h1>TABLEAU DE BORD GENERAL</h1>
+    Edition du {{ today|date('d/m/Y') }}
+    <hr style="margin:5px 0px 5px 0px;" />
+</center>
+<h2 class="couleur-titre">Nombre de donateurs :</h2>
+<hr />
+<b>Donateurs actifs : </b>{{ data['donateur_actif'] }}<br/>
+<b>Donateurs inactifs : </b>{{ data['donateur_removed'] }}<br />
+<b>Nombre total de donateurs : </b>{{ data['donateur_actif']+data['donateur_removed'] }}<br />
+<b>Nombre de téléphones portables : </b>{{ data['donateur_tmobile'] }}<br />
+<b>Nombre d'emails : </b>{{ data['donateur_emails'] }}<br />
+<b>Moyenne d'âge des donateurs : </b>{{ data['moyenne_age'] }}<br />
+<b>Nombre de donateurs actifs 0/12 mois  : </b>{{ data['nb_12mois'] }}<br />
+<b>Nombre de donateurs actifs 12/24 mois : </b>{{ data['nb_24mois'] }}<br />
+<b>Nombre de donateurs actifs 24/36 mois : </b>{{ data['nb_36mois'] }}<br />
+
+{% if data['disabled_donateur'] is defined and data['disabled_donateur'] is not null %}
+    {% for d in data['disabled_donateur'] %}
+        <b>Nombre de donateurs {{  d['name'] }} :</b>  {{   d['comptage'] }} <br />
+    {% endfor %}
+{% endif %}
+<hr />
+<h2 class="couleur-titre" >Nombre d'adresses valides :</h2>
+<hr />
+{% for a in data['pnd'] %}
+    <b>Nombre de PND ({{  a['name'] }}) :</b>  {{   a['cpt'] }} <br />
+{% endfor %}
+<hr />
+<h2 class="couleur-titre" >Statistiques des dons :</h2>
+<hr />
+
+{%  set pa_inactif = 0 %}
+{% if data['don_pa'] is defined%}{% set pa_inactif = data['don_pa']- data['pa_actif'] %}{% endif %}
+<h4 class="couleur-titre">Nombre de dons par type :</h4>
+<hr />
+<b>Dons CS :</b> {% if data['don_cs'] is defined%}{{ data['don_cs'] }}{% else %}0{% endif %}<br/>
+<b>Dons BC :</b> {% if data['don_bc'] is defined%}{{ data['don_bc'] }}{% else %}0{% endif %}<br/>
+<b>Dons ESPECES :</b> {% if data['don_espece'] is defined%}{{ data['don_espece'] }}{% else %}0{% endif %}<br/>
+<b>Dons VIREMENT:</b> {% if data['don_virement'] is defined%}{{ data['don_virement'] }}{% else %}0{% endif %}<br/>
+<hr />
+<h4 class="couleur-titre">Statistiques des prélèvements automatiques :</h4>
+<hr />
+<b>Dons PA :</b> {% if data['don_pa'] is defined%}{{ data['don_pa'] }}{% else %}0{% endif %}<br/>
+<b>Dons PA Actifs (Non stopés):</b> {{ data['pa_actif'] }}<br/>
+<b>Dons PA Innactifs:</b> {{ pa_inactif }}<br/>
+<b>Dons PA  Actifs sur les 12 derniers mois : </b> {{ data['nb_12mois_pa'] }}<br/>
+<b>Dons PA  Actifs sur les 12/24 derniers mois : </b> {{ data['nb_24mois_pa'] }}<br/>
+<b>Dons PA Stopés depuis le début de l'année : </b> {{ data['stops_pa'] }} <br />
+<hr />
+<h4 class="couleur-titre">Statistique des prélèvements :</h4>
+<hr />
+<b>Prélèvement total : </b> {{ data['pre_rejet'] + data['pre_accept'] }}<br/>
+<b>Prélèvements Acceptés : </b> {{ data['pre_accept']  }}<br/>
+<b>Prélèvements Rejetés : </b> {{ data['pre_rejet']  }}<br/>
+<hr />
+<h4 class="couleur-titre">Moyenne des sommes des dons :</h4>
+<hr />
+<b>Especes : </b>   {{ data['mdon_espece'] }} €<br />
+<b>Bulletin chèque : </b>   {{ data['mdon_bc'] }} €<br />
+<b>Chèque seul : </b>   {{ data['mdon_cs'] }} €<br />
+<b>Prélèvement Automatique : </b>   {{ data['mdon_pa'] }} €<br />
+<b>Virement : </b>   {{ data['mdon_virement'] }} €<br />
+<b>Paypal : </b>   {{ data['mdon_paypal'] }} €
+
+{% set total = 0 %}
+{% set isnull = 1 %}
+{% set array_month = {
+'Janvier':'01',
+'Février':'02',
+'Mars':'03',
+'Avril':'04',
+'Mai':'05',
+'Juin':'06',
+'Juillet':'07',
+'Aout':'08',
+'Septembre':'09',
+'Octobre':'10',
+'Novembre':'11',
+'Décembre':'12',
+}
+%}
+
+<hr />
+<h2 class="couleur-titre" >Nombre de nouveaux donateurs :</h2>
+<hr />
+<div class="row">
+    <div style="float:left;width:50%">
+        <table class="table table-condensed" style="width:100%;text-align: left;">
+            <h4 style="padding-left:5px;background-color: #CCC">Année précédente</h4>
+            <hr />
+            <thead>
+            <th>Mois</th>
+            {% for ent in data['entities'] %}
+                <th>{{ ent.name }}</th>
+            {% endfor %}
+            <th>Total</th>
+            </thead>
+            <tbody>
+
+            {% for key,value in array_month %}
+                <tr>
+                    <td>{{ key }}</td>
+
+                    {% for ent in data['entities'] %}
+                        <td>
+                            {% set isnull = 1 %}
+                            {% for tnd in data['tab_nouveau_donateur_preyear']  %}
+                                {% if tnd['nom_entity']  == ent.name and tnd['mois'] == value %}
+                                    {{ tnd['cpt'] }}
+                                    {% set total = total + tnd['cpt'] %}
+                                    {% set isnull = 0 %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if isnull == 1 %}
+                                0
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                    <td> {{ total }} </td>
+                    {% set total = 0 %}
+
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+    <div style="float:left;width:50%">
+        <table class="table table-condensed" style="width:100%;text-align: left;">
+            <h4 style="padding-left:5px;background-color: #d58512" >Année courante</h4>
+            <hr />
+            <thead>
+            <th>Mois</th>
+            {% for ent in data['entities'] %}
+                <th>{{ ent.name }}</th>
+            {% endfor %}
+            <th>Total</th>
+            </thead>
+            <tbody>
+
+            {% for key,value in array_month %}
+                <tr {% if value == "now"|date('m') %}
+                    style="background-color: #5bc0de;"
+                {% endif %}
+                        >
+                    <td>{{ key }}</td>
+                    {% for ent in data['entities'] %}
+                        <td>
+                            {% set isnull = 1 %}
+                            {% for tnd in data['tab_nouveau_donateur_curyear']  %}
+                                {% if tnd['nom_entity']  == ent.name and tnd['mois'] == value %}
+                                    {{ tnd['cpt'] }}
+                                    {% set total = total + tnd['cpt'] %}
+                                    {% set isnull = 0 %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if isnull == 1 %}
+                                0
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                    <td> {{ total }} </td>
+                    {% set total = 0 %}
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+</body>
+</html>

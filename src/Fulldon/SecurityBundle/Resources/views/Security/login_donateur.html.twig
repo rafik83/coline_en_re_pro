@@ -1,0 +1,59 @@
+{% extends "FulldonSecurityBundle::layout.html.twig" %}
+{% block body %}
+    <div class="backstretch" style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px; height: 2000px; width: 1903px; z-index: -999999; position: fixed;">
+        {% if init['perso'].fondPage is defined  and init['perso'].fondPage  is not null %}
+            <img style="position: absolute; margin: 0px; padding: 0px; border: none; width: 1903px; height: 2000px; max-width: none; z-index: -999999; left: 0px; top: 0px;" src="{{ asset('upload/' ~ init['perso'].id ~'/' ~ init['perso'].fondPage)}}" >
+        {% else %}
+            <img style="position: absolute; margin: 0px; padding: 0px; border: none; width: 1903px; height: 2000px; max-width: none; z-index: -999999; left: 0px; top: 0px;" src="{{ asset('img/bg_login.jpg') }}">
+        {% endif %}
+    </div>
+
+    {# Le formulaire, avec URL de soumission vers la route « login_check » comme on l'a vu #}
+    <div class="container console-auth">
+
+        <form class="form-signin console-form-auth " role="form" action="{{ path('login_check_donateur') }}" method="post" style="background:  rgba(255, 255, 255, 1) !important;">
+            <div class="logo-access ">
+                <center>
+                {% if init['perso'].logo is defined and init['perso'].logo is not null %}
+                    <img  class="img-responsive" src="{{ asset('upload/' ~ init['perso'].id ~'/' ~ init['perso'].logo)}}" alt="logo" height="100" />
+                {% else %}
+                    <img src="{{ asset('img/logo_donateur_big.png') }}"  class="img-responsive" />
+                {% endif %}
+                </center>
+            </div>
+            {# S'il y a une erreur, on l'affiche dans un joli cadre #}
+            {% if error %}
+                <div class="alert alert-danger">{{ error.message|trans({},'messages') }}</div>
+            {% endif %}
+            {% for flashMessage in app.session.flashbag.get('info') %}
+                <div class="alert alert-success">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+            <div class="input-group">
+                <div class="input-group-addon"><i class="fa fa-user"></i></div>
+            <input type="text" name="_username" class="form-control" placeholder="Login" required autofocus>
+                </div>
+            <br />
+            <div class="input-group">
+                <div class="input-group-addon"><i class="fa fa-lock"></i></div>
+            <input type="password" name="_password" class="form-control" placeholder="{{"password"|trans({},'messages')  }}" required style="margin:0px;">
+                </div>
+            <br />
+            <span class="glyphicon glyphicon-chevron-right"></span> <a href="{{ path('donateur_register') }}">{{"Créer un compte"|trans({},'messages')  }}</a><br />
+            <span class="glyphicon glyphicon-chevron-right"></span> <a href="{{ path('mdp_oublie_donateur') }}">{{"Mot de passe oublié ?"|trans({},'messages')  }}</a><br />
+            <span class="glyphicon glyphicon-chevron-right"></span> <a href="{{ path('fulldon_donateur_onepage') }}">{{"Faire un don"|trans({},'messages')  }}</a><br />
+    {%  set current_route = app.request.get('_route') %}
+    {%  set params = app.request.attributes.get('_route_params') %}
+
+            <span class="glyphicon glyphicon-globe btn-lg " style="margin:0px;padding:0px;float:left;margin-right:5px;"></span>  <a href="{{ path(current_route, params | merge({"_locale": "fr"})) }}" style="float:left;padding-right: 4px;" >Français</a> <a style="float:left;padding-left: 4px;" href="{{ path(current_route, params | merge({"_locale": "en"})) }}">English</a>
+
+
+            <br />
+            <br />
+            <button class="btn btn-lg btn-primary btn-block"  style="border-radius: 0px !important;" type="submit">{{"Connexion"|trans({},'messages')  }}</button>
+            <input type="hidden" name="_target_path" value="{{ path('fulldon_donateur_accueil') }}" />
+        </form>
+
+    </div> <!-- /container -->
+{% endblock %}

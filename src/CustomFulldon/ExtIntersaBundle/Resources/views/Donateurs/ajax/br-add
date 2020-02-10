@@ -1,0 +1,139 @@
+
+$("#btn_annuler_add_email").click(function () {
+                var test_email = validate();
+                if (test_email === true) {
+                    $('#foyer_dropdown').val($("#email_donateur").val());
+
+                } else {
+
+                }
+
+            })
+
+function InitSubmit() {
+            var emaildona = '';
+
+            if ($("#foyer_dropdown").val() != '') {
+                emaildona = $("#foyer_dropdown").val();
+
+            }
+
+
+            //var emaildona = $("#email_donateur").val();
+
+            //fulldon_donateurbundle_intersadonateurtype_email
+            if (emaildona != '') {
+                $("#div_message_error_saisi_mail").css('display', 'none');
+                $("#div_message_error_saisi_mail").css('background-color', '#f2dede');
+                $("#div_message_error_saisi_mail").css('border-color', '#ebcccc');
+                //$("#div_message_error_mail").css('color', '#a94442');
+                $("#div_message_error_saisi_mail").css('color', 'green');
+                $("#div_message_error_saisi_mail").html('Email valid');
+                return true;
+                //document.getElementById("frm_add_donateur").submit();
+
+            } else {//div_message_error_mail
+                $("#div_message_error_saisi_mail").css('display', 'block');
+                $("#div_message_error_saisi_mail").css('background-color', '#f2dede');
+                $("#div_message_error_mail").css('border-color', '#ebcccc');
+                //$("#div_message_error_mail").css('color', '#a94442');
+                $("#div_message_error_saisi_mail").css('color', 'red');
+                $("#div_message_error_saisi_mail").html('Vous devez saisir un email valid');
+                return false;
+
+
+
+
+            }
+        }
+
+
+
+
+
+function validate2() {
+
+            var email = $("#email_donateur").val();
+            //fulldon_donateurbundle_intersadonateurtype_email
+            if (validateEmail(email)) {
+                $("#div_message_error_mail").css('display', 'block');
+                $("#div_message_error_mail").css('background-color', '#f2dede');
+                $("#div_message_error_mail").css('border-color', '#ebcccc');
+                //$("#div_message_error_mail").css('color', '#a94442');
+                $("#div_message_error_mail").css('color', 'green');
+                $("#div_message_error_mail").html('Email valid');
+                return true;
+            } else {
+                $("#div_message_error_mail").css('display', 'block');
+                $("#div_message_error_mail").css('background-color', '#f2dede');
+                $("#div_message_error_mail").css('border-color', '#ebcccc');
+                //$("#div_message_error_mail").css('color', '#a94442');
+                $("#div_message_error_mail").css('color', 'red');
+                $("#div_message_error_mail").html('Vous devez saisir un email valid');
+                return false;
+            }
+
+        }
+
+
+
+
+
+ $.ajax({
+                        url: "{{ path('getall_emaildonateur') }}", //'/intersa/export-dons/pdf',
+                        type: "GET",
+                        data: 'param=' + mail,
+                        cache: false,
+                        success: function (data)
+                        {
+
+                            console.log(data);
+                            $.each(data, function (index) {
+                                //alert($("#foyer_dropdown option:selected").val()); affiche value
+                                //alert($("#foyer_dropdown option:selected").text()); affiche text
+                                $.each(this, function (k, v) {
+                                    $('#foyer_dropdown').append("<option>" + "</option>");
+                                    $('#foyer_dropdown').append("<option value = '" + this.Id + "'>" + this.Email + "</option>");
+                                    //alert($("#email_donateur").val());
+                                });
+                            });
+                        },
+                        complete: function (com) {
+                            //console.log(com.responseText);
+                            console.log(com);
+                        },
+                        error: function (err) {
+                            console.log(err);
+                            //alert('err');
+                        }
+                    });
+
+
+ <div class="modal fade" id="addRechercheEmail2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Ajouter Email</h4>
+                </div>
+                <form action="#" method="GET">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class=" control-label">Email</label>
+                                <input id="email_donateur" autofocus class="form-control" name="title" required="required"/>
+                                <div id="div_message_error_mail" style="display: none"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" id="btn_annuler_add_email"  data-dismiss="modal">Fermer</button>
+                        <button type="button" id="btn_valider_email"  class="btn btn-primary">Valider</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>

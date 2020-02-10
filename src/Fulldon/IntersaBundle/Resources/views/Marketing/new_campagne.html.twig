@@ -1,0 +1,773 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block stylesheets %}
+        {{ parent() }}
+        {% stylesheets '../app/Resources/Public/css/global/jquery-ui/*' %}
+        <link rel="stylesheet" type="text/css" charset="UTF-8" media="all" href="{{ asset_url }}"/>
+        {% endstylesheets %}
+        <style>
+            #sortable1, #sortable2 {
+                border: 1px solid #eee;
+                min-height: 20px;
+                list-style-type: none;
+                margin: 0;
+                padding: 5px 0 0 0;
+                float: left;
+                width: 100%;
+                /*margin-right: 10px;*/
+            }
+
+            #sortable1 li, #sortable2 li {
+                margin: 0 5px 5px 5px;
+                padding: 5px;
+                font-size: 0.8em;
+                /*width: 120px;*/
+            }
+
+
+        </style>
+    {% endblock %}
+    {% block coque_intersa %}
+        <div class="breadcrumbs" id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li><a href="{{ path('intersa_marketing',{'page':1}) }}">eMarketing </a></li>
+                <li class="active">Nouvelle campagne eMarketing</li>
+            </ol>
+        </div>
+        <div class="page-content">
+
+        <div class="col-md-12 pull-left">
+        <div class="page-header">
+            <h1>
+                Nouvelle campagne eMarketing
+                <small>
+                    <i class="ace-icon fa fa-angle-double-right"></i>
+                    email & sms
+                </small>
+            </h1>
+        </div><!-- /.page-header -->
+        <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#biblioimg" ><i class="fa fa-picture-o"></i> Bibliothèque image </a>
+        <hr/>
+
+        {% for flashMessage in app.session.flashbag.get('info') %}
+            <div class="alert alert-success">
+                <span class="glyphicon glyphicon-ok-sign"></span>{{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% if display_error %}
+            <div class="alert alert-danger alert-dismissable" style="border-radius: 0px;">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <span class="glyphicon glyphicon-remove-circle"></span> Erreur lors de la validation de la compagne.
+                <br/>
+                <ul>
+                    {% for flashMessage in app.session.flashbag.get('error') %}
+                        <li>{{ flashMessage|trans({},'messages') }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <form action="{{ path('intersa_marketing_new') }}" method="post" class="form-group" {{ form_enctype(form) }}>
+        <div class="row">
+        <div class="form-group col-md-6">
+            {{ form_label(form.title, "Titre") }}<br/>
+
+            <div>
+                {% if form.title.vars.errors|length %}
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputError"> {{ form_errors(form.title) }}</label>
+                        {{ form_widget(form.title, {'attr': { 'class': 'task_field form-control'} }) }}
+                    </div>
+                {% else %}
+                    {# Génération de l'input. #}
+                    {{ form_widget(form.title, {'attr': { 'class': 'task_field form-control'} }) }}
+                {% endif %}
+            </div>
+            <br/>
+
+            <div role="tabpanel">
+
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#real" aria-controls="real" role="tab"
+                                                              data-toggle="tab">Mode Réel</a></li>
+                    <li role="presentation"><a href="#test" aria-controls="test" role="tab" data-toggle="tab">Mode
+                            test</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active bg-pane " id="real" >
+                        <br />
+
+                        <label class=" control-label">Choisissez la méthode d'extraction de votre cible : </label>
+
+                        <div>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="extraction" id="by_file" value="by_file" checked>
+                                    Fichiers CSV
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="extraction" id="by_form" value="by_form">
+                                    Formulaire de recherche
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="extraction" id="by_search_fav" value="by_search_fav">
+                                    Vos recherches favorites
+                                </label>
+                            </div>
+                        </div>
+                        <hr />
+                        <input type="hidden" name="columns" id="columns"
+                               value="list[]=iddonateur&list[]=civilitedonateur&list[]=nomdonateur&list[]=prenomdonateur&list[]=telephonedonateur&list[]=emaildonateur&list[]=codeactivite&list[]=issms&list[]=isemail"/>
+
+                        <div id="block_by_file">
+                            <div class="miftah" style="margin-left: 6px;">
+                                <div class="element"
+                                     style="background-color: #eee;float:left;margin-right:5px;border: 1px solid #000;"></div>
+                                <div style="float:left;margin-right:10px;">Champs Supplémentaires</div>
+                                <div class="element"
+                                     style="background-color: #fbf8ee;float:left;margin-right:5px;border: 1px solid #000;"></div>
+                                <div style="float:left;margin-right:10px;">Champs obligatoires</div>
+                            </div>
+                            <hr/>
+                            <div style="height:250px;padding:15px;" class="row">
+                                <div class="col-md-6">
+                                    <h5>Champs supplémentaires :</h5>
+                                    <ul id="sortable1" class="connectedSortable">
+                                        <li id="list_iddon" class="ui-state-default"><i class="fa fa-cube"></i> <b>ID du
+                                                don : </b> Numérique
+                                        </li>
+                                        <li id="list_montantdon" class="ui-state-default"><i class="fa fa-cube"></i> <b>Montant
+                                                du don : </b> Numérique
+                                        </li>
+                                        <li id="list_rumpadon" class="ui-state-default"><i class="fa fa-cube"></i> <b>RUM
+                                                PA du don : </b> Numérique
+                                        </li>
+                                        <li id="list_dateprepa" class="ui-state-default"><i class="fa fa-cube"></i> <b>Date
+                                                du prélévement PA : </b> Numérique
+                                        </li>
+                                        <li id="list_adressedonateur" class="ui-state-default"><i
+                                                    class="fa fa-cube"></i> <b>Adresse du donateur : </b> Chaine
+                                        </li>
+                                        <li id="list_periodicitepa" class="ui-state-default"><i class="fa fa-cube"></i>
+                                            <b>Périodicité : </b> Chaine
+                                        </li>
+                                        <li id="list_sommepa" class="ui-state-default"><i class="fa fa-cube"></i> <b>Somme
+                                                des PA : </b> Chaine
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>Champs à inclure dans le fichier CSV dans l'ordre ci-dessous :</h5>
+                                    <ul id="sortable2" class="connectedSortable ">
+                                        <li id="list_iddonateur" class="ui-state-highlight"><i class="fa fa-cube"></i>
+                                            <b>ID du donateur : </b> Numérique
+                                        </li>
+                                        <li id="list_civilitedonateur" class="ui-state-highlight"><i
+                                                    class="fa fa-cube"></i> <b>Civilité du donateur :</b> Chaine
+                                        </li>
+                                        <li id="list_nomdonateur" class="ui-state-highlight"><i class="fa fa-cube"></i>
+                                            <b>Nom du donateur :</b> Chaine
+                                        </li>
+                                        <li id="list_prenomdonateur" class="ui-state-highlight"><i
+                                                    class="fa fa-cube"></i> <b>Prénom du donateur :</b> Chaine
+                                        </li>
+                                        <li id="list_telephonedonateur" class="ui-state-highlight"><i
+                                                    class="fa fa-cube"></i> <b>Téléphone :</b> ex 33XXXXXXXXX
+                                        </li>
+                                        <li id="list_emaildonateur" class="ui-state-highlight"><i
+                                                    class="fa fa-cube"></i> <b>Email :</b> Chaine
+                                        </li>
+                                        <li id="list_codeactivite" class="ui-state-default"><i class="fa fa-cube"></i>
+                                            <b>Code activité :</b> Chaine
+                                        </li>
+                                        <li id="list_issms" class="ui-state-highlight"><i class="fa fa-cube"></i> <b>Téléphone
+                                                possible :</b> Boolean
+                                        </li>
+                                        <li id="list_isemail" class="ui-state-highlight"><i class="fa fa-cube"></i> <b>Email
+                                                possible :</b> Boolean
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div>
+                                <lable class=" control-label">Importez un ou plusieurs fichiers :</lable>
+                                <div>
+                                    {% if form.file.vars.errors|length %}
+                                        {# Affichage des erreurs pour ce champ précis. #}
+                                        <div class="form-group has-error">
+                                            {{ form_widget(form.file, {'attr': { 'class': 'task_field '} }) }}
+                                        </div>
+                                    {% else %}
+                                        {# Génération de l'input. #}
+                                        {{ form_widget(form.file, {'attr': { 'class': 'task_field'} }) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+
+                        <div id="block_by_form">
+                            Séléctionnez tous les donateurs qui ont effectués un don sur la période :
+                            <div class="input-group input-group-lg">
+                                <div class="input-group-addon"><i class="fa fa-calendar fa-lg"></i></div>
+                                <input type="text" class="form-control" id="reportrange" name="reportrange"
+                                       placeholder="Période">
+                            </div>
+                            <br/>
+                            Avec un don d'une valeur : <br/>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Entre :</label>
+
+                                    <div class="input-group">
+                                        <span class="input-group-addon">€</span>
+                                        <input type="text" name="amount_start" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Et :</label>
+
+                                    <div class="input-group">
+                                        <span class="input-group-addon">€</span>
+                                        <input type="text" name="amount_end" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <br/>
+                            En répondant aux critères suivants : <br/>
+
+                            <div class="row">
+
+                                <div class="form-group col-md-6">
+                                    <label for="iban"><label for="iban" class="required">Type de don</label></label>
+                                    <select name="type_don" class="task_field form-control ">
+                                        <option value=""></option>
+                                        <option value="ponctuel" {% if memo_search['type_don'] is defined and memo_search['type_don'] is not null and memo_search['type_don'] == 'ponctuel' %} selected="selected" {% endif %} >
+                                            Don ponctuel
+                                        </option>
+                                        <option value="regulier" {% if memo_search['type_don'] is defined and memo_search['type_don'] is not null and memo_search['type_don'] == 'regulier' %} selected="selected" {% endif %}>
+                                            Don réguilier
+                                        </option>
+                                    </select>
+                                    <br/>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="iban"><label for="iban" class="required">Code d'activité</label></label>
+                                    {% if  app.session.flashbag.has('error_code_activite') %}
+                                        {# Affichage des erreurs pour ce champ précis. #}
+                                        <div class="form-group has-error">
+                                            <label class="control-label" for="inputError">
+                                                {% for flashMessage in app.session.flashbag.get('error_code_activite') %}
+                                                    <li>{{ flashMessage }}</li>
+                                                {% endfor %}
+                                            </label>
+                                            <input type="text" id="cause"
+                                                   name="cause" {% if memo_search['cause'] is defined and memo_search['cause'] is not null %} value="{{ memo_search['cause'] }}" {% endif %}
+                                                   placeholder="Code d'activité" class="task_field form-control ">
+                                        </div>
+                                    {% else %}
+                                        <input type="text" id="cause"
+                                               name="cause" {% if memo_search['cause'] is defined and memo_search['cause'] is not null %} value="{{ memo_search['cause'] }}" {% endif %}
+                                               placeholder="Code d'activité" class="task_field form-control ">
+                                    {% endif %}
+                                </div>
+                                <br/>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="inputEmail3" class=" control-label"> Catégorie </label>
+
+                                    <div class="">
+                                        <select name="type_donateur" class="task_field form-control ">
+                                            <option value=""></option>
+                                            {% for cat in cats %}
+                                                <option value="{{ cat.id }}">{{ cat.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div id="block_by_search_fav">
+                            <b>Choisissez une ou plusieurs recherches favorites :</b>
+                            <h5>Liste des Recherches favorites (Donateurs)</h5>
+                            {% if favoris_donateurs|length != 0 %}
+                                {% for f in favoris_donateurs  %}
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="search_fav_donateurs[]" value="{{ f.id }}">
+                                            {{ f.title }}<br /><span style="font-size: 10px;">{{ f.description }}</span>
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                                <hr />
+                            {% else %}
+                                <br /> Aucune recherche (donateurs) sauvegardée jusqu'à present.
+                            {% endif %}
+                            <h5>Liste des Recherches favorites (Dons)</h5>
+                            {% if favoris_dons|length != 0 %}
+                                {% for f in favoris_dons  %}
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="search_fav_dons[]" value="{{ f.id }}">
+                                            {{ f.title }}<br /><span style="font-size: 10px;">{{ f.description }}</span>
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <br /> Aucune recherche (dons) sauvegardée jusqu'à present.
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane bg-pane " id="test" >
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="test_mode" id="test_mode" value="1"> Activer le mode Test
+                            </label>
+                        </div>
+                        <div id="test_console" style="display:none;">
+                            <div class="alert alert-info" role="alert">
+                                Veuillez Remplir seulement les champs utilisés comme des variables dans votre email.
+                            </div>
+                            <div class=" pull-right visible-xs required-input-title" >(*) {{ "champs obligatoires"|trans({},'messages') }}</div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Civilité :</label>
+                                <input type="text" name="civilite_test" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label>Identifiant du donateur :</label>
+                                <input type="text" name="id_donateur_test" class="form-control" value="-1" disabled>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Nom du donateur :</label>
+                                <input type="text" name="nom_test" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label>Prénom du donateur :</label>
+                                <input type="text" name="prenom_test" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Téléphone :</label>
+                                <input type="text" name="telephone_test" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label>Email : <span class="required-input" > * </span></label>
+                                <input type="text" name="email_test" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Code d'activité :</label>
+                                <input type="text" name="code_activite_test" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="ok_sms_test"  value="1" > Autoriser l'envoi SMS.
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="ok_email_test" value="1" checked> Autoriser l'envoi Email.
+                            </label>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-md-6">
+
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                <i class="fa fa-envelope "></i> Envoi par Email
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseOne" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                            <div class="checkbox">
+                                <label>
+                                    {{ form_widget(form.isEmail, {'attr': {'class': ' checkbox-inline'} }) }}{{ form_label(form.isEmail, "Autoriser l'envoi par email") }}
+                                </label>
+                            </div>
+                            <div id="email_block" style="display:none;">
+                                {{ form_label(form.objet, "Objet email") }}<br/>
+
+                                <div>
+                                    {% if form.objet.vars.errors|length %}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="control-label"
+                                               for="inputError"> {{ form_errors(form.objet) }}</label>
+                                        {{ form_widget(form.objet, {'attr': { 'class': 'task_field form-control'} }) }}
+                                    </div>
+                                    <div id="email_block">
+                                        {% else %}
+                                            {# Génération de l'input. #}
+                                            {{ form_widget(form.objet, {'attr': { 'class': 'task_field form-control'} }) }}
+                                        {% endif %}
+                                        <br/>
+                                        {{ form_label(form.emailContent, "Contenu email") }}<br/>
+
+                                        <div>
+                                            {% if form.emailContent.vars.errors|length %}
+                                                {# Affichage des erreurs pour ce champ précis. #}
+                                                <div class="form-group has-error">
+                                                    <label class="control-label"
+                                                           for="inputError"> {{ form_errors(form.emailContent) }}</label>
+                                                    {{ form_widget(form.emailContent, {'attr': { 'class': 'task_field form-control'} }) }}
+                                                </div>
+                                            {% else %}
+                                                {# Génération de l'input. #}
+                                                {{ form_widget(form.emailContent, {'attr': { 'class': 'task_field form-control'} }) }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                                <i class="fa fa-comment "></i> Envoi par SMS
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseTwo" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="checkbox">
+                                <label>
+                                    {{ form_widget(form.isSms, {'attr': {'class': ' checkbox-inline'} }) }}{{ form_label(form.isSms, "Autoriser l'envoi par SMS ") }}
+                                </label>
+                            </div>
+
+                            <div id="sms_block" style="display:none;">
+                                <hr/>
+                                <div class="pull-right">
+                                    Variables dynamiques : <i class="fa fa-lg fa-magic"></i> <select id="vars_sms">
+                                        <option value=""></option>
+                                        <option value="[[donateur_id]]">Identifiant du donateur</option>
+                                        <option value="[[civilite_donateur]]"> Civilité du donateur</option>
+                                        <option value="[[nom_donateur]]"> Nom du donateur</option>
+                                        <option value="[[prenom_donateur]]"> Prénom du donateur</option>
+                                        <option value="[[code_activite]]"> Code d'activité</option>
+                                        <option value="[[pa_somme]]"> Somme de PA</option>
+                                        <option value="[[periodicite]]"> Périodicité</option>
+                                        <option value="[[adresse_donateur]]"> Adresse du donateur</option>
+                                        <option value="[[date_prelevement]]"> Date de prélèvement</option>
+                                        <option value="[[montant_don]]"> Montant du don</option>
+                                        <option value="[[ref_don]]"> Identifiant du don</option>
+                                    </select>
+
+                                </div>
+                                <br/>
+                                <br/>
+                                {% if form.smsContent.vars.errors|length %}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="control-label"
+                                               for="inputError"> {{ form_errors(form.smsContent) }}</label>
+                                        {{ form_widget(form.smsContent, {'attr': { 'class': 'task_field form-control'} }) }}
+                                    </div>
+                                {% else %}
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.smsContent, {'attr': { 'class': 'task_field form-control'} }) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+
+        <div class="widget-toolbox padding-8 clearfix">
+
+            <button class="btn btn-xs btn-success pull-right"  type="submit">
+                <span class="bigger-110">Envoyer la campagne</span>
+
+                <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+            </button>
+        </div>
+        {{ form_rest(form) }}
+        </form>
+        </div>
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="biblioimg" tabindex="-1" role="dialog" aria-labelledby="biblioimgLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="biblioimgLabel">Bibliothèque images </h4>
+                    </div>
+                    <div class="modal-body">
+                    <form action="{{ path('intersa_biblio_img_add') }}" method="POST" id="biblioForm" {{ form_enctype(formBiblio) }}>
+
+                        <div class="alert alert-info">
+                            <i class="fa fa-info"></i> Une image utilisée dans une campagne emailing ne doit pas être supprimée afin qu'elle puisse être visualisées par la cible.
+                        </div>
+                        {{ form_widget(formBiblio) }}
+                        <a id="submit_img" class="btn btn-primary pull-right btn-xs " href="#" ><i class="fa fa-plus"></i> Ajouter l'image</a>
+
+                        <br />
+                    </form>
+<br />
+                        <div id="content_images" style="height: 500px;overflow: auto;">
+                    {% if images|length >0 %}
+                        <table class="table">
+                        {% for image in images %}
+                            <tr>
+                                <td class="col-md-6"><img src="{{ asset('upload/' ~ image.id ~'/' ~ image.image)}}"  style="width:100px;" class="img-responsive" /></td>
+                                <td class="col-md-6">
+                                    <div class="btn-group pull-right">
+                                        <button type="button" class="btn btn-primary dropdown-toggle btn-xs" data-toggle="dropdown" aria-expanded="false">
+                                            Actions <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="#" onclick="removeImg({{ image.id }})" ><i class="fa fa-trash-o"></i> Supprimer</a></li>
+                                            <li><a href="#" onclick="insertImg('{{ app.request.scheme ~'://' ~ app.request.httpHost ~ asset('upload/' ~ image.id ~'/' ~ image.image)}}')" ><i class="fa fa-copy"></i> Insérer l'image dans l'éditeur</a></li>
+                                        </ul>
+                                    </div></td>
+                            </tr>
+                        {% endfor %}
+                        </table>
+                    {% else %}
+                        <hr />
+                        Aucune image sauvegardée.
+                    {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        {% javascripts '../app/Resources/Public/js/daterangepicker/moment-with-langs.min.js'
+        '../app/Resources/Public/js/daterangepicker/daterangepicker.js' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '../app/Resources/Public/js/ckeditor_plugins/fulldon.plugin.js' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '../app/Resources/Public/js/jquery-ui/jquery-ui.js' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        <script>
+            moment.lang('fr');
+
+            var pickerLocale = {
+                applyLabel: 'OK',
+                cancelLabel: 'Annuler',
+                fromLabel: 'Entre',
+                toLabel: 'et',
+                customRangeLabel: 'Période personnalisée',
+                daysOfWeek: moment().lang()._weekdaysMin,
+                monthNames: moment().lang()._months,
+                firstDay: 0
+            };
+
+            var pickerRanges = {
+                'Aujourd\'hui': [moment(), moment()],
+                'Hier': [moment().subtract('days', 1), moment().subtract('days', 1)],
+                '5 jours précédents': [moment().subtract('days', 4), moment().subtract('days', 1)],
+                'Ce mois': [moment().startOf('month'), moment().endOf('month')],
+                'Mois précedent': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')]
+            };
+            // Intialize
+
+            $(document).ready(function () {
+
+                //Controle des checkboxes
+               if( $('#fulldon_marketing_isEmail').is(":checked")) {
+                        if ($('#email_block').is(":hidden")) {
+                            $('#email_block').show();
+                        }
+                    } else {
+                        $('#email_block').hide();
+                    }
+
+
+                if ($('#by_file').is(':checked')) {
+                    $('#block_by_file').show();
+                    $('#block_by_form').hide();
+                    $('#block_by_search_fav').hide();
+                }
+                if ($('#by_form').is(':checked')) {
+                    $('#block_by_form').show();
+                    $('#block_by_file').hide();
+                    $('#block_by_search_fav').hide();
+                }
+                if ($('#by_search_fav').is(':checked')) {
+                    $('#block_by_form').hide();
+                    $('#block_by_file').hide();
+                    $('#block_by_search_fav').show();
+                }
+
+
+                $('#fulldon_marketing_isEmail').change(function () {
+                    if ($(this).is(":checked")) {
+                        if ($('#email_block').is(":hidden")) {
+                            $('#email_block').show();
+                        }
+                    } else {
+                        $('#email_block').hide();
+                    }
+                });
+                $('#fulldon_marketing_isSms').change(function () {
+                    if ($(this).is(":checked")) {
+                        if ($('#sms_block').is(":hidden")) {
+                            $('#sms_block').show();
+                        }
+                    } else {
+                        $('#sms_block').hide();
+                    }
+                });
+                $('#by_file').click(function () {
+                    if ($('#by_file').is(':checked')) {
+                        $('#block_by_file').show();
+                        $('#block_by_form').hide();
+                        $('#block_by_search_fav').hide();
+                    }
+                });
+                $('#by_form').click(function () {
+                    if ($('#by_form').is(':checked')) {
+                        $('#block_by_form').show();
+                        $('#block_by_file').hide();
+                        $('#block_by_search_fav').hide();
+                    }
+                });
+                $('#by_search_fav').click(function () {
+                    if ($('#by_search_fav').is(':checked')) {
+                        $('#block_by_form').hide();
+                        $('#block_by_file').hide();
+                        $('#block_by_search_fav').show();
+                    }
+                });
+                $('#reportrange').daterangepicker(
+                        {
+                            showDropdowns: false,
+                            ranges: pickerRanges,
+                            format: 'DD/MM/YYYY',
+                            separator: ' à ',
+                            locale: pickerLocale
+                        }
+                );
+
+                $('#vars_sms').change(function () {
+
+                    $('#fulldon_marketing_smsContent').val($('#fulldon_marketing_smsContent').val() + $(this).val());
+
+                });
+
+                $(function () {
+                    $("#sortable1, #sortable2").sortable({
+                        connectWith: ".connectedSortable",
+                        update: function () {
+                            var order = $('#sortable2').sortable('serialize');
+                            $('#columns').val(order);
+                        }
+
+                    }).disableSelection();
+                });
+            });
+            // Test mode
+            $('#test_mode').change(function () {
+                if ($(this).is(":checked")) {
+                    if ($('#test_console').is(":hidden")) {
+                        $('#test_console').show();
+                    }
+                } else {
+                    $('#test_console').hide();
+                }
+            });
+
+            $( "#submit_img" ).click(function( event ) {
+
+                // Stop form from submitting normally
+                event.preventDefault();
+
+                // Get some values from elements on the page:
+                var $form = $( "#biblioForm" ),
+                        term = $form.find( "input[name='fulldon_intersabundle_biblioimage[image]']" ).val(),
+                        url = $form.attr( "action" );
+
+                if(term.length > 0) {
+                var formData = new FormData($form[0]);
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: formData,
+                    async: false,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (returndata) {
+                        $('#content_images').html(returndata);
+                    }
+                });
+                } else {
+                    alert('Veuillez SVP joindre un fichier !');
+                }
+
+                return false;
+
+            });
+            function insertImg(img) {
+
+                CKEDITOR.instances.fulldon_marketing_emailContent.insertHtml("<img src=" + img + " alt='' align='right'/>");
+            }
+            function removeImg(id) {
+
+                if (confirm("Voulez-vous supprimer cette image ?")) { // Clic sur OK
+                $.ajax({
+                    url: "/intersa/biblio/img/remove/"+id,
+                    type: 'GET',
+                    async: false,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (returndata) {
+                        $('#content_images').html(returndata);
+                    }
+                });
+                }
+
+            return false;
+
+            }
+        </script>
+    {% endblock %}

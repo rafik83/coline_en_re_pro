@@ -1,0 +1,798 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+{% block coque_intersa %}
+    <div class="breadcrumbs" id="breadcrumbs">
+        <ol class="breadcrumb">
+            <li><a href="{{ path('donateur_account') }}">Accueil</a></li>
+            <li><a href="{{ path('elastic_don') }}">Gestion des dons </a></li>
+            <li class="active">Fiche du don :#{{ don.id }} </li>
+        </ol>
+    </div>
+    <div class="page-content">
+
+        <div class="col-md-12 pull-left">
+            <div class="page-header">
+                <h1>
+                    Gestion des dons
+                    <small>
+                        <i class="ace-icon fa fa-angle-double-right"></i>
+                        Fiche du don #{{ don.id }}
+                    </small>
+                </h1>
+            </div>
+
+
+            {% for flashMessage in app.session.flashbag.get('info') %}
+                <div class="alert alert-success">
+                    <span class="glyphicon glyphicon-ok-sign"> </span> {{ flashMessage }}
+                </div>
+            {% endfor %}
+            {% for flashMessage in app.session.flashbag.get('warning') %}
+                <div class="alert alert-warning">
+                    <span class="glyphicon glyphicon-warning-sign"> </span> {{ flashMessage|nl2br }}
+                </div>
+            {% endfor %}
+            {% if  app.session.flashbag.has('error_date') %}
+                <div class="alert alert-danger">
+                    {% for flashMessage in app.session.flashbag.get('error_date') %}
+                        <span class="glyphicon glyphicon-remove-circle"> </span> {{ flashMessage }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div id="user-profile-2" class="user-profile">
+                <div class="tabbable">
+                    <ul class="nav nav-tabs padding-18">
+                        <li class="active">
+                            <a data-toggle="tab" href="#home">
+                                <i class="orange ace-icon fa fa-euro bigger-120"></i>
+                                Le don
+                            </a>
+                        </li>
+                        {% if don.ispa == 1 %}
+                            <li>
+                                <a data-toggle="tab" href="#pa">
+                                    <i class="orange ace-icon fa fa-credit-card bigger-120"></i>
+                                    Prélèvements automatiques
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li>
+                            <a data-toggle="tab" href="#rf">
+                                <i class="orange ace-icon fa fa-files-o bigger-120"></i>
+                                Reçus fiscaux
+                            </a>
+                        </li>
+
+                    </ul>
+
+                    <div class="tab-content no-border padding-24">
+                        <div id="home" class="tab-pane in active">
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-3 ">
+                                    {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') or is_granted('ROLE_TRIAL') %}
+                                        <div class="list-group">
+                                            <a href="{{ path('intersa_donateur_gestion',{'id':donateur.id,'cumul':cumul,'date':date}) }}"
+                                               class="btn btn-sm btn-block btn-primary">
+                                                <i class="ace-icon fa fa-user bigger-110"></i>
+                                                <span class="bigger-110">Fiche du donateur</span>
+                                            </a>
+                                            <a {% if don.removed == false %} href="{{ path('intersa_dons_edit', {'id': don.id}) }}" {% endif %}
+                                                                             class="list-group-item {% if don.removed %} disabled {% endif %} "><span
+                                                    class="glyphicon glyphicon-pencil"></span> Modifier le don </a>
+                                            <a href="#" {% if don.removed == false %} onclick="disable_don({{ don.id }})"  {% endif %}
+                                               class="list-group-item {% if don.removed %} disabled {% endif %}"><span
+                                                    class="glyphicon glyphicon-minus"></span> Désactiver le don </a>
+                                            <a href="#" onclick="validate_don({{ don.id }})" class="list-group-item"><span
+                                                    class="fa fa-flag "></span> Changer le statut du don</a>
+                                                {% if don.ispa %}
+                                                    {% if don.abonnement.signedFile is not null %}
+                                                    <a href="{{ path('assets_signed_mandat', {'token': don.abonnement.signedFile}) }}" download
+                                                       class="list-group-item"><i class="fa fa-credit-card"></i> Télécharger votre mandat signé</a>
+                                                {% endif %}
+                                                <a href="#" data-toggle="modal" data-target="#generate_prelevement"
+                                                   class="list-group-item"><i
+                                                        class="fa fa-cog"></i> Générer le prochain prélèvement bancaire</a>
+
+                                            {% endif %}
+
+                                            {% if don.rfs|length != 0 %}
+                                                {% for rf in don.rfs %}
+                                                    <a href="#" {% if don.removed == false %}  data-toggle="modal" data-target="#generate_duplicata_{{ rf.id }}" {% endif %}
+                                                       class="list-group-item "><span class="glyphicon glyphicon-file"></span>
+                                                        Génerer un duplicata <b>#{{ rf.id }}</b></a>
+                                                    {% endfor %}
+                                                {% endif %}
+
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <!-- /.col -->
+
+                                <div class="col-xs-12 col-sm-9">
+                                    <h4 class="blue">
+                                        <span class="middle">Don de {{ don.montant }} €</span>
+
+                                        {% if don.removed %} <span class="label label-warning"><span
+                                                    class="glyphicon glyphicon-minus"></span>Désactivé</span> {% if don.motif.name is defined %} Motif : {{ don.motif.name }}{% endif %}{% endif %}{% if don.eclat is not null %}
+                                            <div class="pull-right"><span class="label label-info">Don Eclaté</span></div>{% endif %}
+                                        </h4>
+
+                                        <div class="profile-user-info">
+                                            <div class="profile-info-row">
+                                                <div class="profile-info-name"> Nom complet du donateur</div>
+
+                                                <div class="profile-info-value">
+                                                    <span> {{ donateur.nom }} {{ donateur.prenom }} </span>
+                                                </div>
+                                            </div>
+                                            <div class="profile-info-row">
+                                                <div class="profile-info-name"> Statut</div>
+
+                                                <div class="profile-info-value">
+                                                    <span> {% if don.transaction.statut.code is defined %} {{ don.transaction.statut.libelle }}   {% else %}
+                                                        <i class="fa fa-remove red"></i> Abondonné{% endif %}<br/></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="profile-info-row">
+                                                <div class="profile-info-name"> Montant</div>
+
+                                                <div class="profile-info-value">
+                                                    <span>{{ don.montant }} Euros</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="profile-info-row">
+                                                <div class="profile-info-name"> Mode de paiement</div>
+
+                                                <div class="profile-info-value">
+                                                    <span>{% if don.modePaiement is defined and don.modePaiement is not null %}{{ don.modePaiement.libelle }}{% endif %}</span>
+                                                </div>
+                                            </div>
+                                            <div class="profile-info-row">
+                                                <div class="profile-info-name"> Date de saisie</div>
+
+                                                <div class="profile-info-value">
+                                                    <span>{{ don.createdAt|date('d/m/Y') }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="profile-info-row">
+                                                <div class="profile-info-name"> Date fiscale</div>
+
+                                                <div class="profile-info-value">
+                                                    <span>{{ don.dateFiscale|date('d/m/Y') }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="profile-info-row">
+                                                <div class="profile-info-name"> Type de don</div>
+
+                                                <div class="profile-info-value">
+                                                    <span>
+                                                        {% if don.ispa %}
+                                                            Don régulier : {% if don.abonnement.actif == 0 %}Desactivé{% else %}Activé {% endif %}
+                                                        {% else %}
+                                                            Don ponctuel
+                                                        {% endif %}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                    <!-- /.col -->
+                                </div>
+                                <!-- /.row -->
+
+                                <div class="space-20"></div>
+
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6">
+                                        <div class="widget-box transparent">
+                                            <div class="widget-header widget-header-small">
+                                                <h4 class="widget-title smaller">
+                                                    <i class="ace-icon fa fa-check-square-o bigger-110"></i>
+                                                    Informations bancaires (Cas échéant)
+                                                </h4>
+                                            </div>
+
+                                            <div class="widget-body">
+                                                <div class="widget-main">
+                                                    {% if(don.abonnement is defined) %}
+                                                        {% if   don.abonnement.periodicite  is defined and don.abonnement.periodicite is not null %}
+                                                            <b>Périodicite : </b>       {{ don.abonnement.periodicite.name }} <br/>{% endif %}
+                                                            {% if   don.abonnement.dateFirstPa  is defined and  don.abonnement.dateFirstPa is not null %}
+                                                                <b>Date du premier prélevement
+                                                                    : </b>       {{ don.abonnement.dateFirstPa|date('d/m/Y') }} <br/>{% endif %}
+                                                                    {% if   don.abonnement.dateNextPa  is defined and  don.abonnement.dateNextPa is not null %}
+                                                                    <b>Date du prochain prélevement
+                                                                        : </b>       {{ don.abonnement.dateNextPa|date('d/m/Y') }} <br/>{% endif %}
+                                                                        {% if   don.abonnement.dateFinPa  is defined and  don.abonnement.dateFinPa is not null %}
+                                                                        <b>Date
+                                                                            du fin d'engagement :</b>       {{ don.abonnement.dateFinPa|date('d/m/Y') }}
+                                                                        <br/>{% endif %}
+                                                                        {% if   don.abonnement.iban is defined and don.abonnement.iban is not null %}<b>IBAN
+                                                                                :</b>       {{ don.abonnement.iban }} <br/>{% endif %}
+                                                                            {% if   don.abonnement.bic is defined and don.abonnement.bic is not null %}<b>BIC
+                                                                                    :</b>       {{ don.abonnement.bic }} <br/>{% endif %}
+                                                                                    {% if   don.abonnement.nomBanque is defined and don.abonnement.nomBanque is not null %}
+                                                                                    <b>Nom
+                                                                                        de la banque :</b>       {{ don.abonnement.nomBanque }} <br/>{% endif %}
+
+                                                                                {% endif %}
+                                                                                {% if(don.transaction.cheque is defined) %}
+                                                                                    {% if   don.transaction.cheque.numeroCheque is defined and don.transaction.cheque.numeroCheque is not null %}
+                                                                                        <b>Numéro du chèque :</b>       {{ don.transaction.cheque.numeroCheque }}
+                                                                                        <br/>{% endif %}
+                                                                                        {% if   don.transaction.cheque.dateCheque is defined  and  don.transaction.cheque.dateCheque is not null %}
+                                                                                            <b>Date du chèque :</b>       {{ don.transaction.cheque.dateCheque|date('d/m/Y') }}
+                                                                                            <br/>{% endif %}
+                                                                                            {% if   don.transaction.cheque.nomBanque is defined and don.transaction.cheque.nomBanque is not null and don.transaction.cheque.nomBanque is not empty %}
+                                                                                                <b>Nom de la banque :</b>       {{ don.transaction.cheque.nomBanque }}
+                                                                                                <br/>{% endif %}
+                                                                                            {% endif %}
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="col-xs-12 col-sm-6"> 
+                                                                                <div class="widget-box transparent">
+                                                                                    <div class="widget-header widget-header-small header-color-blue2">
+                                                                                        <h4 class="widget-title smaller">
+                                                                                            <i class="ace-icon fa fa-list bigger-120"></i>
+                                                                                            Notes de l'évènement : ({{ don.cause.libelle }})
+                                                                                        </h4>
+                                                                                    </div>
+
+                                                                                    <div class="widget-body">
+                                                                                        <div class="widget-main padding-16">
+                                                                                            {% if note is not null %}
+
+                                                                                                {% if note.q1 is defined and note.q1 is not null %}
+                                                                                                    Question 1 : {{ note.q1 }}/10 <br/>
+                                                                                                {% endif %}
+                                                                                                {% if note.q2 is defined and note.q2 is not null %}
+                                                                                                    Question 2 : {{ note.q2 }}/10 <br/>
+                                                                                                {% endif %}
+                                                                                                {% if note.q3 is defined and note.q3 is not null %}
+                                                                                                    Question 3 : {{ note.q3 }}/10 <br/>
+                                                                                                {% endif %}
+                                                                                                {% if note.q4 is defined and note.q4 is not null %}
+                                                                                                    Question 4 : {{ note.q4 }}/10 <br/>
+                                                                                                {% endif %}
+                                                                                                {% if note.q5 is defined and note.q5 is not null %}
+                                                                                                    Question 5 : {{ note.q5 }}/10 <br/>
+                                                                                                {% endif %}
+                                                                                                {% if note.q6 is defined and note.q6 is not null %}
+                                                                                                    Question 6 : {{ note.q6 }}/10 <br/>
+                                                                                                {% endif %}
+                                                                                                {% if note.q7 is defined and note.q7 is not null %}
+                                                                                                    Question 7 : {{ note.q7 }}/10 <br/>
+                                                                                                {% endif %}
+                                                                                                {% if note.q8 is defined and note.q8 is not null %}
+                                                                                                    Question 8 : {{ note.q8 }}/10 <br/>
+                                                                                                {% endif %}
+                                                                                                {% if note.q9 is defined and note.q9 is not null %}
+                                                                                                    Question 9 : {{ note.q9 }}/10 <br/>
+                                                                                                {% endif %}
+                                                                                                {% if note.q10 is defined and note.q10 is not null %}
+                                                                                                    Question 10 : {{ note.q10 }}/10 <br/>
+                                                                                                {% endif %}
+                                                                                            {% endif %}
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+                                                                    <!-- /#home -->
+                                                                    {% if don.ispa == 1 %}
+                                                                        <div id="pa" class="tab-pane">
+                                                                            <div class="profile-feed row">
+                                                                                <div class="col-sm-12">
+
+                                                                                    <h4 style="margin-top:5px;" class="couleur-intersa">Les prélevements
+                                                                                        : {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') or is_granted('ROLE_TRIAL') %}
+                                                                                        <div class="pull-right">
+                                                                                            {% if don.abonnement is not null %}{% if don.abonnement.actif == true %}<a
+                                                                                                        class="btn btn-danger btn-xs" data-toggle="modal" data-target="#myModal">
+                                                                                                        <span class="glyphicon glyphicon-stop"></span> Stoper l'abonnement
+                                                                                                    </a>{% else %}<a class="btn btn-success btn-xs" data-toggle="modal"
+                                                                                                                     data-target="#myModal2"><span
+                                                                                                            class="glyphicon glyphicon-play"></span> Réactiver l'abonnement
+                                                                                                    </a>{% endif %}{% endif %}</div>{% endif %}
+                                                                                            </h4>
+                                                                                            <hr/>
+                                                                                            <table class="table table-condensed">
+                                                                                                <thead>
+                                                                                                    <tr>
+                                                                                                        <th>#REF</th>
+                                                                                                        <th>Montant</th>
+                                                                                                        <th>Date</th>
+                                                                                                        <th>Motif de rejet</th>
+
+                                                                                                        <th></th>
+                                                                                                    </tr>
+                                                                                                </thead>
+                                                                                                <tbody id="content">
+
+                                                                                                    {% for pr in prelevements %}
+                                                                                                        <tr class="{% if pr.rejet %}disabled{% endif %}">
+                                                                                                            <td>{{ pr.id }}</td>
+                                                                                                            <td>{{ pr.montant }} €</td>
+                                                                                                            <td>{{ pr.datePrelevement|date('d/m/Y') }}</td>
+                                                                                                            <td>{% if pr.rejet %}{{ pr.motif.name }}{% endif %}</td>
+                                                                                                            <td><a {% if pr.rejet %}disabled {% endif %} class="btn btn-danger btn-xs"
+                                                                                                                                    onclick="rejet_prelevement({{ don.id }},{{ pr.id }} )" ><span
+                                                                                                                        class="glyphicon glyphicon-stop"></span> Rejeter </a></td>
+
+                                                                                                        </tr>
+                                                                                                    {% endfor %}
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                            <div class="holder"></div>
+
+                                                                                        </div>
+                                                                                        <!-- /.col -->
+                                                                                    </div>
+                                                                                    <!-- /.row -->
+
+                                                                                </div>
+                                                                                <!-- /#pa -->
+                                                                            {% endif %}
+
+                                                                            <div id="rf" class="tab-pane">
+                                                                                <!-- #section:pages/profile.friends -->
+                                                                                <div class="profile-users clearfix">
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-6">
+
+                                                                                            {% if don.ispa %}
+                                                                                                <div class="col-xs-12 col-sm-12 widget-container-col">
+                                                                                                    <div class="widget-box widget-color-dark light-border">
+                                                                                                        <div class="widget-header">
+                                                                                                            <h5 class="widget-title smaller">Génération du Reçu fiscal
+                                                                                                                Annuel </h5>
+
+                                                                                                            <div class="widget-toolbar">
+                                                                                                                <span class="badge badge-success"> Reçu fiscal de  {{ ('now'|date('Y'))-1 }}</span>
+                                                                                                            </div>
+                                                                                                        </div>
+
+                                                                                                        <div class="widget-body">
+                                                                                                            <div class="widget-main padding-6">
+                                                                                                                La génération du reçu fiscal annuel est une opération qui peut prendre
+                                                                                                                quelques instants, veuillez ne pas intérrompre l'execution.<br/><br/>
+                                                                                                                {% if don.rfs|length != 0 %}
+                                                                                                                    {% for rf in don.rfs %}
+                                                                                                                        <span class="glyphicon glyphicon-saved"></span><b> <span
+                                                                                                                                class="text-primary"> #{{ rf.id }}</span> Reçu fiscal généré
+                                                                                                                        </b> Le <span
+                                                                                                                            class="text-primary">{{ rf.createdAt|date('d/m/Y H:i:s') }}</span>
+                                                                                                                        <br/><br/>
+                                                                                                                    {% endfor %}
+                                                                                                                {% else %}
+                                                                                                                    <span class="glyphicon glyphicon-save"></span><b> Reçu fiscal pas encore
+                                                                                                                        généré</b> <br/>
+                                                                                                                    <br/>
+                                                                                                                {% endif %}
+                                                                                                                <br/>
+                                                                                                                {% if don.removed == false %}
+                                                                                                                    <div class="widget-toolbox padding-8 clearfix">
+                                                                                                                        <a href="#" data-toggle="modal" data-target="#generate_rf"
+                                                                                                                           class="btn btn-xs btn-default pull-right"><span
+                                                                                                                                class="glyphicon glyphicon-file"></span> Lancer la
+                                                                                                                            génération </a>
+                                                                                                                    </div>
+                                                                                                                {% endif %}
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            {% else %}
+                                                                                                {% set sate = 'else' %}
+                                                                                                {#{dump(sate)}#}
+                                                                                                <div class="col-xs-12 col-sm-12 widget-container-col">
+                                                                                                    <div class="widget-box widget-color-dark light-border">
+                                                                                                        <div class="widget-header">
+                                                                                                            <h5 class="widget-title smaller">Génération du Reçu fiscal
+                                                                                                                Annuel </h5>
+
+                                                                                                            <div class="widget-toolbar">
+                                                                                                                <span class="badge badge-success">{{ don.rfs|length }}
+                                                                                                                    reçu(s) généré(s)</span>
+                                                                                                            </div>
+                                                                                                        </div>
+
+                                                                                                        <div class="widget-body">
+                                                                                                            <div class="widget-main padding-6">
+                                                                                                                La génération du reçu fiscal annuel est une opération qui peut prendre
+                                                                                                                quelques instants, veuillez ne pas intérrompre l'execution.<br/><br/>
+                                                                                                                {% if don.rfs|length != 0 %}
+                                                                                                                    <hr/>
+                                                                                                                    {% for rf in don.rfs %}
+                                                                                                                        <span class="glyphicon glyphicon-saved"></span><b> <span
+                                                                                                                                class="text-primary"> #{{ rf.id }}</span> Reçu fiscal généré
+                                                                                                                        </b> Le <span
+                                                                                                                            class="text-primary">{{ rf.createdAt|date('d/m/Y H:i:s') }}</span>
+                                                                                                                        <br/><br/>
+                                                                                                                    {% endfor %}
+                                                                                                                {% else %}
+                                                                                                                    <span class="glyphicon glyphicon-save"></span><b> Reçu fiscal pas encore
+                                                                                                                        généré</b> <br/>
+                                                                                                                    <br/>
+                                                                                                                {% endif %}
+                                                                                                                <br/>
+                                                                                                                {% if don.removed == false and  don.rfs|length == 0 %}
+                                                                                                                    <div class="widget-toolbox padding-8 clearfix">
+                                                                                                                        <a href="#" data-toggle="modal" data-target="#generate_rf"
+                                                                                                                           class="btn btn-xs btn-default pull-right"><span
+                                                                                                                                class="glyphicon glyphicon-file"></span> Lancer la
+                                                                                                                            génération
+                                                                                                                        </a>
+                                                                                                                    </div>
+                                                                                                                {% endif %}
+
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+
+                                                                                            {% endif %}
+
+                                                                                        </div>
+                                                                                        <div class="col-md-6">
+
+
+                                                                                            <div class="col-xs-12 col-sm-12 widget-container-col">
+                                                                                                <div class="widget-box widget-color-dark light-border">
+                                                                                                    <div class="widget-header">
+                                                                                                        <h5 class="widget-title smaller">Duplicatas</h5>
+
+                                                                                                        <div class="widget-toolbar">
+                                                                                                            <span class="badge badge-success">{{ don.rfs|length }} duplicatas </span>
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                    <div class="widget-body">
+                                                                                                        <div class="widget-main padding-6">
+
+                                                                                                            {% if don.rfs|length != 0 %}
+                                                                                                                {% if don.rfs is defined and don.rfs is not null %}
+                                                                                                                {#% if don.rfs is not defined and don.rfs is  null %#}
+                                                                                                                    {% for rf in don.rfs %}
+                                                                                                                        <a href="#" {% if don.removed == false %}  data-toggle="modal" data-target="#generate_duplicata_{{ rf.id }}" {% endif %}
+                                                                                                                           class="list-group-item "><span
+                                                                                                                                class="glyphicon glyphicon-file"></span>
+                                                                                                                            Génerer un duplicata <b>#{{ rf.id }}</b></a>
+                                                                                                                        {% endfor %}
+                                                                                                                    {%else%}
+                                                                                                                            <div style="display: block;background-color: rgba(242, 222, 222, 0.08);border-color:#ebcccc;color: rgba(230, 18, 18, 0.84);">
+                                                                                                                            <h4> 
+                                                                                                                                {{ 'Vous ne pouvez pas' ~ '  ' ~ ' générer un duplicata ' ~  '  ' }}
+                                                                                                                                
+                                                                                                                                
+                                                                                                                            </h4>
+                                                                                                                                <br/>
+                                                                                                                                <h4>
+                                                                                                                                   {{'pour un reçu fiscal' ~  '  '   ~  'avec un Don inexistant'}} 
+                                                                                                                                </h4>
+
+                                                                                                                    </div>
+
+                                                                                                                {% endif %}
+                                                                                                            {% endif %}
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                </div>
+
+                                                                            </div>
+                                                                            <!-- /#friends -->
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="modal fade" id="myModal" tabindex="-2" role="dialog" aria-labelledby="myModalLabel"
+                                                             aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                                        <h4 class="modal-title" id="myModalLabel">Stopper l'abonnement</h4>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <div class="alert alert-danger">Si vous stoppez l'abonnement, le prélevement et tous les
+                                                                            traitements associés à ce don vont être bloqués.
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+                                                                                <form action="{{ path('intersa_dons_stop_abo') }}" method="post" class="form-group">
+                                                                                    <label for="motif"><label for="motif" class="required">Veuillez choisir le motif
+                                                                                            :</label></label>
+                                                                                    <SELECT name="motif" class="task_field form-control ">
+                                                                                        {% for motif in motifs %}
+                                                                                            <option value="{{ motif.id }}">{{ motif.name }}</option>
+                                                                                        {% endfor %}
+                                                                                    </SELECT>
+                                                                                    <br/>
+                                                                                    <input type="hidden" value="{{ don.id }}" name="don_id"/>
+
+                                                                                    <div class="pull-right">
+                                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Annuler
+                                                                                        </button>
+                                                                                        <input type="submit" class="btn btn-danger" value="Confirmer"/>
+                                                                                    </div>
+
+                                                                                </form>
+                                                                            </div>
+
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal fade" id="myModal2" tabindex="-2" role="dialog" aria-labelledby="myModalLabel"
+                                                             aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                                        <h4 class="modal-title" id="myModalLabel">Réactiver l'abonnement</h4>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <div class="alert alert-success">Si vous réactivez l'abonnement, le prélevement et tous les
+                                                                            traitements associés à ce don vont être débloqués.
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+                                                                                <form action="{{ path('intersa_dons_start_abo') }}" method="post" class="form-group">
+                                                                                    <input type="hidden" value="{{ don.id }}" name="don_id"/>
+                                                                                    <label for="iban"><label for="iban" class="required">Date du prochain
+                                                                                            prélevement</label></label>
+                                                                                    <input type="text" id="date_next_pa" name="date_next_pa" placeholder="jj/mm/yyyy"
+                                                                                           class=" datepicker task_field form-control ">
+                                                                                    <br/>
+
+                                                                                    <div class="pull-right">
+                                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Annuler
+                                                                                        </button>
+                                                                                        <input type="submit" class="btn btn-success" value="Confirmer"/>
+                                                                                    </div>
+
+                                                                                </form>
+                                                                            </div>
+
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal fade" id="rejetprelevement" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel"
+                                                             aria-hidden="true">
+
+                                                        </div><!-- /.modal -->
+                                                        <div class="modal fade" id="disabledon" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel"
+                                                             aria-hidden="true">
+
+                                                        </div><!-- /.modal -->
+                                                        {% if don.rfs|length != 0 %}
+                                                            {% set count = 0 %}
+                                                            {% for rf in don.rfs %}
+                                                                {% set count = rf.id %}
+
+                                                                <div class="modal fade" id="generate_duplicata_{{ rf.id }}" tabindex="-2" role="dialog"
+                                                                     aria-hidden="true">
+                                                                    <div class="modal-dialog">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <button type="button" class="close" data-dismiss="modal"
+                                                                                        aria-hidden="true">&times;</button>
+                                                                                <h4 class="modal-title" id="myModalLabel">Génération du duplicata</h4>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                {% if rf is defined and rf is not null %}
+                                                                                    <div class="alert alert-info">Souhaitez-vous réellement générer le duplicata ? Si l'adresse email du donateur est renseignée, le document lui sera automatiquement envoyé.
+                                                                                    </div>
+                                                                                {% else %}
+                                                                                    <div class="alert alert-danger">Impossible de générer un duplicata : Reçu fiscal
+                                                                                        manquant
+                                                                                    </div>
+                                                                                {% endif %}
+
+                                                                                <div class="row">
+                                                                                    <div class="col-md-12">
+
+                                                                                        <div class="pull-right">
+                                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Annuler
+                                                                                            </button>
+                                                                                            {#% if rf is not defined and rf is  null %#}
+                                                                                            {% if rf is defined and rf is not null %}
+
+                                                                                                <a href="{{ path('assets_duplicata',{'id': rf.id}) }}"
+                                                                                                   target="_blank" class="btn btn-primary" id="id_generate_duplicata">
+                                                                                                    Confirmer </a>
+
+                                                                                                {#% else %#}
+
+                                                                                                {#{dump('rafik')}#}
+
+                                                                                                <!--a href="#" target="_blank" class="btn btn-primary disabled"
+                                                                                                   id="id_generate_duplicata"> Confirmer </a-->
+                                                                                            {% endif %}
+
+                                                                                        </div>
+
+                                                                                    </div>
+
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            {% endfor %}
+
+                                                            <input type="hidden" id="get_id_recu_duplicata" value="{{count}}" />
+                                                        {% endif %}
+                                                        <div class="modal fade" id="validate_don" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel"
+                                                             aria-hidden="true">
+
+                                                        </div><!-- /.modal -->
+                                                        <div class="modal fade" id="generate_rf" tabindex="-2" role="dialog" aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                                        <h4 class="modal-title" id="myModalLabel">Génération du reçu fiscal</h4>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        {% if don.ispa %}
+                                                                            <div class="alert alert-info">Voulez-vous générer le Reçu fiscal
+                                                                                Annuel {{ ('now'|date('Y'))-1 }} pour le don #{{ don.id }}.
+                                                                            </div>
+                                                                        {% else %}
+                                                                            <div class="alert alert-info">Voulez-vous générer le Reçu fiscal pour le don #{{ don.id }}
+                                                                                .
+                                                                            </div>
+                                                                        {% endif %}
+
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+
+                                                                                <div class="pull-right">
+                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                                                                                    <a href="{{ path('assets_rf',{'id': don.id}) }}" target="_blank"
+                                                                                       class="btn btn-primary" id="id_generate_rf"> Confirmer </a>
+                                                                                </div>
+
+                                                                            </div>
+
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal fade" id="generate_prelevement" tabindex="-2" role="dialog" aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                                        <h4 class="modal-title" id="myModalLabel">Génération du prochain prélèvement</h4>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        {% if don.ispa %}
+                                                                            Voulez-vous générer le Prochain prélèvement automatique
+                                                                            pour la date {{ don.abonnement.dateNextPa|date('d/m/Y') }} du don #{{ don.id }}.
+
+                                                                        {% endif %}
+
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+
+                                                                                <div class="pull-right">
+                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                                                                                    <a href="{{ path('generate_next_pa', {'id': don.id}) }}"
+                                                                                       class="btn btn-primary" id="id_generate_rf"> Confirmer </a>
+                                                                                </div>
+
+                                                                            </div>
+
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {% endblock %}
+                                                            {% block javascripts %}
+                                                                {{ parent() }}
+                                                                <script>
+
+
+
+
+
+
+                                                                    $(document).ready(function () {
+                                                                        $('#id_generate_duplicata').on('click', function () {
+                                                                            //$('#generate_duplicata').modal('hide')
+                                                                            var rf_id = $("#get_id_recu_duplicata").val();
+                                                                            $("#generate_duplicata_" + rf_id).css('display', 'none');
+
+
+                                                                        });
+
+                                                                    });
+
+                                                                    $('#fulldon_donateurbundle_dontype_abonnement_actif').on('click', function () {
+                                                                        if ($('#fulldon_donateurbundle_dontype_abonnement_actif').is(':checked')) {
+                                                                            $('#abo_date').show();
+                                                                        } else {
+                                                                            $('#abo_date').hide();
+                                                                        }
+                                                                    });
+
+                                                                    function rejet_prelevement(don_id, id) {
+                                                                        $.ajax({
+                                                                            url: "/intersa/ajax/rejet/did/" + don_id + "/id/" + id,
+                                                                            beforeSend: function (xhr) {
+
+                                                                            }
+                                                                        })
+                                                                                .done(function (data) {
+                                                                                    $("#rejetprelevement").html(data);
+                                                                                    $("#rejetprelevement").modal('show')
+                                                                                });
+                                                                    }
+                                                                    function disable_don(don_id) {
+                                                                        $.ajax({
+                                                                            url: "/intersa/ajax/don/disable/id/" + don_id,
+                                                                            beforeSend: function (xhr) {
+
+                                                                            }
+                                                                        })
+                                                                                .done(function (data) {
+                                                                                    $("#disabledon").html(data);
+                                                                                    $('#disabledon').modal('show')
+                                                                                });
+                                                                    }
+                                                                    $(document).ready(function () {
+                                                                        $("div.holder").jPages({
+                                                                            containerID: "content",
+                                                                            perPage: 10
+                                                                        });
+                                                                    });
+                                                                    $('#id_generate_rf').click(function () {
+                                                                        $('#generate_rf').modal('hide');
+                                                                    });
+
+                                                                    function validate_don(id) {
+                                                                        $.ajax({
+                                                                            url: "/intersa/ajax/validate/" + id,
+                                                                            beforeSend: function (xhr) {
+                                                                                ;
+                                                                            }
+                                                                        })
+                                                                                .done(function (data) {
+                                                                                    $("#validate_don").html(data);
+                                                                                    $('#validate_don').modal('show')
+                                                                                });
+                                                                    }
+                                                                </script>
+
+                                                            {% endblock %}

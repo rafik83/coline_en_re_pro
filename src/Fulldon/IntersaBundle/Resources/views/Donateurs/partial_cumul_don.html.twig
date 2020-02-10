@@ -1,0 +1,98 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4 class="widget-title title-plus"></h4>
+
+
+            </div>
+
+            <div class="widget-body">
+                <div class="widget-main">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form id="frm_cumul_don" action="{{ path('elastic_cumule_don_by_donateur') }}" method="POST" class="form-group">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <label class=" label-plus">{{'Cumul des Dons entre :'}}</label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <!--input type="text" id="montat_min_dons" class="task_field form-control" placeholder="minimum (€)"/-->
+                                        {{ form_widget(form_cumule_don.MtMinDon,{'attr':{'class':'task_field form-control','placeholder': 'minimum (€)'}}) }}
+                                    </div>
+
+                                    <div class="col-md-1">
+                                        <label class=" label-plus">{{'et'}}</label>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <!--input type="text" id="montat_max_dons" class="task_field form-control" placeholder="maximum (€) "-->
+                                        {{ form_widget(form_cumule_don.MtMaxDon,{'attr':{'class':'task_field form-control','placeholder': 'maximum (€)'}}) }}
+                                    </div>
+
+
+
+
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <label class=" label-plus">{{'Date dernier Dons  :'}}</label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <!--input type="text" id="date_min_dons" placeholder="Date min jj/mm/aaaa" class=" datepicker task_field form-control "-->
+                                        {{ form_widget(form_cumule_don.DateMinDon,{'attr':{'class':'datepicker task_field form-control','placeholder': 'Date min jj/mm/aaaa'}}) }}
+                                    </div>
+
+                                    <div class="col-md-1">
+                                        <label class=" label-plus">{{'et'}}</label>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <!--input type="text" id="date_max_dons"  placeholder="Date max jj/mm/aaaa" class=" datepicker task_field form-control "-->
+                                        {{ form_widget(form_cumule_don.DateMaxDon,{'attr':{'class':'datepicker task_field form-control','placeholder': 'Date max jj/mm/aaaa'}}) }}
+                                    </div>
+                                </div>
+                                <br>
+
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <label class=" label-plus">{{'E-mail:'}}</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <!--input type="text" id="date_min_dons" placeholder="Date min jj/mm/aaaa" class=" datepicker task_field form-control "-->
+                                        {{ form_widget(form_cumule_don.emailDonateur,{'attr':{'class':'task_field form-control','placeholder': 'email donateur'}}) }}
+                                    </div>
+                                </div>
+                                
+
+
+                                <div class="row">
+                                    <div class="col-md-2">
+
+                                        <button class="btn btn-xs btn-success pull-right" type="button" id="serach_btn_elastic_don" style="margin-top: -187px;margin-right: -1290px;width: 150px;">
+                                            <span class="bigger-110">Rechercher</span>
+
+                                            <i class="ace-icon fa fa-search icon-on-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                {{ form_widget(form_cumule_don.refDonateur) }}
+                            </form> 
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- /.span -->
+
+</div>
+
+
+
+
+

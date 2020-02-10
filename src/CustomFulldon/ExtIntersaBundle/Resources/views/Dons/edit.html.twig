@@ -1,0 +1,422 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+        {% set cheques = { 'BC':'BC','CS':'CS' } %}
+        {% set pa = { 'PA':'PA' } %}
+        {% set virement = { 'VIREMENT':'VIREMENT' } %}
+        <div class="breadcrumbs" id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('donateur_account') }}">Accueil</a></li>
+                <li><a href="{{ path('elastic_don') }}">Gestion des dons </a></li>
+                <li><a href="{{ path('intersa_dons_view',{'id':don.id}) }}">Don :#{{ don.id }}</a></li>
+                <li class="active">Modification du don :#{{ don.id }} </li>
+            </ol>
+        </div>
+        <div class="page-content">
+        <div class="col-md-12">
+
+        <h3 style="margin-top:5px;" class="couleur-intersa"> Modification du don :#{{ don.id }} </h3>
+        <hr/>
+
+
+        <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+        <div class="modal-dialog"
+             style="top:-10px;right:0px;{%  if data['image'] is defined %}width:100%;height:100%;{% else %}width:600px;height:100px{% endif %}">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel">Modification du don :#{{ don.id }} </h4>
+        </div>
+        <div class="modal-body">
+        <div class="row">
+        {% if data['image'] is defined %}
+            <div class="col-md-6">
+                {% if type in pa|keys or type in virement|keys %}
+                    {% if data['image'][0] is defined %} <img src="{{ path('assets_img',{'token': data['image'][0]}) }}"
+                                                              style="max-height: 900px;" />{% endif %}
+                {% else %}
+                    {% if data['image'][0] is defined %} <img src="{{ path('assets_img',{'token': data['image'][0]}) }}"
+                                                              style="width: 100%" />{% endif %}
+                    {% if data['image'][1] is defined %} <img src="{{ path('assets_img',{'token': data['image'][1]}) }}"
+                                                              style="width: 100%" />{% endif %}
+                {% endif %}
+            </div>
+        {% endif %}
+        <div class="col-md-{% if data['image'] is defined %}6{% else %}12{% endif %}">
+        <form action="{{ path('intersa_dons_edit', {'id': don.id}) }}" method="post">
+        <input type="hidden" name="id_don" {% if data['id'] is defined %}value="{{ data['id'] }}"{% endif %} />
+        <label for="montant"><label for="montant" class="required">Montant</label></label>
+        {% if  app.session.flashbag.has('error_montant') %}
+            {# Affichage des erreurs pour ce champ précis. #}
+            <div class="form-group has-error">
+                <label class="control-label" for="inputError">
+                    {% for flashMessage in app.session.flashbag.get('error_montant') %}
+                        <li>{{ flashMessage }}</li>
+                    {% endfor %}
+                </label>
+                <input type="text" id="montant" name="montant" required="required" placeholder="Montant (en Euros)"
+                       class="task_field form-control"
+                       {% if data['montant'] is defined %}value="{{ data['montant'] }}" {% endif %} {% if data['rf'] == true and don.ispa == false %} readonly='readonly' {% endif %}>
+            </div>
+        {% else %}
+            <input type="text" id="montant" name="montant" required="required" placeholder="Montant (en Euros)"
+                   {% if data['montant'] is defined %}value="{{ data['montant'] }}" {% endif %}
+                   class="task_field form-control"  {% if data['rf'] == true and don.ispa == false %} readonly='readonly' {% endif %} >
+        {% endif %}
+        <br/>
+        <label for="code_activite"><label for="code_activite" class="required">Code Activité</label></label>
+        {% if  app.session.flashbag.has('error_code_activite') %}
+            {# Affichage des erreurs pour ce champ précis. #}
+            <div class="form-group has-error">
+                <label class="control-label" for="inputError">
+                    {% for flashMessage in app.session.flashbag.get('error_code_activite') %}
+                        <li>{{ flashMessage }}</li>
+                    {% endfor %}
+                </label>
+                <input type="text" id="code_activite" name="code_activite" required="required" autocomplete="off"
+                       class="task_field form-control"
+                       {% if data['cause'] is defined and  data['cause'] is not null %}value="{{ data['cause'].code }}" {% endif %}  >
+            </div>
+        {% else %}
+            <input type="text" id="code_activite" name="code_activite" required="required" autocomplete="off"
+                   class="task_field form-control"
+                   {% if data['cause'] is defined and  data['cause'] is not null %}value="{{ data['cause'].code }}" {% endif %} >
+        {% endif %}
+        <br/>
+        <label for="date_fiscal"><label for="date_fiscale" class="required">Date Fiscale</label></label>
+        {% if  app.session.flashbag.has('error_date_fiscale') %}
+            {# Affichage des erreurs pour ce champ précis. #}
+            <div class="form-group has-error">
+                <label class="control-label" for="inputError">
+                    {% for flashMessage in app.session.flashbag.get('error_date_fiscale') %}
+                        <li>{{ flashMessage }}</li>
+                    {% endfor %}
+                </label>
+                <input type="text" id="date_fiscale" name="date_fiscale" placeholder="jj/mm/aaaa"
+                       class="task_field form-control "
+                       {% if data['date_fiscale'] is defined and data['date_fiscale'] is not null %}value="{{ data['date_fiscale']|date('d/m/Y') }}"{% endif %}
+                       autocomplete="off">
+            </div>
+        {% else %}
+            <input type="text" id="date_fiscale" name="date_fiscale" placeholder="jj/mm/aaaa"
+                   class="task_field form-control "
+                   {% if data['date_fiscale'] is defined and data['date_fiscale'] is not null %}value="{{ data['date_fiscale']|date('d/m/Y') }}"{% endif %}
+                   autocomplete="off">
+        {% endif %}
+        <br/>
+        {% if type in cheques|keys %}
+            <label for="num_cheque"><label for="num_cheque" class="required">Numero du chèque</label> </label>
+            <input type="text" id="num_cheque" name="num_cheque"
+                   value="{% if data['num_cheque'] is defined %}{{ data['num_cheque'] }}{% endif %}"
+                   class="task_field form-control " {% if data['rf'] == true and don.ispa == false %} disabled {% endif %}>
+            <br/>
+            <label for="num_cheque"><label for="date_cheque" class="required">Date du chèque</label></label>
+            {% if  app.session.flashbag.has('error_date_cheque') %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError">
+                        {% for flashMessage in app.session.flashbag.get('error_date_cheque') %}
+                            <li>{{ flashMessage }}</li>
+                        {% endfor %}
+                    </label>
+                    <input type="text" id="date_cheque" name="date_cheque" placeholder="jj/mm/aaaa"
+                           class="task_field form-control "
+                           {% if data['date_cheque'] is defined %}value="{{ data['date_cheque']|date('d/m/Y') }}"{% endif %}
+                           autocomplete="off"  {% if data['rf'] == true and don.ispa == false %} disabled {% endif %}>
+                </div>
+            {% else %}
+                <input type="text" id="date_cheque" name="date_cheque" placeholder="jj/mm/aaaa"
+                       class="task_field form-control "
+                       {% if data['date_cheque'] is defined %}value="{{ data['date_cheque']|date('d/m/Y') }}"{% endif %}
+                       autocomplete="off"  {% if data['rf'] == true and don.ispa == false %} disabled {% endif %}>
+            {% endif %}
+            <br/>
+        {% endif %}
+        {% if type in pa|keys or don.ispa == true %}
+            {% if data['mode'] is defined and data['mode'] != 'cb' %}
+                <label for="bic"><label for="bic" class="required">BIC</label></label>
+                {% if  app.session.flashbag.has('error_bic') %}
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputError">
+                            {% for flashMessage in app.session.flashbag.get('error_bic') %}
+                                <li>{{ flashMessage }}</li>
+                            {% endfor %}
+                        </label>
+                        <input type="text" id="bic" name="bic" required="required" placeholder="BIC"
+                               class="task_field form-control "
+                               {% if data['bic'] is defined %}value="{{ data['bic'] }}"{% endif %} autocomplete="off">
+                    </div>
+                {% else %}
+                    <input type="text" id="bic" name="bic" required="required" placeholder="BIC"
+                           class="task_field form-control "
+                           {% if data['bic'] is defined %}value="{{ data['bic'] }}"{% endif %} autocomplete="off">
+                {% endif %}
+                <br/>
+                <label for="iban"><label for="iban" class="required">IBAN</label></label>
+                {% if  app.session.flashbag.has('error_iban') %}
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputError">
+                            {% for flashMessage in app.session.flashbag.get('error_iban') %}
+                                <li>{{ flashMessage }}</li>
+                            {% endfor %}
+                        </label>
+                        <input type="text" id="iban" name="iban" required="required" placeholder="IBAN"
+                               class="task_field form-control "
+                               {% if data['iban'] is defined %}value="{{ data['iban'] }}"{% endif %} autocomplete="off">
+                    </div>
+                {% else %}
+                    <input type="text" id="iban" name="iban" required="required" placeholder="IBAN"
+                           class="task_field form-control "
+                           {% if data['iban'] is defined %}value="{{ data['iban'] }}"{% endif %} autocomplete="off">
+                {% endif %}
+                <br/>
+            {% endif %}
+            <label for="date_first_pa"><label for="date_first_pa" class="required">Date du premier
+                    prélevement</label></label>
+            {% if  app.session.flashbag.has('error_date_first_pa') %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError">
+                        {% for flashMessage in app.session.flashbag.get('error_date_first_pa') %}
+                            <li>{{ flashMessage }}</li>
+                        {% endfor %}
+                    </label>
+                    <input type="text" id="date_first_pa" name="date_first_pa" required="required"
+                           placeholder="jj/mm/aaaa" class="task_field form-control "
+                           {% if data['date_first_pa'] is defined %}value="{{ data['date_first_pa']|date('d/m/Y') }}"{% endif %}
+                           autocomplete="off">
+                </div>
+            {% else %}
+                <input type="text" id="date_first_pa" name="date_first_pa" required="required" placeholder="jj/mm/aaaa"
+                       class="task_field form-control "
+                       {% if data['date_first_pa'] is defined %}value="{{ data['date_first_pa']|date('d/m/Y') }}"{% endif %}
+                       autocomplete="off">
+            {% endif %}
+            <br/>
+            <label for="date_fin_pa"><label for="date_fin_pa" class="required">Date du fin de
+                    prélevement</label></label>
+            {% if  app.session.flashbag.has('error_date_fin_pa') %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError">
+                        {% for flashMessage in app.session.flashbag.get('error_date_fin_pa') %}
+                            <li>{{ flashMessage }}</li>
+                        {% endfor %}
+                    </label>
+                    <input type="text" id="date_fin_pa" name="date_fin_pa" placeholder="jj/mm/aaaa"
+                           class="task_field form-control "
+                           {% if data['date_fin_pa'] is defined and data['date_fin_pa'] is not null %}value="{{ data['date_fin_pa']|date('d/m/Y') }}"{% endif %}
+                           autocomplete="off">
+                </div>
+            {% else %}
+                <input type="text" id="date_fin_pa" name="date_fin_pa" placeholder="jj/mm/aaaa"
+                       class="task_field form-control "
+                       {% if data['date_fin_pa'] is defined and data['date_fin_pa'] is not null %}value="{{ data['date_fin_pa']|date('d/m/Y') }}"{% endif %}
+                       autocomplete="off">
+            {% endif %}
+            <br/>
+            <label for="periodicite"><label for="periodicite" class="required">Périodicité</label></label>
+            {% if  app.session.flashbag.has('error_periodicite') %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError">
+                        {% for flashMessage in app.session.flashbag.get('error_periodicite') %}
+                            <li>{{ flashMessage }}</li>
+                        {% endfor %}
+                    </label>
+                    <SELECT id="periodicite" name="periodicite" required="required"
+                            class="task_field form-control "  {% if data['rf'] == true and don.ispa == false %} disabled {% endif %}>
+                        {% for periode in periodes %}
+                            <option value="{{ period.id }}"
+                                    {% if data['periodicite'] is defined and data['periodicite'] == period.id %}selected="selected"{% endif %}>{{ period.name }}</option>
+                        {% endfor %}
+                    </SELECT>
+                </div>
+            {% else %}
+                <SELECT id="periodicite" name="periodicite" required="required"
+                        class="task_field form-control "  {% if data['rf'] == true and don.ispa == false %} disabled {% endif %}>
+                    {% for periode in periodes %}
+                        <option value="{{ periode.id }}"
+                                {% if data['periodicite'] is defined and data['periodicite'] == periode.id %}selected="selected"{% endif %}>{{ periode.name }}</option>
+                    {% endfor %}
+                </SELECT>
+            {% endif %}
+            <br/>
+        {% endif %}
+        {% if type in cheques|keys  or ( type in pa|keys and data['mode'] is defined and data['mode'] != 'cb' ) or type in virement|keys %}
+            <label for="nom_banque"><label for="nom_banque" class="required">Nom de la banque</label></label>
+            {% if  app.session.flashbag.has('error_nom_banque') %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError">
+                        {% for flashMessage in app.session.flashbag.get('error_nom_banque') %}
+                            <li>{{ flashMessage }}</li>
+                        {% endfor %}
+                    </label>
+                    <input type="text" id="nom_banque" name="nom_banque" class="task_field form-control"
+                           {% if data['nom_banque'] is defined %}value="{{ data['nom_banque'] }}"{% endif %}
+                           autocomplete="off"  {% if data['rf'] == true and don.ispa == false %} disabled {% endif %}>
+                </div>
+            {% else %}
+                <input type="text" id="nom_banque" name="nom_banque" class="task_field form-control"
+                       {% if data['nom_banque'] is defined %}value="{{ data['nom_banque'] }}"{% endif %} {% if data['rf'] == true and don.ispa == false %} disabled {% endif %} >
+            {% endif %}
+        {% endif %}
+        <br/>
+        <h4>Système des notes :</h4>
+        <label class="inline">
+            <input type="checkbox" class="ace" id="isnotes" name="isnotes" onchange="updatenotes()"
+                   value="1" {% if data['isnotes'] is defined  and data['isnotes'] == 1 %} checked {% endif %}>
+            <span class="lbl"> Absence des notes</span>
+        </label>
+
+        <div class="form-inline">
+
+            <label class="inline" for="q1">Q1 :</label>
+            <input type="text" class="input-small" id="q1" name="q1"
+                   {% if data['q1'] is defined %}value="{{ data['q1'] }}"{% endif %}>
+
+            <label class="inline" for="q2">Q2 :</label>
+            <input type="text" class="input-small" id="q2" name="q2"
+                   {% if data['q2'] is defined %}value="{{ data['q2'] }}"{% endif %}>
+            <label class="inline" for="q3">Q3 :</label>
+            <input type="text" class="input-small" id="q3" name="q3"
+                   {% if data['q3'] is defined %}value="{{ data['q3'] }}"{% endif %}>
+
+            <label class="inline" for="q4">Q4 :</label>
+            <input type="text" class="input-small" id="q4" name="q4"
+                   {% if data['q4'] is defined %}value="{{ data['q4'] }}"{% endif %}>
+            <br/>
+            <label class="inline" for="q4">Q5 :</label>
+            <input type="text" class="input-small" id="q5" name="q5"
+                   {% if data['q5'] is defined %}value="{{ data['q5'] }}"{% endif %}>
+
+            <label class="inline" for="q4">Q6 :</label>
+            <input type="text" class="input-small" id="q6" name="q6"
+                   {% if data['q6'] is defined %}value="{{ data['q6'] }}"{% endif %}>
+
+            <label class="inline" for="q4">Q7 :</label>
+            <input type="text" class="input-small" id="q7" name="q7"
+                   {% if data['q7'] is defined %}value="{{ data['q7'] }}"{% endif %}>
+            <label class="inline" for="q4">Q8 :</label>
+            <input type="text" class="input-small" id="q8" name="q8"
+                   {% if data['q8'] is defined %}value="{{ data['q8'] }}"{% endif %}>
+            <br/>
+            <label class="inline" for="q4">Q9 :</label>
+            <input type="text" class="input-small" id="q9" name="q9"
+                   {% if data['q9'] is defined %}value="{{ data['q9'] }}"{% endif %}>
+            <label class="inline" for="q4">Q10 :</label>
+            <input type="text" class="input-small" id="q10" name="q10"
+                   {% if data['q10'] is defined %}value="{{ data['q10'] }}"{% endif %}>
+
+        </div>
+        <br/>
+
+        <div class="widget-toolbox padding-8 clearfix">
+
+            <a href="{{ path('intersa_dons_view', {'id': don.id}) }}" class="btn btn-xs btn-default pull-left "><span
+                        class="glyphicon glyphicon-eye-open"></span> retourner au don #{{ don.id }} </a>
+            <button class="btn btn-xs btn-success pull-right" type="submit">
+                <span class="bigger-110">Modifier le donateur</span>
+
+                <i class="ace-icon fa fa-check icon-on-right"></i>
+            </button>
+        </div>
+
+        </form>
+        </div>
+        </div>
+
+
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+    {% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+
+        var $inputCause = $('#code_activite');
+
+        //causes
+        $.ajax({
+            url: "/intersa/causes",
+            beforeSend: function (xhr) {
+                ;
+            }
+        })
+                .done(function (data) {
+                    if (data.length != 0) {
+
+                        $inputCause.typeahead({source: data,
+                            autoSelect: true});
+                    }
+
+                });
+
+        $inputCause.change(function () {
+            var current = $inputCause.typeahead("getActive");
+            if (current) {
+                // Some item from your model is active!
+                if (current.name == $inputCause.val()) {
+                    // This means the exact match is found. Use toLwerCase() if you want case insensitive match.
+                } else {
+                    // This means it is only a partial match, you can either add a new item
+                    // or take the active if you don't want new items
+                }
+            } else {
+                // Nothing is active so it is a new value (or maybe empty value)
+            }
+        });
+
+    </script>
+    <script>
+        $('#myModal2').modal('show');
+        function disableAll() {
+            $('#q1').prop('disabled', true);
+            $('#q2').prop('disabled', true);
+            $('#q3').prop('disabled', true);
+            $('#q4').prop('disabled', true);
+            $('#q5').prop('disabled', true);
+            $('#q6').prop('disabled', true);
+            $('#q7').prop('disabled', true);
+            $('#q8').prop('disabled', true);
+            $('#q9').prop('disabled', true);
+            $('#q10').prop('disabled', true);
+        }
+        function enableAll() {
+            $('#q1').prop('disabled', false);
+            $('#q2').prop('disabled', false);
+            $('#q3').prop('disabled', false);
+            $('#q4').prop('disabled', false);
+            $('#q5').prop('disabled', false);
+            $('#q6').prop('disabled', false);
+            $('#q7').prop('disabled', false);
+            $('#q8').prop('disabled', false);
+            $('#q9').prop('disabled', false);
+            $('#q10').prop('disabled', false);
+        }
+        if ($('#isnotes').is(':checked')) {
+            disableAll();
+        } else {
+            enableAll();
+
+        }
+        function updatenotes() {
+
+            if ($('#isnotes').is(':checked')) {
+                disableAll();
+            } else {
+                enableAll();
+
+            }
+
+        }
+
+    </script>
+{% endblock %}

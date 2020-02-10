@@ -1,0 +1,6 @@
+"symfony/filesystem": "~2.3",
+        "symfony/config": "2.4.x-dev",
+        "mandrill/mandrill": "1.*",
+        "symfony/http-foundation": "2.4.x-dev",
+        "slot/mandrill-bundle": "v1.0.1",
+        "hipaway-travel/mandrill-bundle": "dev-master"

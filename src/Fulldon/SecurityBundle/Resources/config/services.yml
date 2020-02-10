@@ -1,0 +1,10 @@
+parameters:
+#    fulldon_security.example.class: Fulldon\SecurityBundle\Example
+
+services:
+#    fulldon_security.example:
+#        class: %fulldon_security.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
+services:
+    fulldon.security.sha256salted_encoder:
+        class: Fulldon\SecurityBundle\Service\Sha256Salted

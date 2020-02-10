@@ -1,0 +1,132 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+    <div class="breadcrumbs" id="breadcrumbs">
+        <script type="text/javascript">
+            try {
+                ace.settings.check('breadcrumbs', 'fixed')
+            } catch (e) {
+            }
+        </script>
+        <ol class="breadcrumb">
+            <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+            <li><a href="{{ path('intersa_advanced_stats') }}">Statistiques avancées</a></li>
+            <li class="active">Statistiques globales par entité ({{ entity }})</li>
+        </ol>
+    </div>
+    <div class="page-content">
+        <div class="page-header">
+            <h1>
+                Statistiques globales
+                <small>
+                    <i class="ace-icon fa fa-angle-double-right"></i>
+                    Entité : {{ entity }}
+                </small>
+            </h1>
+        </div>
+        <!-- /.page-header -->
+
+
+        <a href="#" onclick="document.forms['pdf'].submit()" class="btn btn-info"><span
+                    class="glyphicon glyphicon-file"></span> Générer un PDF</a>
+
+        <a href="#" onclick="document.forms['excel'].submit()" class="btn btn-default"><img
+                    src="{{ asset('img/excel.png') }}"/> Générer un Excel</a>
+
+        <form action="{{ path('intersa_advanced_stats_global_pdf') }}" method="post" name="pdf" target="_blank">
+            <input type="hidden" name="pdf_date_debut" value="{{ date_debut|date('d/m/Y') }}"/>
+            <input type="hidden" name="pdf_date_fin" value="{{ date_fin|date('d/m/Y') }}"/>
+            <input type="hidden" name="pdf_entity" value="{{ entity }}"/>
+        </form>
+        <form action="{{ path('intersa_advanced_stats_global_excel') }}" method="post" name="excel" target="_blank">
+            <input type="hidden" name="excel_date_debut" value="{{ date_debut|date('d/m/Y') }}"/>
+            <input type="hidden" name="excel_date_fin" value="{{ date_fin|date('d/m/Y') }}"/>
+            <input type="hidden" name="excel_entity" value="{{ entity }}"/>
+        </form>
+
+        {% for flashMessage in app.session.flashbag.get('info') %}
+            <div class="alert alert-success">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('warning') %}
+            <div class="alert alert-warning">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+
+        {% set total_pros = 0 %}
+        {% set total_comptage = 0 %}
+        {% set total_cumul = 0 %}
+        {% set total_moyenne = 0 %}
+        <div class="row">
+
+            <div class=" col-md-12">
+                <hr />
+                <b>Date : </b>{{ date_debut|date('d/m/Y H:i:s') }} - {{ date_fin|date('d/m/Y H:i:s') }}
+                <hr/>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Code occasion</th>
+                        <th>Cible</th>
+                        <th>NB ENVOIS</th>
+                        <th>NB DONS</th>
+                        <th>TX DE RDT</th>
+                        <th>Montant Collecté</th>
+                        <th>Don MOYEN</th>
+                    </tr>
+                    </thead>
+                    <tbody id="content">
+                    {% for r in data['result'] %}
+                        <tr class="">
+
+                            <td>{{ r.code }}</td>
+                            <td>{{ r.cible }}</td>
+                            <td>{{ r.pros }}</td>
+                            <td>{{ r.comptage }}</td>
+                            <td>{% if r.pros != 0 %}{{ (r.comptage/r.pros)|round }}{% else %} 0 {% endif %}</td>
+                            <td>{{ r.cumul }}€</td>
+                            <td>{{ r.moyenne|round }}€</td>
+
+
+                        </tr>
+                        {% set total_pros = total_pros + r.pros %}
+                        {% set total_comptage = total_comptage + r.comptage %}
+                        {% set total_cumul = total_cumul + r.cumul %}
+                        {% set total_moyenne = total_moyenne + r.moyenne %}
+                    {% endfor %}
+                    {# total #}
+                    <tr class="label-info" style="font-weight: bold;color:white;">
+                        <td colspan="2"> TOTAL</td>
+                        <td>{{ total_pros }}</td>
+                        <td>{{ total_comptage }}</td>
+                        <td></td>
+                        <td>{{ total_cumul }}€</td>
+                        <td>{% if data['result']|length != 0 %}{{ (total_moyenne/(data['result']|length))|round }}{% else %}0{% endif %}
+                            €
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    {% endblock %}
+    {% block javascripts %}
+    {{ parent() }}
+
+
+    <script>
+
+        $(document).ready(function () {
+            $("div.holder").jPages({
+                containerID: "content",
+                perPage: 10
+            });
+
+        });
+
+    </script>
+{% endblock %}

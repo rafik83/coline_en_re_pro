@@ -1,0 +1,12 @@
+.widget-box {
+
+    margin: 8px 0 !important;
+}
+.title-plus {
+    font-weight: bold;
+    color:#ed6c1a;
+    font-size: 13px;
+}
+.listnotes li {
+    display: inline;list-style-type: square;padding-right: 20px;
+}

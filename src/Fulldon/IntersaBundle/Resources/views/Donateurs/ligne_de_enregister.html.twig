@@ -1,0 +1,156 @@
+
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        body {
+            font-size: 12px;
+        }
+        .couleur-titre {
+            color:#d58512;
+        }
+        th {
+            text-align: left;
+        }
+        .row_td {
+            background-color: #B3BCF8;
+        }
+        .sub_total {
+            background-color: #1AC5EC;
+        }
+        .aligne_row {
+            text-align: right;
+            width:150px;
+        }
+        .page {
+            overflow: hidden;
+            page-break-after: always;
+        }
+        td {
+            padding: 3px;
+        }
+    </style>
+
+</head>
+
+
+
+<div class="tab-pane">
+    <br/>
+    <table class="table table-condensed" id="table_ligne_search_de">
+        <thead style="width: 100%;">
+            <tr>
+                {% for key,value in coldisplay_ligne_de_enregister %}
+                    {% for key2,value2 in value %}
+                        {% if key2 == "title" %}
+                            <th style="width: 30%">{{value2}}</th>
+                            {% elseif key2 ==  "descrip" %}
+                            <th style="width: 40%">{{value2}}</th>
+                            {% elseif key2 ==  "createdat" %}
+                            <th style="width: 26%">{{value2}}</th>
+                            <th  style="width: 2%"></th>
+                            <th  style="width: 2%"></th>
+                            {% endif %}
+
+
+                    {% endfor %}
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody id="content" >
+            {% for r2 in data %}
+                <tr id="id_ligne_de_{{r2['id']}}">
+                    {% for key,value in coldisplay_ligne_de_enregister %}
+                        {% for key2,value2 in value %}
+                            {% if key2 == "title" %}
+                                <td>{{ r2['title'] }}</td>
+                            {% elseif key2 ==  "descrip" %}
+                                <td>{{ r2['description'] }}</td>
+                            {% elseif key2 == "createdat" %}
+                                <td>{{ r2['created_at']|date('d/m/Y') }}</td>
+                                <td>
+                                    <div class="hidden-sm hidden-xs btn-group">
+                                        <button id="btn_consulte_de" type="button" class="btn btn-xs btn-info" onclick="consulterDessinER({{ r2['id'] }})">
+                                            <i class="ace-icon fa fa-search bigger-120"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="hidden-sm hidden-xs btn-group">
+                                        <!--button id="btn_delete_de" type="button" class="btn btn-xs btn-danger"  onclick="deleteDessinER({#{ r2['id'] }#})"-->
+                                        <button id="btn_delete_de" type="button" class="btn btn-xs btn-danger" data-toggle="modal" data-target="#delete_popup" onclick="deleteDessinER({{ r2['id'] }} );">
+                                            <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                        </button>
+                                    </div>
+                                </td>
+
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </tr>
+
+            {% endfor %}
+
+        </tbody>
+    </table>
+
+    <center>
+        {% if pager_dessin is defined and pager_dessin is not null %}
+            {# Pager #}
+            {% if pager_dessin.haveToPaginate %}
+                {% set state = '' %}
+                <ul class="pagination pull-center">
+                    {# back #}
+                    {% if pager_dessin.hasPreviousPage %}
+                        {% set state = 'paginate_button first' %}
+                        <li class="{{ state }}"><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateDessin({{ pager_dessin.getCurrentPage() -1 }} )">&laquo;&nbsp;{{ 'Previous'|trans }}</a></li>
+                        {% else %}
+                        <li class="disabled">
+                            <span>&laquo;&nbsp;{{ 'Previous'|trans }}</span>
+                        </li>
+                    {% endif %}
+
+
+
+
+
+
+                    {# pages 1 2 3 ... #}
+                    {% for givenPage in 1..pager_dessin.getNbPages() %}
+                        {% set state = '' %}
+                        {% if  pager_dessin.getCurrentPage()  == givenPage %}
+                            {% set state = 'active' %}
+                        {% endif %}
+                        <li class="{{ state }}"><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateDessin({{ givenPage }})">{{ givenPage }}</a></li>
+                        {%  endfor %}
+
+
+
+                    {# forward #}
+                    {% set state = '' %}
+                    {% if pager_dessin.hasNextPage %}
+                        <li class="{{ state }}" ><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateDessin({{ pager_dessin.getCurrentPage() +1}})">{{ 'Next'|trans }}&nbsp;&raquo;</a></li>
+                        {% else %}
+                        <li class="disabled">
+                            <span>&laquo;&nbsp;{{ 'Next'|trans }}</span>
+                        </li>
+                    {% endif %}
+
+                {% endif %}
+            {% endif %}
+
+    </center>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+

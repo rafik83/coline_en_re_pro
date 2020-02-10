@@ -1,0 +1,53 @@
+{% extends "FulldonSecurityBundle::layout.html.twig" %}
+{% block title %}Mot de passe oublié{% endblock %}
+{% block body %}
+
+    <div class="backstretch" style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px; height: 2000px; width: 1903px; z-index: -999999; position: fixed;">
+        {% if init['perso'].fondPage is defined  and init['perso'].fondPage  is not null %}
+            <img style="position: absolute; margin: 0px; padding: 0px; border: none; width: 1903px; height: 2000px; max-width: none; z-index: -999999; left: 0px; top: 0px;" src="{{ asset('upload/' ~ init['perso'].id ~'/' ~ init['perso'].fondPage)}}" >
+        {% else %}
+            <img style="position: absolute; margin: 0px; padding: 0px; border: none; width: 1903px; height: 2000px; max-width: none; z-index: -999999; left: 0px; top: 0px;" src="{{ asset('img/bg_login.jpg') }}">
+        {% endif %}
+    </div>
+    {# Le formulaire, avec URL de soumission vers la route « login_check » comme on l'a vu #}
+    <div class="container console-auth">
+
+        <form class="form-signin console-form-auth" role="form" action="{{ path('mdp_oublie_donateur') }}" method="post">
+            <div class="logo-access">
+                {% if init['perso'].logo is defined %}
+                    <img src="{{ asset('upload/' ~ init['perso'].id ~'/' ~ init['perso'].logo)}}" alt="logo" height="100" />
+                {% else %}
+                    <img src="{{ asset('img/logo_donateur_big.png') }}"  />
+                {% endif %}
+
+            </div>
+            <h4>{{ "Mot de passe oublié"|trans({},'messages') }} :</h4>
+            <div class="alert alert-info">
+
+                <span class="glyphicon glyphicon-info-sign"></span> {{ "Un nouveau mot de passe sera généré et envoyé à votre email"|trans({},'messages') }}.
+            </div>            {# S'il y a une erreur, on l'affiche dans un joli cadre #}
+            {% for flashMessage in app.session.flashbag.get('error_email_donateur') %}
+                <div class="alert alert-danger">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+            {% for flashMessage in app.session.flashbag.get('error_email_exist_donateur') %}
+                <div class="alert alert-danger">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+            {% for flashMessage in app.session.flashbag.get('info') %}
+                <div class="alert alert-success">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+            <label>Email : </label>
+            <input type="text" name="_email" class="form-control" placeholder="Email" required autofocus>
+            <br />
+            <span class="glyphicon glyphicon-chevron-right"></span> <a href="{{ path('donateur_register') }}">{{ "Créer un compte"|trans({},'messages') }}</a>
+            <br /><br />
+            <button class="btn btn-lg btn-primary btn-block" type="submit">{{ "Valider"|trans({},'messages') }}</button>
+        </form>
+
+    </div> <!-- /container -->
+{% endblock %}

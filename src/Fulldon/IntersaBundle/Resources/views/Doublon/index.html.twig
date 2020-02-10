@@ -1,0 +1,103 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+{% block coque_intersa %}
+
+    <div class="breadcrumbs" id="breadcrumbs">
+        <ol class="breadcrumb">
+            <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+            <li class="active"> Liste des doublons potentiels : </li>
+        </ol>
+    </div>
+    <div class="page-content">
+        <div class="col-md-12 pull-left">
+            <div class="page-header">
+                <h1>
+                    Gestion des doublons
+                    <small>
+                        <i class="ace-icon fa fa-angle-double-right"></i>
+                        Liste des doublons potentiels
+                    </small>
+                </h1>
+            </div><!-- /.page-header -->
+
+            {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') or is_granted('ROLE_TRIAL')%}
+
+                <a href="{{ path('intersa_doublon_merge') }}" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-transfer"></span> Fusionner un doublon manuellement </a>
+
+            {% endif %}
+            <hr  />
+
+            {% for flashMessage in app.session.flashbag.get('info') %}
+                <div class="alert alert-success">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+
+            <div class="pagination_desc"><strong>{{ total_doublons }}</strong> Doublons potentiels en attente dans l'historique
+                    {% if last_page > 1 %}
+                    - page <strong>{{ current_page }}/{{ last_page }}</strong>
+                    <br />
+                {% endif %}
+            </div>
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Identifiant donateur 1 (Origine)</th>
+                        <th>Identifiant donateur 2 (Doublon)</th>
+                        <th>Pourcentage de similarité</th>
+                        {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1')or is_granted('ROLE_TRIAL') %}<th></th>{% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doublon in doublons %}
+                        
+                       {%if doublon.done == false  %}
+                       
+                        <tr>
+                            <td>{{ doublon.id }}</td>
+                            <td>{{ doublon.createdAt | date('Y-m-d H:i:s') }}</td>
+                            <td style="width:100px;">{{ doublon.donateur1 }}</td>
+                            <td style="width:100px;" >{{ doublon.donateur2 }}</td>
+                            <td>{{ doublon.pourcentage }}%</td>
+                            {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') or is_granted('ROLE_TRIAL')%}
+                                <td><a href="{{ path('intersa_doublon_merge') }}?vdonateur1={{ doublon.donateur1 }}&vdonateur2={{ doublon.donateur2 }}"><span class="glyphicon glyphicon-transfer"></span> Fusionner </a></td>
+                            {% endif %}
+                        </tr>
+                         {%endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <center>
+        {% if last_page > 1 %}
+            <ul class="pagination pull-center">
+                <li><a href="{{ path('intersa_doublon', { 'page': previous_page }) }}">&laquo;</a></li>
+                    {% for page in 1..last_page %}
+                        {% if page == current_page %}
+                        <li class="active"><a href="#">{{ page }}</a></li>
+                        {% else %}
+                        <li><a href="{{ path('intersa_doublon', { 'page': page }) }}">{{ page }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                <li><a href="{{ path('intersa_doublon', { 'page': next_page }) }}">&raquo;</a></li>
+            </ul>
+        {% endif %}
+    </center>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+
+        $('#fulldon_donateurbundle_dontype_abonnement_actif').on('click', function () {
+            if ($('#fulldon_donateurbundle_dontype_abonnement_actif').is(':checked')) {
+                $('#abo_date').show();
+            } else {
+                $('#abo_date').hide();
+            }
+        });
+
+    </script>
+{% endblock %}

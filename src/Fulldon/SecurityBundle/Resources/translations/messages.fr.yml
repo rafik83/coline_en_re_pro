@@ -1,0 +1,6 @@
+'Bad credentials': 'Le login ou le mot de passe saisi est incorrect.'
+'The presented password is invalid.': 'Le mot de passe saisi est invalide'
+'The presented password cannot be empty.': 'Le mot de passe ne doit pas être vide'
+'User account is disabled.': 'Cet utilisateur est désactivé'
+'user': 'Nom d''utilisateur'
+'password': 'Mot de passe'

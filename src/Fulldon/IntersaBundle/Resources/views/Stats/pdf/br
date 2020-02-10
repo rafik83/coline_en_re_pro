@@ -1,0 +1,294 @@
+<tbody id="content" >
+                            {% for value in data_detaill  %}
+                                {% if value['cause_id'] == header['id'] %}
+
+                                    <tr class="">
+                                        <td class="row_td">{{ value['donateur_id']}}</td>
+
+                                        <td class="row_td aligne_row"  >
+                                            {% if value['cause_id'] is not null %}  
+                                                {{ header['date_concert'] }} <br /> {{ header['lieu_concert'] }}  <br />
+                                            {% else %}
+                                                {{ ' ' }} <br />
+                                            {% endif %}
+
+                                        </td>
+
+
+                                        <td class="row_td">
+                                            {% if value['donateur_id'] is not null %}
+                                                {{ value['nom_donateur']}}  {{ value['prenom_donateur'] }}
+                                            {% endif %}
+                                        </td>
+                                        <td class="row_td aligne_row"  >
+                                            {% if value['montant'] is not null %}  
+                                                {% if value['montant'] != 0 %} 
+                                                    {{ value['montant']}} €
+                                                {% endif %}
+
+                                                {% if value['mode_payement'] is not null %} 
+                                                    {% if value['mode_payement'] == 'ESPECE' %}
+                                                        {% set mt_don_espece = mt_don_espece + value['montant'] %}
+                                                    {% endif %}
+
+                                                    {% if value['mode_payement'] == 'Chèque' %}
+                                                        {% set mt_don_cheque = mt_don_cheque + value['montant'] %}
+                                                    {% endif %}
+
+                                                    {% if value['mode_payement'] == 'Virement Bancaire' %}
+                                                        {% set mt_don_virrement = mt_don_virrement + value['montant'] %}
+                                                    {% endif %}
+
+                                                {% endif %}
+                                                {% if value['montant'] == 0 %} 
+                                                    0.00 €
+                                                {% endif %}
+                                            {% endif %}
+
+                                        </td>
+                                        <td class="row_td aligne_row"  >
+                                            {% if value['mode_payement'] is not null %}   
+                                                {{ value['mode_payement']}}
+                                                {% if value['mode_payement'] == 'ESPECE' %}
+                                                    {% set nb_don_espece = nb_don_espece + 1 %}
+                                                {% endif %}
+
+                                                {% if value['mode_payement'] == 'Chèque' %}
+                                                    {% set nb_don_cheque = nb_don_cheque + 1 %}
+                                                {% endif %}
+
+                                                {% if value['mode_payement'] == 'Virement Bancaire' %}
+                                                    {% set nb_don_virrement = nb_don_virrement + 1 %}
+                                                {% endif %}
+
+
+
+                                            {% else %}
+                                                {{ vide }}
+                                            {% endif %}
+                                            {% if value['montant'] is not null %} 
+                                                {% if value['montant'] == 0 %} 
+                                                    {% set nb_don_sans_monatant = nb_don_sans_monatant + 1 %}
+                                                {% endif %}
+                                            {% endif %}
+
+
+                                        </td>
+                                        <td class="row_td aligne_row"  >
+                                            {% if value['num_rf'] is not null %}   
+                                                # {{ value['num_rf']}}
+                                            {% else %}
+                                                {{ vide }}
+                                            {% endif %}
+
+                                        </td>
+                                        <td class="row_td aligne_row"  >
+                                            {% if value['date_creation'] is not null %}   
+                                                {{ value['date_creation']|date('d/m/Y')}} <br />
+                                            {% else %}
+                                                {{ ' ' }} <br />
+                                            {% endif %}
+
+                                        </td>
+                                    </tr>
+
+
+
+                                {%endif%}
+                            {% endfor %}
+                            <tr >
+
+                                <td colspan="2" class="sub_total aligne_row" style="text-align: left;padding:5px;">
+                                    Nombre de dons en espèces du concert : {{ nb_don_espece }}<br />
+                                    Nombre de dons par chèque du concert :  {{ nb_don_cheque }} <br />
+                                    Nombre de dons par virement bancaire du concert :  {{ nb_don_virrement }} <br />
+                                    {% set nb_bulltin_concert = nb_don_espece + nb_don_cheque + nb_don_virrement %}
+                                    Nombre de bulletins du concert :  {{ nb_bulltin_concert }} <br />
+                                    {% set nb_don_concert = nb_bulltin_concert - nb_don_sans_monatant %}
+                                    Nombre de dons du concert :  {{ nb_don_concert }}<br />
+                                    {% set nb_don_concert_total = nb_don_concert_total +  nb_don_concert  %}
+
+                                    {% set nbr_don_espece_totale = nbr_don_espece_totale +  nb_don_espece  %}
+                                    {% set nbr_don_cheque_toatle = nbr_don_cheque_toatle +  nb_don_cheque  %}
+                                    {% set nbr_don_virrement_toatle = nbr_don_virrement_toatle +  nb_don_virrement  %}
+                                    {% set nbr_bulltin_total = nbr_bulltin_total +  nb_bulltin_concert  %}
+
+                                </td>
+                                <td colspan="3" class="sub_total aligne_row" style="text-align:left;padding:5px;">
+                                    Montant des dons en espèces du concert :  {{ mt_don_espece }}€ <br />
+                                    Montant des dons par chèque du concert : {{ mt_don_cheque }}€<br />
+                                    Montant des dons par virement bancaire du concert :  {{ mt_don_virrement }}€ <br />
+                                    {% set mt_don_total = mt_don_espece + mt_don_cheque + mt_don_virrement %}
+                                    {% set MT_don_par_anner = MT_don_par_anner + mt_don_total %}
+                                    {% if nb_don_concert > 0 %} 
+                                        {% set mt_moyen_don = mt_don_total / nb_don_concert %}
+                                        Montant moyen des dons du concert : {{ mt_moyen_don|round(2)  }} €<br /> 
+                                    {% endif %}
+                                    Montant total des dons du concert : {{ mt_don_total }}€<br />
+                                </td>
+
+                            </tr>
+                        </tbody>
+
+
+-------------------------------------juste aprés enfor-------
+
+<table class="table table-condensed" style="width:100%;float:left;background-color: #000; color:#fff">
+            <td colspan="3"  style="text-align:left;padding:5px; font-size: 16px">
+
+                Nombre de bulletins total :  {{ nbr_bulltin_total}} <br />
+                Nombre de dons par chèque :   {{ nbr_don_cheque_toatle }} <br />
+                Nombre de dons en espèces :   {{ nbr_don_espece_totale }} <br />
+                Nombre de dons par virement bancaire:   {{ nbr_don_virrement_toatle }} <br />
+                Nombre Total des dons :   {{ nb_don_concert_total }} <br />
+            </td>
+            <td colspan="3"  style="text-align:left;padding:5px;">
+
+                {% if nb_don_concert_total > 0 %} 
+                    {% set MT_moyen_don_par_anner = MT_don_par_anner / nb_don_concert_total %}
+                {% endif %}
+
+                Montant total des dons de la période sélectionnée : {{ MT_don_par_anner }}€<br />
+                Montant moyen des dons de la période sélectionnée : {{ MT_moyen_don_par_anner|round(2) }}€<br />
+            </td>
+        </table>
+
+-------------------------------
+
+ {% for art_distint in artiste_distinct %}
+                                        {% if art_distint['artiste'] is not null %}
+                                            {% if art_distint['artiste'] == header['artiste'] %}
+                                                <tr class="">
+                                                    <td class="row_td">{{ value['donateur_id']}}</td>
+
+                                                    <td class="row_td aligne_row"  >
+                                                        {% if value['cause_id'] is not null %}  
+                                                            {{ header['date_concert'] }} <br /> {{ header['lieu_concert'] }}  <br />
+                                                        {% else %}
+                                                            {{ ' ' }} <br />
+                                                        {% endif %}
+
+                                                    </td>
+
+
+                                                    <td class="row_td">
+                                                        {% if value['donateur_id'] is not null %}
+                                                            {{ value['nom_donateur']}}  {{ value['prenom_donateur'] }}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td class="row_td aligne_row"  >
+                                                        {% if value['montant'] is not null %}  
+                                                            {% if value['montant'] != 0 %} 
+                                                                {{ value['montant']}} €
+                                                            {% endif %}
+
+                                                            {% if value['mode_payement'] is not null %} 
+                                                                {% if value['mode_payement'] == 'ESPECE' %}
+                                                                    {% set mt_don_espece = mt_don_espece + value['montant'] %}
+                                                                {% endif %}
+
+                                                                {% if value['mode_payement'] == 'Chèque' %}
+                                                                    {% set mt_don_cheque = mt_don_cheque + value['montant'] %}
+                                                                {% endif %}
+
+                                                                {% if value['mode_payement'] == 'Virement Bancaire' %}
+                                                                    {% set mt_don_virrement = mt_don_virrement + value['montant'] %}
+                                                                {% endif %}
+
+                                                            {% endif %}
+                                                            {% if value['montant'] == 0 %} 
+                                                                0.00 €
+                                                            {% endif %}
+                                                        {% endif %}
+
+                                                    </td>
+                                                    <td class="row_td aligne_row"  >
+                                                        {% if value['mode_payement'] is not null %}   
+                                                            {{ value['mode_payement']}}
+                                                            {% if value['mode_payement'] == 'ESPECE' %}
+                                                                {% set nb_don_espece = nb_don_espece + 1 %}
+                                                            {% endif %}
+
+                                                            {% if value['mode_payement'] == 'Chèque' %}
+                                                                {% set nb_don_cheque = nb_don_cheque + 1 %}
+                                                            {% endif %}
+
+                                                            {% if value['mode_payement'] == 'Virement Bancaire' %}
+                                                                {% set nb_don_virrement = nb_don_virrement + 1 %}
+                                                            {% endif %}
+
+
+
+                                                        {% else %}
+                                                            {{ vide }}
+                                                        {% endif %}
+                                                        {% if value['montant'] is not null %} 
+                                                            {% if value['montant'] == 0 %} 
+                                                                {% set nb_don_sans_monatant = nb_don_sans_monatant + 1 %}
+                                                            {% endif %}
+                                                        {% endif %}
+
+
+                                                    </td>
+                                                    <td class="row_td aligne_row"  >
+                                                        {% if value['num_rf'] is not null %}   
+                                                            # {{ value['num_rf']}}
+                                                        {% else %}
+                                                            {{ vide }}
+                                                        {% endif %}
+
+                                                    </td>
+                                                    <td class="row_td aligne_row"  >
+                                                        {% if value['date_creation'] is not null %}   
+                                                            {{ value['date_creation']|date('d/m/Y')}} <br />
+                                                        {% else %}
+                                                            {{ ' ' }} <br />
+                                                        {% endif %}
+
+                                                    </td>
+                                                </tr>
+
+                                            {%else%}
+                                               
+
+                                            {%endif%}
+
+                                        {%endif%}
+                                    {% endfor %}
+
+--------------------------------------------------------------------
+
+ {% for ht_distint in hote_distinct %}
+                                    {% if ht_distint['hote'] is not null %}
+                                        {#% if ht_distint['hote'] == header['hote'] %#}
+                                            {% if ht_distint['hote'] is not null %}
+                                                {% for donateur in alldonateur %}
+                                                    {% if donateur.id == ht_distint['hote'] %}
+                                                        Organisateur : {{donateur.nom}}  {{donateur.prenom}} <br />
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                Organisateur : {{vide}} <br />
+                                            {% endif %}
+                                        {#% endif %#}
+                                    {% endif %}
+
+                                {%endfor%}
+                                
+                                {% for art_distint in artiste_distinct %}
+                                    {% if art_distint['artiste'] is not null %}
+                                        {#% if art_distint['artiste'] == header['artiste'] %#}
+                                            {% if art_distint['artiste'] is not null %}
+                                                {% for donateur in alldonateur %}
+                                                    {% if donateur.id == art_distint['artiste'] %}
+                                                        Pianiste : {{donateur.nom}}  {{donateur.prenom}} <br />
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                Pianiste : {{vide}} <br />
+                                            {% endif %}
+                                            Code Occasion : {{header['name_code_occasion']}}
+                                        {#% endif %#}
+                                    {% endif %}
+
+                                {%endfor%}

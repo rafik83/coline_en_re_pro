@@ -1,0 +1,185 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+        <div class="breadcrumbs" id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li class="active">Gestion des codes activités</li>
+            </ol>
+        </div>
+        <div class="page-content">
+
+            <div class="col-md-12 pull-left">
+                <div class="page-header">
+                    <h1>
+                        Gestion des codes activités
+                        <small>
+                            <i class="ace-icon fa fa-angle-double-right"></i>
+                            Liste des codes activités
+                        </small>
+                    </h1>
+                </div>
+                {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') or is_granted('ROLE_TRIAL')%}
+                    <a href="{{ path('intersa_table_cause_new') }}" class="btn btn-primary btn-sm"><span
+                                class="glyphicon glyphicon-plus-sign"></span> Ajouter un code activité </a>
+                {% endif %}
+                {% if occasion is defined and occasion is not null %}
+                    Pour le code occasion : <b>{{ occasion.name }}</b>
+                {% endif %}
+                <hr/>
+                <div class="pull-left">
+                    <form action="{{ path('intersa_table_cause',{'page':1}) }}" method="GET">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="task_field form-control" placeholder="Code activité"
+                                       name="codeact"/>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="submit" class="btn btn-primary btn-sm" value="Rechercher"/>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <br/>
+                <br/>
+                <hr/>
+                {% for flashMessage in app.session.flashbag.get('info') %}
+                    <div class="alert alert-success">
+                        <span class="glyphicon glyphicon-ok-sign"></span>  {{ flashMessage }}
+                    </div>
+                {% endfor %}
+                {% for flashMessage in app.session.flashbag.get('erreur') %}
+                    <div class="alert alert-danger">
+                        <span class="glyphicon glyphicon-remove-sign"></span>{{ flashMessage }}
+                    </div>
+                {% endfor %}
+                <div class="pagination_desc"><strong>{{ total_elements }}</strong> Code(s)
+                    {% if last_page > 1 %}
+                        - page <strong>{{ current_page }}/{{ last_page }}</strong>
+                        <br/>
+                    {% endif %}
+                </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Libelle</th>
+                        <th>Code</th>
+                        <th>Autorisation des RFs</th>
+                        <th>Activé</th>
+                        <th>Code Analytique</th>
+                        <th>Code Occasion</th>
+                        <th>Entité</th>
+                        {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') %}
+                            <th></th>
+                        {% endif %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for element in elements %}
+                        <tr>
+                            <td width="2">{{ element.libelle }}</td>
+                            <td width="1">{{ element.code }}</td>
+                            <td width="1">{% if element.rf is not null and element.rf == true %} Oui {% else %} Non {% endif %}</td>
+                            <td width="1">{% if element.actif is not null and element.actif == true %} Oui {% else %} Non {% endif %}</td>
+                            <td width="1">{% if element.codeAnalytique is not null %} {{ element.codeAnalytique.name }} {% else %} Non attribué {% endif %}</td>
+                            <td width="1">{% if element.codeOccasion is not null %} {{ element.codeOccasion.name }} {% else %} Non attribué {% endif %}</td>
+                            <td width="1">{% if element.entity is not null %} {{ element.entity.name }} {% else %} Non attribué {% endif %}</td>
+
+                            {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') %}
+                                <td width="1">
+                                    <div class="btn-group">
+                                        <button class="btn btn-default btn-xs dropdown-toggle" type="button"
+                                                data-toggle="dropdown">
+                                            Gestion <span class="caret"></span>
+                                        </button>
+
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a href="{{ path('intersa_table_cause_edit', {'id':element.id}) }}"><span
+                                                            class="glyphicon glyphicon-edit"></span> Modifier </a></li>
+                                            <li><a href="#"
+                                                   onclick="delete_cause({{ element.id }})"><span
+                                                            class="glyphicon glyphicon-remove"></span> Supprimer </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('intersa_table_element', {'table':'depense','page':1}) }}?bycause={{ element.id }}"><span
+                                                            class="glyphicon glyphicon-wrench"></span> Gérer les
+                                                    dépenses </a></li>
+                                            <li>
+                                                <a href="{{ path('intersa_table_cause_stat',{'id':element.id}) }}?idoccas={{ element.id }}"
+                                                        >
+                                                    <span class="glyphicon glyphicon-stats"></span> Statistiques
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <center>
+            {% set url_ext = null %}
+            {% if search is not null %}
+                {% set url_ext = '?codeact='~search %}
+            {% endif %}
+            {% if last_page > 1 %}
+                <ul class="pagination pull-center">
+                    <li><a href="{{ path('intersa_table_cause', { 'page': previous_page }) }}{{ url_ext }}">&laquo;</a>
+                    </li>
+                    {% for page in 1..last_page %}
+                        {% if page >= current_page-4 and page <= current_page+4 %}
+                            {% if   page == current_page-4 or page == current_page+4 %}
+                                {% if   page == current_page-4 %}
+                                    <li><a href="{{ path('intersa_table_cause', {  'page': 1 }) }}{{ url_ext }}">1</a>
+                                    </li>
+                                    <li class="disabled"><a href="#">...</a></li>
+                                {% else %}
+                                    <li class="disabled"><a href="#">...</a></li>
+                                    <li>
+                                        <a href="{{ path('intersa_table_cause', {  'page': last_page }) }}{{ url_ext }}">{{ last_page }}</a>
+                                    </li>
+                                {% endif %}
+                            {% else %}
+                                {% if page == current_page %}
+                                    <li class="active"><a href="#">{{ page }}</a></li>
+                                {% else %}
+                                    <li>
+                                        <a href="{{ path('intersa_table_cause', {  'page': page }) }}{{ url_ext }}">{{ page }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    <li><a href="{{ path('intersa_table_cause', {  'page': next_page }) }}{{ url_ext }}">&raquo;</a>
+                    </li>
+                </ul>
+            {% endif %}
+        </center>
+        <div class="modal fade" id="deletecause" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel"
+             aria-hidden="true">
+
+        </div><!-- /.modal -->
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+
+            function delete_cause(id) {
+                $.ajax({
+                    url: "/intersa/table/ajax/delete/id/" + id,
+                    beforeSend: function (xhr) {
+                    }
+                })
+                        .done(function (data) {
+                            $("#deletecause").html(data);
+                            $("#deletecause").modal('show');
+                        });
+            }
+
+        </script>
+    {% endblock %}

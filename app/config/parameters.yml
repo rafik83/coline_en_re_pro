@@ -1,0 +1,14 @@
+# This file is auto-generated during the composer install
+parameters:
+    database_host: localhost
+    database_port: null
+    database_name: coline_en_re_full_db
+    database_user: root
+    database_password: baxe6Equ
+    mailer_transport: smtp
+    mailer_host: 192.168.172.25
+    mailer_user: null
+    mailer_password: null
+    locale: fr
+    secret: sd39738967397937937397937899097389coline_en_re
+    database_driver: pdo_mysql

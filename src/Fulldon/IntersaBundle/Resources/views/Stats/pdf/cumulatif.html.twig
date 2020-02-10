@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        .couleur-titre {
+            color:#d58512;
+        }
+        th {
+            text-align: left;
+        }
+        .row_td {
+            background-color: #B3BCF8;
+        }
+        .sub_total {
+            background-color: #1AC5EC;
+        }
+        .aligne_row {
+            text-align: right;
+            width:150px;
+        }
+    </style>
+
+</head>
+<body>
+<center>
+
+
+
+<h1 style="margin-top:5px;" class="couleur-intersa" >Etat cumulatif ({{ entity }})  </h1>
+    <hr style="margin:5px 0px 5px 0px;" />
+<b>Date : </b>{{ date_debut|date('d/m/Y H:i:s') }} - {{ date_fin|date('d/m/Y H:i:s') }}
+</center>
+<hr />
+<div class="row">
+
+        {% for oc in data.result %}
+        <div class="form-group col-md-12">
+            <table class="table table-condensed" style="width:100%;float:left;">
+                <tr><td style="background-color: #CCC;width: 100%">Code Occasion : {{ oc.occasion.name }}  | Cible : {{ oc.occasion.cible }}</td></tr>
+            </table>
+                <table class="table table-condensed" style="width:100%;float:left;">
+                    <thead>
+                    <tr>
+                        <th>Code media</th>
+                        <th>Libellé code média</th>
+                        <th>Quantité</th>
+                        <th>Montant en Euros</th>
+                        <th>Don moyen</th>
+                    </tr>
+                    </thead>
+                    <tbody id="content" >
+                    {% for c in oc.content %}
+                        <tr class="">
+                            <td class="row_td">{{ c.code }}</td>
+                            <td class="row_td">{{ c.cible }}</td>
+                            <td class="row_td aligne_row"  >{{ c.comptage }}</td>
+                            <td class="row_td aligne_row"  >{{ c.cumul }}€</td>
+                            <td class="row_td aligne_row"  >{{ c.moyenne|round }}€</td
+                        </tr>
+                    {% endfor %}
+                    <tr >
+
+                        <td colspan="2"></td>
+                        <td class="sub_total aligne_row">{{ oc.quantity }}</td>
+                        <td class="sub_total aligne_row">{{ oc.cumul }}€</td>
+                        <td class="sub_total aligne_row">{{ oc.avg|round }}€</td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+       {% endfor %}
+
+    <table class="table table-condensed" style="width:100%;float:left;background-color: #CCC">
+        <td colspan="2"> Total général : </td>
+        <td class=" aligne_row">{{ data.global_quantity }}</td>
+        <td class=" aligne_row">{{ data.global_cumul }}€</td>
+        <td class=" aligne_row">{{ data.global_avg|round }}€</td>
+    </table>
+    </div>
+
+</div>
+</body>
+</html>

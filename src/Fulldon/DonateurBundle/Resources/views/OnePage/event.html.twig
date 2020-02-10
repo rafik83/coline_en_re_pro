@@ -1,0 +1,720 @@
+<!DOCTYPE HTML>
+<html style="margin:0px;padding:0px;">
+{% if init['perso'].couleur is defined  and init['perso'].couleur  is not null %}{%  set mycolor = init['perso'].couleur %} {% else %}{%  set mycolor = '#7a6cc0' %}{% endif %}
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{% block title %}{{ "événements de l'association"|trans({},'messages') }}{% endblock %}</title>
+
+    {% block stylesheets %}
+        {% stylesheets '../app/Resources/Public/css/global/*' %}
+        <link rel="stylesheet" type="text/css" charset="UTF-8" media="all" href="{{ asset_url }}"/>
+        {% endstylesheets %}
+        {% stylesheets '../app/Resources/Public/css/global/jquery-ui/jquery-ui.css' %}
+        <link rel="stylesheet" type="text/css" charset="UTF-8" media="all" href="{{ asset_url }}"/>
+        {% endstylesheets %}
+    {% endblock %}
+    {% if mycolor is defined and mycolor is not null %}
+        <style type="text/css">
+            .couleur-donateur {
+                color: {{ mycolor }} !important;
+            }
+            .background-donateur {
+                background-color: {{ mycolor }}  !important;
+            }
+            a.list-group-item.active, a.list-group-item.active:hover, a.list-group-item.active:focus {
+                background-color: {{ mycolor }} !important;
+                border-color: {{ mycolor }} !important;
+            }
+            .pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+                background-color: {{ mycolor }} !important;
+                border-color: {{ mycolor }} !important;
+            }
+            a, a:hover {
+                color: #000000;
+            }
+            .datepicker td.active, .datepicker td.active:hover {
+                background-color: {{ mycolor }} !important;
+                background-image: -webkit-linear-gradient(top, {{ mycolor }}, {{ mycolor }})!important;;
+            }
+            .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open .dropdown-toggle.btn-default      {
+
+                background-color: #fff;
+                text-shadow: 0 0 0 #000 !important;
+            }
+            .btn-default {
+
+                background-color: {{ mycolor }};
+                border-color: {{ mycolor }};
+                font-weight: bold;
+                color : #fff;
+                text-shadow: 0 1px 0 {{ mycolor }};
+            }
+            .list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
+                text-shadow: 0 -1px 0 {{ mycolor }} !important;
+                background-image: -webkit-linear-gradient(top, {{ mycolor }} 0%, {{ mycolor }}) !important;
+                background-image: -webkit-gradient(linear, left top, left bottom, from({{ mycolor }}), to({{ mycolor }})) !important;
+                background-image: linear-gradient(to bottom, {{ mycolor }} 0%, {{ mycolor }} 100%) !important;
+                filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff428bca', endColorstr='#ff3278b3', GradientType=0);
+                background-repeat: repeat-x;
+                border-color: {{ mycolor }} ;
+            }
+            .panel-primary > .panel-heading {
+                background-image: -webkit-linear-gradient(top, {{ mycolor }} 0%, {{ mycolor }} 100%) !important;
+                background-image: -o-linear-gradient(top, {{ mycolor }} 0%, {{ mycolor }} 100%) !important;
+                background-image: -webkit-gradient(linear, left top, left bottom, from({{ mycolor }}), to({{ mycolor }})) !important;
+                background-image: linear-gradient(to bottom, {{ mycolor }} 0%, {{ mycolor }} 100%) !important;
+                filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff428bca', endColorstr='#ff357ebd', GradientType=0) !important;
+                background-repeat: repeat-x;
+            }
+            .radio-inline-anon li {
+                float: left;
+                text-align: center;
+                margin: 0 10px;
+                padding-bottom: 10px;
+            }
+
+            .radio-inline-anon li {
+                display: list-item;
+                list-style: none;
+            }
+            ul {
+                padding:0px;
+            }
+            .radio-inline-anon span {
+                display: block;
+            }
+            .well {
+                min-height: 20px;
+                margin-bottom: 20px;
+                background-color: #f5f5f5;
+                border: 1px solid rgba(196, 196, 196, 0.67);
+                 border-radius: 0px;
+                -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+                box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+                background-image: linear-gradient(to bottom, #f0f0f0 0%, #fff 100%);
+            }
+             .footer-block {
+                background: url({{ asset('img/footer-block.png') }}) no-repeat bottom center;
+                color: #6a6a6a;
+                 padding:10px;
+                 padding-bottom: 30px;
+                 font-size: 12px;
+            }
+            .footer-block hr {
+                background-color: {{ mycolor }};
+                height: 2px ;
+            }
+            .hr-last-footer {
+                background-color: {{ mycolor }};
+                height: 1px ;
+                margin: 0px;
+            }
+
+            .logo_powered {
+                padding:20px 20px 20px 0;
+            }
+            .container_section, .powered_section{
+                margin: 0 auto;max-width: 970px;
+            }
+            .full_autremonatnat {
+                margin-left:10px;
+            }
+            .container {
+                width: 100% !important;
+            }
+            .hr-without-marge
+            {
+                margin: 0px;
+            }
+            .infos_adherent
+            {
+                font-size: 12px;
+                color:#ea653f;
+                margin-bottom: 10px;
+                text-align: justify;
+                text-justify: inter-word;
+            }
+            .modal-dialog {
+                padding-top: 15%;
+            }
+            .panel-heading {
+                padding: 3px 10px;
+            }
+            .panel-body {
+                padding: 5px 15px 5px 15px;
+            }
+            .panel {
+                border-radius: 0px;
+            }
+            .panel-heading {
+                border-top-right-radius: 0px;
+                border-top-left-radius: 0px;
+            }
+        </style>
+    {% endif %}
+
+
+</head>
+<body style="margin:0px;padding:0px;">
+<div class="container">
+<div class="row container_section" >
+
+<div class="col-md-12" >
+{% if init['perso'].headerPage is defined  and init['perso'].headerPage  is not null %}
+    <img src="{{ asset('upload/' ~ init['perso'].id ~'/' ~ init['perso'].headerPage)}}" alt="headerPage" style="width:940px;" class="img-responsive" />
+{% endif %}
+
+{%  set current_route = app.request.get('_route') %}
+{%  set params = app.request.attributes.get('_route_params') %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="well well-sm " style="overflow:auto;border-radius: 0px;!important;margin-bottom: 0px;">
+            <div class="">
+                <div class="col-md-12">
+                    <b>Langues :</b> <a href="{{ path(current_route, params | merge({"_locale": "fr"})) }}" style="margin-top: 5px;" >Français</a>&nbsp;|  <a style="margin-top: 5px;padding-left: 4px;" href="{{ path(current_route, params | merge({"_locale": "en"})) }}">English</a>
+
+                    <br class="visible-sm"/>
+                    <br class="visible-sm"/>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+{% if display_error %}
+    <div class="alert alert-danger alert-dismissable" style="border-radius: 0px;">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <span class="glyphicon glyphicon-remove-circle" ></span> Une erreur est survenue lors de la validation de votre demande. <br />
+        <ul>
+            {% for flashMessage in app.session.flashbag.get('error') %}
+                <li>{{ flashMessage|trans({},'messages') }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+<form action="{{ path('fulldon_donateur_onepage_event') }}" method="POST" >
+    <input type="hidden" name="token" value="{{ token }}" />
+    <div class="row">
+        <div class="col-md-6">
+            <h4  style=" border: 1px solid #e1e1e1;padding:5px;background-color:{{ mycolor }};color:#fff"><i class="fa fa-user fa-lg"></i>  {{ "Mes coordonnées"|trans({},'messages') }}</h4>
+            <a href="#" class="pull-right" data-toggle="modal" data-target="#myModal"><b><i class="fa fa-user"></i> {{ "Je suis déjà donateur"|trans({},'messages') }} </b></a>
+            <br />
+            <div class="checkbox">
+                <label>
+                    <input name="company_check" id="company_check" type="checkbox"> <b style="font-size:11px;">{{ "Je représente une entreprise / organisation."|trans({},'messages') }}</b>
+                </label>
+            </div>
+            <div id="is_company" style="display: none;">
+                <label for="email" class="control-label ">{{ "Raison sociale"|trans({},'messages') }} </label>
+                <div >
+                    <input type="text" name="raison_sociale" class="form-control input-sm form-control"   {% if data['raison_sociale'] is defined  %} value="{{ data['raison_sociale'] }}" {% endif %} style="border-radius:0px !important;" />
+                </div>
+            </div>
+            <label for="email" class="control-label ">{{ "Email"|trans({},'messages') }} <span class="required-input"  > * </span></label>
+            <div >
+                <input type="email" name="email" class="form-control input-sm form-control" required="required"  {% if data['email'] is defined  %} value="{{ data['email'] }}" {% endif %} style="border-radius:0px !important;" />
+            </div>
+            <label for="civilite" class="control-label re">{{ "Civilité"|trans({},'messages') }} <span class="required-input" > * </span></label>
+            <div >
+                <select name="civilite" class="form-control input-sm"  style="border-radius:0px !important;" >
+                    <option value="M" {% if data['civilite'] is defined and data['civilite'] == "M" %} selected="selected" {% endif %} >Monsieur</option>
+                    <option value="Mme" {% if data['civilite'] is defined and data['civilite'] == "Mme" %} selected="selected" {% endif %}>Madame</option>
+                    <option value="Mlle" {% if data['civilite'] is defined and data['civilite'] == "Mlle" %} selected="selected" {% endif %}>Mademoiselle</option>
+                </select>
+            </div>
+
+            <input type="hidden" name="bic" id="bic"/>
+            <input type="hidden" name="iban" id="iban" />
+            <input type="hidden" name="telephone" id="telephone"/>
+            <input type="hidden" name="indicatif" id="indicatif"/>
+            <label for="prenom" class="control-label ">{{ "Prénom"|trans({},'messages') }} <span class="required-input" > * </span></label>
+            <div >
+                <input type="text" name="prenom" class="form-control input-sm" required="required" {% if data['prenom'] is defined  %} value="{{ data['prenom'] }}" {% endif %} style="border-radius:0px !important;" />
+            </div>
+            <label for="nom" class="control-label">{{ "Nom"|trans({},'messages') }} <span class="required-input" > * </span></label>
+            <div >
+                <input type="text" name="nom" class="form-control input-sm" required="required" {% if data['nom'] is defined  %} value="{{ data['nom'] }}" {% endif %} style="border-radius:0px !important;"/>
+            </div>
+
+            <label for="prenom" class="control-label">{{ "Pays"|trans({},'messages') }} <span class="required-input" > * </span></label>
+            <div >
+                <select name="pays" id="pays" class="form-control input-sm" required="required"  style="border-radius:0px !important;" >
+                    {% for key,country in countries %}
+                        <option value="{{ key }}" {% if (data['pays'] is not defined or data['pays'] is empty ) and key =='FR'%} selected="selected" {% endif %} {% if data['pays'] is defined and data['pays'] == key %} selected="selected" {% endif %} >{{ country }}</option>
+                    {% endfor %}
+                </select>
+
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="zipcode" class="control-label">{{ "Code postal"|trans({},'messages') }} <span class="required-input" > * </span></label>
+                    <div >
+                        <input type="text" name="zipcode" id="zipcode" class="form-control input-sm" required="required" {% if data['zipcode'] is defined  %} value="{{ data['zipcode'] }}" {% endif %} style="border-radius:0px !important;" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="ville" class="control-label">{{ "Ville"|trans({},'messages') }} <span class="required-input" > * </span></label>
+                    <div >
+                        <input type="text" name="ville" id="ville" class="form-control input-sm" required="required" {% if data['ville'] is defined  %} value="{{ data['ville'] }}" {% endif %} style="border-radius:0px !important;" />
+                    </div>
+                </div>
+            </div>
+            <label for="adresse1" class="control-label">{{ "Adresse"|trans({},'messages') }} <span class="required-input" > * </span></label>
+            <div >
+                <input type="text" name="adresse1" id="adresse1" class="form-control input-sm ui-autocomplete-input" required="required" {% if data['adresse1'] is defined  %} value="{{ data['adresse1'] }}" {% endif %} style="border-radius:0px !important;" />
+            </div>
+            <label for="adresse2" class="control-label">{{ "Complément adresse"|trans({},'messages') }} </label>
+            <div >
+                <input type="text" name="adresse2" id="adresse2" class="form-control input-sm"  {% if data['adresse2'] is defined  %} value="{{ data['adresse2'] }}" {% endif %} style="border-radius:0px !important;" />
+            </div>
+
+            <br />
+            <div class=" pull-left  required-input-title " style="font-size: 12px;"> ( * ) {{ "Champs obligatoires"|trans({},'messages') }}</div>
+            <br />
+        </div>
+
+
+        <div class="col-md-6">
+            <h4  style=" border: 1px solid #e1e1e1;padding:5px;background-color:{{ mycolor }};color:#fff"><i class="fa fa-euro fa-lg"></i>  {{ "Je choisis des événements"|trans({},'messages') }} </h4>
+            {% for event in events %}
+                <div class="panel panel-primary" style="border-color: {{ mycolor }};">
+                    <div class="panel-heading" style="background-color: {{ mycolor }};border-color: {{ mycolor }}">
+                        {{ event.titre }}
+                    </div>
+                    <div class="panel-body">
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="event_{{ event.id }}"  value="nadh_{{ event.prixNonAdh }}" >
+                                {{ event.prixNonAdh }} € : Prix non adhérent
+                            </label>
+                        </div>
+                       {% if event.prixAdh is  defined and event.prixAdh is not null %}
+                           <div class="radio">
+                               <label>
+                                   <input type="radio" name="event_{{ event.id }}" value="adh_{{ event.prixAdh }}" >
+                                   {{ event.prixAdh }} € : Prix adhérent
+                               </label>
+                           </div>
+                        {% endif %}
+                        <b>Date de l'événement :</b> {{ event.dateEvent|date('d/m/Y') }}
+                        <div class="pull-right" >
+                        <a href="#"  data-toggle="modal" data-target="#modal_event_{{ event.id }}" class="btn btn-default btn-xs">Détails de l'événement</a>
+
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <div style="font-weight: bold;text-align: center;margin: auto;margin-bottom: 15px;">{{ "OU"|trans({},'messages') }}</div>
+            <div class="panel panel-primary" style="border-color: {{ mycolor }};">
+                <div class="panel-heading" style="background-color: {{ mycolor }};border-color: {{ mycolor }}">
+                    {{ "Je souhaite également "|trans({},'messages') }}
+                </div>
+                <div class="panel-body">
+                   <i class="fa fa-users"></i><a href="{{ path('fulldon_donateur_onepage_adherent') }}"> Devenir adhérent </a><br />
+                   <i class="fa fa-gift"></i><a href="{{ path('fulldon_donateur_onepage') }}">  Faire un don </a>
+                </div>
+            </div>
+            <h4  style=" border: 1px solid #e1e1e1;padding:5px;background-color:{{ mycolor }};color:#fff"><i class="fa fa-lock fa-lg"></i>  {{ "Paiement"|trans({},'messages') }}  <b>100%</b> {{ "sécurisé"|trans({},'messages') }} </h4>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h5 class="couleur-donateur">{{ "Choisissez votre méthode de paiement"|trans({},'messages') }} </h5>
+                    <hr class="hr-without-marge" />
+                    <div style="float:left;margin-right: 5px;">
+                        <label>
+                            <input type="radio" name="payment_method" id="payment_method_1" value="VISA" {% if data['cb_payment_method'] is defined and data['cb_payment_method']=='VISA' %} checked="checked" {% endif %} onChange="cb_mp_onChange(this)" > <img alt="visa" src="{{ asset('img/visa.png') }}"  />
+                        </label>
+                    </div>
+                    <div style="float:left;margin-right: 5px;">
+                        <label>
+                            <input type="radio" name="payment_method" value="MasterCard" id="payment_method_2" {% if data['cb_payment_method'] is defined and data['cb_payment_method']=='MasterCard' %} checked="checked" {% endif %} onChange="cb_mp_onChange(this)" > <img alt="mastercard" src="{{ asset('img/mastercard.png') }}" />
+                        </label>
+                    </div>
+                    <div  style="float:left;margin-right: 5px;" >
+                        <label>
+                            <input type="radio" name="payment_method" value="PAYPAL" id="payment_method_3" {% if data['cb_payment_method'] is defined and data['cb_payment_method']=='PAYPAL' %} checked="checked" {% endif %} onChange="cb_mp_onChange(this)"> <img  alt="paypal" src="{{ asset('img/paypal.png') }}" />
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div id="total_trx" style="font-size: 12px;" >
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="submit" class="btn btn-default btn-lg btn-block " style="width:100%;" value="{{ "Je valide mon choix"|trans({},'messages') }}" />
+                </div>
+                <div class="col-md-6">
+                    <input type="reset" id="reset_form" class="btn btn-default btn-lg btn-block col-md-6" style="width:100%;" value="{{ "Réinitialiser"|trans({},'messages') }}" />
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+    <input type="hidden" name="current_localite" id="current_localite" />
+</form>
+<hr />
+</form>
+</div>
+<div class="row" style="margin: 0 auto;max-width: 970px;">
+
+    <div class="col-md-12 hidden-xs hidden-sm">
+        <div >
+            <h4 style="color:{{ mycolor }};"><i class="fa fa-lock fa-lg"></i> {{ "Paiement sécurisé"|trans({},'messages') }} </h4>
+            <hr />
+
+            Les transactions effectuées sur la plateforme de don de FULLDON sont sécurisées par le système de paiement Ogone.
+            Pour assurer la sécurité de votre paiement, nous utilisons une liaison codée (protocole SSL) grâce à laquelle vos données confidentielles (numéro de carte bancaire, cryptogramme et date d'expiration) sont protégées et cryptées avant transmission. Ainsi à aucun moment votre numéro de carte ne nous sera communiqué.
+            Les informations échangées pour traiter le paiement ne peuvent être ni détectées, ni interceptées, ni utilisées par des tiers. Elles ne sont pas non plus conservées sur nos systèmes informatiques.
+            <br />
+            <br />
+            <img  alt="security labels" class="img-responsive pull-right" src="{{ asset('img/security-bare.png') }}" />
+        </div>
+    </div>
+
+</div>
+<div class="row powered_section"  >
+    <div class="col-md-12">
+        <br />
+        <hr class="hr-last-footer"/>
+        <a href="http://www.fulldon.fr" class="logo_powered" ><img  alt="Ogone" src="{{ asset('img/power1.png') }}" /></a>
+        <img  alt="security labels" class="hidden-md hidden-lg" style="float:right" src="{{ asset('img/security-bare.png') }}" />
+    </div>
+</div>
+</div> <!-- /container -->
+</div>
+<!-- Modal -->
+{% for event in events %}
+<div class="modal fade" id="modal_event_{{ event.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="top:-10px;right:0px;min-width:800px;height:100px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">{{ event.titre }}</h4>
+            </div>
+            <div class="modal-body">
+                    {{ event.description|raw }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    {% javascripts '../app/Resources/Public/js/bootstrap.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/bootstrap-colorpicker.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/bootstrap-datepicker.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/docs.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/jquery.form.min.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/locales/*' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/iban.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/jquery-ui/jquery-ui.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script>
+
+        var global_choice = null;
+        var global_type = null;
+        var global_montant = null;
+        $('.datepicker').datepicker({
+            language: "fr-FR",
+            format: "dd/mm/yyyy"
+        });
+
+        {% for event in events %}
+
+        $('input[name="event_{{ event.id }}"]').on('change', function() {
+            var total = null;
+            var nb = 0;
+        {% for event in events %}
+
+            var radioValue = $('input[name="event_{{ event.id }}"]:checked').val();
+            if(typeof  radioValue != 'undefined') {
+            var res = radioValue.split("_");
+                total = total + parseFloat(res[1]);
+                nb++;
+            }
+
+
+        {% endfor %}
+            $('#total_trx').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center>{{ "Total de la transaction"|trans({},'messages') }}  </center><br /><div style="background-color: white;color:#5d5d5d;padding:5px;"> Vous avez séléctionné <b>'+ nb +'</b> événement(s) <br /> Total de la transaction : <b>'+total+' €</b><br /></div></div><br />');
+        });
+        {% endfor %}
+
+        $('#reset_form').on('click', function() {
+            $('#total_trx').html('');
+        });
+
+
+
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var elements = document.getElementsByTagName("INPUT");
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].oninvalid = function(e) {
+                    e.target.setCustomValidity("");
+                    if (!e.target.validity.valid) {
+                        e.target.setCustomValidity('{{ "Veuillez renseigner ce champ."|trans({},'messages') }}');
+                    }
+                };
+                elements[i].oninput = function(e) {
+                    e.target.setCustomValidity("");
+                };
+            }
+        })
+    </script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', '{{ google_analytics_code }}', 'auto');
+        ga('send', 'pageview');
+
+        var accentMap = {
+            "á": "a",
+            "à": "a",
+            "â": "a",
+            "ä": "a",
+            "ç": "c",
+            "é": "e",
+            "è": "e",
+            "ê": "e",
+            "ë": "e",
+            "î": "i",
+            "ï": "i",
+            "ô": "o",
+            "ö": "o",
+            "ù": "u",
+            "û": "u",
+            "ü": "u",
+            "'": " "
+
+        };
+        var normalize = function(term){
+            var ret = "";
+            for(var i = 0; i < term.length; i++){
+                ret += accentMap[ term.charAt(i) ] || term.charAt(i);
+            }
+            return ret;
+        };
+        var current_localite;
+        var checkZipcode = $('#zipcode').val();
+        var current_cities = new Array();
+        if(checkZipcode.length !=0 ) {
+            callCpApi(checkZipcode, '');
+
+        }
+        function callCpApi(zipcode, pays) {
+            var _urldqe = 'https://prod2.dqe-software.com/';
+            var pays = 'FRA';
+            var vliscence ='INTERSA12';
+            //DQE
+            var current_pays = $( "#pays").val();
+            if(current_pays == 'FR') {
+            $.ajax({
+
+                url:_urldqe+"CP/?Pays="+pays+"&CodePostal="+zipcode+"&Licence="+vliscence,
+
+                dataType: 'jsonp',
+
+                jsonp : "callback",
+
+                crossDomain: true,
+
+                jsonpCallback: "afficheCp"
+            }).done(function(data) {
+
+                    });
+            }
+        }
+        function callAdrApi(adresse, localite) {
+            var _urldqe = 'https://prod2.dqe-software.com/';
+            var pays = 'FRA';
+            var vliscence ='INTERSA12';
+            //DQE
+            var current_pays = $( "#pays").val();
+            if(current_pays == 'FR') {
+            $.ajax({
+
+                url:_urldqe+"ADR/?Pays="+pays+"&IDLocalite="+localite+"&Adresse="+adresse+"&Licence="+vliscence,
+
+                dataType: 'jsonp',
+
+                jsonp : "callback",
+
+                crossDomain: true,
+
+                jsonpCallback: "afficheAdr"
+            }).done(function(data) {
+
+                    });
+            }
+        }
+        var timeoutReference;
+        var timeoutReferenceAdr;
+
+        $('input#zipcode').keypress(function() {
+            var el = this; // copy of this object for further usage
+
+            if (timeoutReference) clearTimeout(timeoutReference);
+            timeoutReference = setTimeout(function() {
+                verifycp.call(el);
+            }, 3000);
+        });
+        $('input#zipcode').blur(function(){
+            verifycp.call(this);
+        });
+        $('input#adresse1').keypress(function() {
+            var el = this; // copy of this object for further usage
+            $('input#adresse1').val(normalize($('input#adresse1').val()));
+            if (timeoutReference) clearTimeout(timeoutReference);
+            timeoutReference = setTimeout(function() {
+                verifyAdr.call(el);
+            }, 400);
+
+        });
+        $('input#adresse1').blur(function(){
+            verifyAdr.call(this);
+        });
+        function verifycp(){
+            // we only want to execute if a timer is pending
+            if (!timeoutReference){
+                return;
+            }
+            // reset the timeout then continue on with the code
+            timeoutReference = null;
+
+            //
+            // Code to execute here
+            //
+            var pays = $('#pays').val();
+            var zipcode = $('#zipcode').val();
+            if(zipcode.length != 0 || pays.length !=0) {
+                // ajax
+                callCpApi(zipcode, pays);
+
+            }
+
+        }
+        function verifyAdr(){
+            // we only want to execute if a timer is pending
+            if (!timeoutReference){
+                return;
+            }
+            // reset the timeout then continue on with the code
+            timeoutReference = null;
+
+            //
+            // Code to execute here
+            //
+            var adresse = $('#adresse1').val();
+            var localite = current_localite;
+            if(adresse.length > 3 ) {
+                // ajax
+                callAdrApi(adresse,localite);
+
+            }
+        }
+        function afficheCp(RtnData) {
+            current_cities = new Array();
+            $( "input#ville" ).autocomplete({source: []});
+            _listeVilleChoix = [];
+            var repcp = eval('('+RtnData+')');
+            pos = 0;
+            var resultat=new Array();
+            $.each(repcp, function(nomRes,res) {
+                resultat[nomRes]=res;
+                _listeVilleChoix.push({label:resultat[nomRes].CodePostal+' '+resultat[nomRes].Localite+' '+resultat[nomRes].LieuDit, value:resultat[nomRes].CodePostal+''+resultat[nomRes].Localite+' '+resultat[nomRes].LieuDit, id:pos, codeville:
+                        resultat[nomRes].IDLocalite, ville: resultat[nomRes].Localite, lieudit: resultat[nomRes].LieuDit, cp:
+                        resultat[nomRes].CodePostal});
+                pos=pos+1;
+
+            });
+            if(_listeVilleChoix.length > 1) {
+                var tags =new Array();
+                for(var i=0; i < _listeVilleChoix.length ; i++) {
+                    tags[i] = _listeVilleChoix[i].ville.trim();
+                    current_cities[_listeVilleChoix[i].ville.trim()] = _listeVilleChoix[i].codeville;
+                }
+                $( "#ville" ).autocomplete({
+                    source: function( request, response ) {
+                        var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
+                        response( $.grep( tags, function( item ){
+                            return matcher.test( item );
+                        }) );
+                    },
+                    change: function() {
+                        current_localite = current_cities[$(this).val().toUpperCase()];
+                        $('#current_localite').val(current_localite);
+                    }
+                });
+            } else {
+                $( "#ville" ).autocomplete({source: [], change: []});
+                // Afficher la ville
+                current_localite = _listeVilleChoix[0].codeville;
+                $('#ville').val(_listeVilleChoix[0].ville);
+                $('#current_localite').val(current_localite);
+            }
+        }
+        function afficheAdr(RtnData) {
+            $( "#adresse1" ).autocomplete({source: [], change: []});
+            _listeAdrChoix = [];
+            var tags =new Array();
+            var repcp = eval('('+RtnData+')');
+            pos = 0;
+            var resultat=new Array();
+            $.each(repcp, function(nomRes,res) {
+                resultat[nomRes]=res;
+                _listeAdrChoix.push({label:resultat[nomRes].CodePostal+' '+resultat[nomRes].Localite+' '+resultat[nomRes].LieuDit, value:resultat[nomRes].CodePostal+''+resultat[nomRes].Localite+' '+resultat[nomRes].LieuDit, id:pos, codeville:
+                        resultat[nomRes].IDLocalite, ville: resultat[nomRes].Localite, lieudit: resultat[nomRes].LieuDit, cp:
+                        resultat[nomRes].CodePostal, adr: resultat[nomRes].Numero +" "+resultat[nomRes].Voie});
+                pos=pos+1;
+
+            });
+            if(_listeAdrChoix.length >= 1) {
+
+                for(var i=0; i < _listeAdrChoix.length ; i++) {
+                    tags[i] = _listeAdrChoix[i].adr.trim();
+                }
+
+                $( "#adresse1" ).autocomplete({
+                    source: function( request, response ) {
+                        var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
+                        response( $.grep( tags, function( item ){
+                            return matcher.test( item );
+                        }) );
+                    }
+                });
+
+            }
+        }
+
+    </script>
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <style type="text/css">
+            .couleur-titre {
+                color:#d58512;
+            }
+            th {
+                text-align: left;
+            }
+            .row_td {
+                background-color: #B3BCF8;
+            }
+            .sub_total {
+                background-color: #1AC5EC;
+            }
+            .aligne_row {
+                text-align: right;
+                width:150px;
+            }
+            .page {
+                overflow: hidden;
+                page-break-after: always;
+            }
+        </style>
+
+    </head>
+    <body>
+    <center>
+        <h1 style="margin-top:5px;" class="couleur-intersa" >{{ code }}  </h1>
+        <hr style="margin:5px 0px 5px 0px;" />
+        <b>Date : </b>{{ date_debut|date('d/m/Y') }} - {{ date_fin|date('d/m/Y') }}
+    </center>
+    <hr />
+    <div class="row">
+
+        <div class="page">
+            <div class="form-group col-md-12">
+
+                <table class="table table-condensed" style="width:100%;float:left;">
+                    <thead>
+                        <tr>
+                            <th>Identifiant</th>
+                            <th>Code Activité</th>
+                            <th>Donateur</th>
+                            <th>Montant Don</th>
+                            <th>Mode Reglement</th>
+                            <th>N°RF</th>
+                            <th>Date de creation</th>
+                        </tr>
+                    </thead>
+                    <tbody id="content" >
+                        {% for value in data_detaill  %}
+
+                            <tr class="">
+
+                                <td class="row_td aligne_row" >
+                                    {% if value['donateur_id'] is not null %}   
+                                        {{ value['donateur_id']}} <br />
+                                    {% else %}
+                                        {{ ' ' }} <br />
+                                    {% endif %}
+
+                                </td>
+
+                                <td class="row_td aligne_row"  >
+                                    {% if value['cause_id'] is not null %}  
+                                        {{ value['date_concert']}} <br /> {{ value['lieu_concert'] }} <br />
+                                    {% else %}
+                                        {{ ' ' }} <br />
+                                    {% endif %}
+
+                                </td>
+
+                                <td class="row_td">
+                                    {% if value['donateur_id'] is not null %}
+                                        {{ value['nom_donateur']}}  {{ value['prenom_donateur'] }} <br />
+                                    {% else %}
+                                        {{ ' ' }} <br />
+                                    {% endif %}
+                                </td>
+
+
+                                <td class="row_td aligne_row"  >
+                                    {% if value['montant'] is not null %}  
+                                        {% if value['montant'] != 0 %} 
+                                            {{ value['montant']}} € <br />
+                                        {% endif %}
+                                        {% if value['montant'] == 0 %} 
+                                            0.00 € <br />
+                                        {% endif %}
+                                    {% endif %}
+
+                                </td>
+                                
+                                <td class="row_td aligne_row"  >
+                                            {% if value['mode_payement'] is not null %}   
+                                                {{ value['mode_payement']}} <br />
+                                            {% else %}
+                                                {{ ' ' }} <br />
+                                            {% endif %}
+                                        </td>
+
+                                    <td class="row_td aligne_row" >
+                                        {% if value['num_rf'] is not null %}   
+                                            # {{ value['num_rf']}} <br />
+                                        {% else %}
+                                            {{ ' ' }} <br />
+                                        {% endif %}
+
+                                    </td>
+                                    
+                                    <td class="row_td aligne_row" >
+                                        {% if value['date_creation_rf'] is not null %}   
+                                            {{ value['date_creation_rf']|date('d/m/Y')}} <br />
+                                        {% else %}
+                                            {{ ' ' }} <br />
+                                        {% endif %}
+
+                                    </td>
+
+
+                            </tr>
+
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

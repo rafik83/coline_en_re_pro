@@ -1,0 +1,165 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+        <div class="breadcrumbs" id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li class="active">Emailing</li>
+            </ol>
+        </div>
+        <div class="page-content">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h1>
+                        eMarketing
+                        <small>
+                            <i class="ace-icon fa fa-angle-double-right"></i>
+                            Console eMarketing
+                        </small>
+                    </h1>
+                </div><!-- /.page-header -->
+
+                    {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') or is_granted('ROLE_TRIAL')%}
+
+                            <a href="{{ path('intersa_marketing_new') }}" class="btn btn-primary btn-sm"><span
+                                        class="glyphicon glyphicon-plus-sign"></span> Planifier une campagne </a>
+                            <a href="{{ path('intersa_marketing_rejects_emailing', {'page':1}) }}" class="btn btn-primary btn-sm"><i class="fa fa-remove"></i> Liste détaillée des rejets emailing </a>
+                    {% endif %}
+
+                <hr/>
+
+                {% for flashMessage in app.session.flashbag.get('info') %}
+                    <div class="alert alert-success">
+                        {{ flashMessage }}
+                    </div>
+                {% endfor %}
+                {% for flashMessage in app.session.flashbag.get('warning') %}
+                    <div class="alert alert-warning">
+                        {{ flashMessage }}
+                    </div>
+                {% endfor %}
+                <div class="alert alert-info" role="alert">
+                    <a href="#" onclick="syncrejets()" class="btn btn-default" data-toggle="modal"
+                       data-target="#syncrejets"><i class="fa fa-refresh"></i> Cliquez ICI </a> pour synchroniser la
+                    base de données avec les rejets eMarketing.
+                </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Objet</th>
+                        <th>Dernière execution</th>
+                        <th>Statut</th>
+                        <th>Cible potentielle</th>
+                        {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') or is_granted('ROLE_TRIAL') %}
+                            <th></th>
+                        {% endif %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for element in elements %}
+                        <tr>
+                            <td width="2">{{ element.title }}</td>
+                            <td width="1">{{ element.objet }}</td>
+                            <td width="1">{{ element.lastrun|date('d/m/Y H:i:s') }}</td>
+                            <td width="1">{% if element.done is not null and element.done == true %} <span
+                                    class="label label-success"><i
+                                        class="fa fa-check"></i> Terminé </span> {% elseif element.progress == true %}
+                                <span class="label label-info"><i
+                                            class="fa fa-hdd-o"></i> En cours de traitement </span> {% else %} <span
+                                    class="label label-warning"><i
+                                        class="fa fa-clock-o"></i> En attente </span>  {% endif %}
+                                &nbsp;{% if element.testMode == true %} <span class="label label-info"><i
+                                            class="fa fa-laptop"></i> Mode test </span> {% endif %}</td>
+                            <td width="1">{{ element.totalDonateur }}</td>
+
+                            {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') or is_granted('ROLE_TRIAL') %}
+                                <td width="1">
+                                    <div class="btn-group">
+                                        <button class="btn btn-default btn-xs dropdown-toggle" type="button"
+                                                data-toggle="dropdown">
+                                            Gestion <span class="caret"></span>
+                                        </button>
+
+                                        <ul class="dropdown-menu">
+
+                                            <li>
+                                                <a href="{{ path('intersa_emarketing_stats', {'tag': tag_prefix~'-'~tag_emarketing~'-'~element.id}) }}"><i
+                                                            class="fa fa-bar-chart-o"></i></span> Statistiques de la
+                                                    campagne </a></li>
+                                            <li>
+                                            <li>
+                                                <a href="{{ path('intersa_marketing_new', {'copiedCampagne': element.id}) }}"><i
+                                                            class="fa fa-refresh"></i> Utiliser le contenu de cette
+                                                    campagne </a></li>
+                                            <li>
+                                                <a href="{{ path('assets_marketing',{'id':element.id, 'token': element.file}) }}"
+                                                   target="_blank">
+                                                    <i class="fa fa-file"></i> Exporter le fichier client
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <div class="modal fade" id="syncrejets" tabindex="-1" role="dialog" aria-hidden="true">
+
+                    </div>
+                    <!-- /.modal -->
+                </table>
+            </div>
+        </div>
+        <center>
+
+            {% if last_page > 1 %}
+                <ul class="pagination pull-center">
+                    <li><a href="{{ path('intersa_marketing', { 'page': previous_page }) }}">&laquo;</a>
+                    </li>
+                    {% for page in 1..last_page %}
+                        {% if page >= current_page-4 and page <= current_page+4 %}
+                            {% if   page == current_page-4 or page == current_page+4 %}
+                                {% if   page == current_page-4 %}
+                                    <li><a href="{{ path('intersa_marketing', {  'page': 1 }) }}">1</a>
+                                    </li>
+                                    <li class="disabled"><a href="#">...</a></li>
+                                {% else %}
+                                    <li class="disabled"><a href="#">...</a></li>
+                                    <li>
+                                        <a href="{{ path('intersa_marketing', {  'page': last_page }) }}">{{ last_page }}</a>
+                                    </li>
+                                {% endif %}
+                            {% else %}
+                                {% if page == current_page %}
+                                    <li class="active"><a href="#">{{ page }}</a></li>
+                                {% else %}
+                                    <li>
+                                        <a href="{{ path('intersa_marketing', {  'page': page }) }}">{{ page }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    <li><a href="{{ path('intersa_marketing', {  'page': next_page }) }}">&raquo;</a>
+                    </li>
+                </ul>
+            {% endif %}
+        </center>
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+            function syncrejets() {
+                $.ajax({
+                    url: "/intersa/emarketing/ajax/majcontacts",
+                    beforeSend: function (xhr) {
+
+                    }
+                })
+                        .done(function (data) {
+                            $("#syncrejets").html(data);
+                        });
+            }
+        </script>
+    {% endblock %}

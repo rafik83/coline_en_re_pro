@@ -1,0 +1,706 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+        {% set cheques = { 'BC':'BC','CS':'CS' } %}
+        {% set pa = { 'PA':'PA' } %}
+        {% set virement = { 'VIREMENT':'VIREMENT' } %}
+        {% set mix = { 'MIX':'MIX' } %}
+        <div class="breadcrumbs" id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li class="active">Resaisie de l'anomalie</li>
+            </ol>
+        </div>
+        <div class="page-content">
+        <div class="col-md-12">
+
+        <h3 style="margin-top:5px;" class="couleur-intersa">Resaisie de l'anomalie # {{ anomalie }}</h3>
+        <hr/>
+
+
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Visuel de la sequence associée.
+                            <div class="pull-right"><span class="label label-primary"> Anomalie : {{ anomalie }}</span>
+                            </div>
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="panel-group" id="accordion">
+                            <img src="{{ path('assets_img',{'token': data['image'][0]}) }}" width="820"/>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <a href="#" data-toggle="modal" data-target="#myModal2" class="btn btn-primary col-md-12 "
+                   style="text-align: center"><span class="glyphicon glyphicon-edit"></span> Saisir le don </a>
+            </div>
+
+        </div>
+        <!-- /container -->
+
+        <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+        <div class="modal-dialog" style="top:-10px;right:0px;width:100%;height:100%">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel">Saisie de la séquence #{{ sequence }} </h4>
+        </div>
+        <div class="modal-body">
+        <div class="row">
+        <div class="col-md-6">
+            {% for flashMessage in app.session.flashbag.get('info') %}
+                <div class="alert alert-success">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+            {% for flashMessage in app.session.flashbag.get('warning') %}
+                <div class="alert alert-warning">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+            {% if type in pa|keys or type in virement|keys %}
+                {% if data['image'][0] is defined %} <img src="{{ path('assets_img',{'token': data['image'][0]}) }}"
+                                                          style="max-height: 900px;" />{% endif %}
+            {% else %}
+                {% if data['image'][0] is defined %} <img src="{{ path('assets_img',{'token': data['image'][0]}) }}"
+                                                          style="width: 100%" />{% endif %}
+                {% if data['image'][1] is defined %} <img src="{{ path('assets_img',{'token': data['image'][1]}) }}"
+                                                          style="width: 100%" />{% endif %}
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+        <h5 class="couleur-intersa">Informations principaux : </h5>
+        <hr/>
+        <br/>
+
+        <form method="post" onsubmit="submit_donateur();return false;">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="inputEmail3" class="control-label">Numéro du donateur</label>
+
+                    <div id="donateur_id_block">
+                        <input type="text" class="task_field form-control" name="id_donateur" id="value_donateur"
+                               {% if champs['id'] is defined %}value="{{ champs['id'] }}"{% endif %} />
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- Tab panes -->
+        <form action="{{ path('intersa_saisie_reserie_anomalie',{'nom':lot,'type':type,'anomalie':sequence}) }}"
+              method="post" class="form-group" {{ form_enctype(form) }}>
+        <input type="hidden" name="num_donateur[]" id="hidden_id_donateur"
+               {% if champs['id'] is not null %}value="{{ champs['id'] }}"{% endif %}   {% if data['donateur'] is defined %} value="{{ data['donateur'] }}" {% endif %} />
+
+        <div class="row">
+        <div class="col-md-8">
+        <div id="proposition_eclate"
+             style="position: absolute; top: -80px;z-index: 100;background-color: #fff;color:#000;opacity:0.95;height: 120%;width:98%;display:none;">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="pull-right"><a href="{{ path('intersa_donateur_add') }}" class="btn btn-xs btn-success"
+                                               target="_blank"><span class="glyphicon glyphicon-plus"></span> Ajouter un
+                            nouveau donateur</a> <a href="#" onclick="close_proposition(2)"
+                                                    class="btn btn-xs btn-danger"><span
+                                    class="glyphicon glyphicon-remove"></span> Fermer </a></div>
+                    <br/>
+                    <hr/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label class=" control-label">Nom</label>
+
+                    <div>
+                        <input type="text" name="nom_eclate_search" class="task_field form-control"
+                               id="nom_eclate_search"/>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class=" control-label">Prenom</label>
+
+                    <div>
+                        <input type="text" name="prenom_eclate_search" class="task_field form-control"
+                               id="prenom_eclate_search"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <br/>
+                    <a href="#" onclick="get_eclate_propostion()" class="col-md-12 btn btn-primary"><span
+                                class="glyphicon glyphicon-search"></span> Rechercher</a>
+                </div>
+            </div>
+            <hr/>
+            <div class="col-md-12" id="result_eclate">
+                <center>
+                    <img id="load_data" src="{{ asset('img/ajax-loader.gif') }}"/>
+                </center>
+            </div>
+        </div>
+        <div id="donateur_info_block">
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="inputEmail3" class="control-label">{{ form_label(form.civilite, "Civilité") }}</label>
+
+                <div>
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    {{ form_errors(form.civilite) }}
+
+                    {# Génération de l'input. #}
+                    {{ form_widget(form.civilite, {'attr': {'class': 'task_field form-control', 'id':'civilite'} }) }}
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputEmail3" class=" control-label">{{ form_label(form.nom, "Nom") }}</label>
+
+                <div>
+                    {% if form.nom.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError"> {{ form_errors(form.nom) }}</label>
+                            {{ form_widget(form.nom, {'attr': {'class': 'task_field form-control', 'id':'inputError', 'placeholder':'Nom', 'value':data['nom'] } }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.nom, {'attr': {'class': 'task_field form-control', 'id':'nom', 'placeholder':'Nom' ,'value':data['nom'] }}) }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="form-group col-md-6">
+                <label for="inputEmail3" class="control-label">{{ form_label(form.prenom, "Prénom") }}</label>
+
+                <div>
+                    {% if form.prenom.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError"> {{ form_errors(form.prenom) }}</label>
+                            {{ form_widget(form.prenom, {'attr': {'class': 'task_field form-control', 'id':'prenom', 'placeholder':'Prénom','value':data['prenom'] } }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.prenom, {'attr': {'class': 'task_field form-control', 'id':'prenom', 'placeholder':'Prénom','value':data['prenom'] } }) }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputEmail3" class="control-label">{{ form_label(form.email, "Email") }}</label>
+
+                <div>
+                    {% if form.email.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError"> {{ form_errors(form.email) }}</label>
+                            {{ form_widget(form.email, {'attr': { 'class': 'task_field form-control', 'id':'email'} }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.email, {'attr': { 'class': 'task_field form-control', 'id':'email'} }) }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="inputEmail3"
+                       class="control-label">{{ form_label(form.adresse1, "N° appartement ou boîte aux lettres - etage - couloir - escalier ") }}</label>
+
+                <div>
+                    {% if form.adresse1.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError"> {{ form_errors(form.adresse1) }}</label>
+                            {{ form_widget(form.adresse1, {'attr': { 'class': 'task_field form-control', 'id':'adresse1','value':data['adresse1']} }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.adresse1, {'attr': { 'class': 'task_field form-control', 'id':'adresse1','value':data['adresse1']} }) }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputEmail3"
+                       class="control-label">{{ form_label(form.adresse2, "Entrée - bâtiment - immeuble - résidence ") }}</label>
+
+                <div>
+                    {% if form.adresse2.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError"> {{ form_errors(form.adresse2) }}</label>
+                            {{ form_widget(form.adresse2, {'attr': { 'class': 'task_field form-control', 'id':'adresse2','value':data['adresse2']} }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.adresse2, {'attr': { 'class': 'task_field form-control', 'id':'adresse2','value':data['adresse2']} }) }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="inputEmail3"
+                       class="control-label">{{ form_label(form.adresse3, "Numéro + libellé de la voie (rue,avenue...) ") }}</label>
+
+                <div>
+                    {% if form.adresse3.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError"> {{ form_errors(form.adresse3) }}</label>
+                            {{ form_widget(form.adresse3, {'attr': { 'class': 'task_field form-control', 'id':'adresse3','value':data['adresse3']} }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.adresse3, {'attr': { 'class': 'task_field form-control', 'id':'adresse3','value':data['adresse3']} }) }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputEmail3" class="control-label">{{ form_label(form.adresse4, "BP - Lieu dit ") }}</label>
+
+                <div>
+                    {% if form.adresse4.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError"> {{ form_errors(form.adresse4) }}</label>
+                            {{ form_widget(form.adresse4, {'attr': { 'class': 'task_field form-control', 'id':'adresse4','value':data['adresse4']} }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.adresse4, {'attr': { 'class': 'task_field form-control', 'id':'adresse4','value':data['adresse4']} }) }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="inputEmail3" class=" control-label">{{ form_label(form.zipcode, "Code postal ") }}</label>
+
+                <div>
+                    {% if form.zipcode.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError"> {{ form_errors(form.zipcode) }}</label>
+                            {{ form_widget(form.zipcode, {'attr': { 'class': 'task_field form-control', 'id':'codepostal','value':data['zipcode']} }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.zipcode, {'attr': { 'class': 'task_field form-control', 'id':'codepostal','value':data['zipcode']} }) }}
+                    {% endif %}
+
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputEmail3" class=" control-label">{{ form_label(form.isopays, "Pays") }}</label>
+
+                <div>
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    {{ form_errors(form.isopays) }}
+
+                    {# Génération de l'input. #}
+                    {{ form_widget(form.isopays, {'attr': { 'class': 'task_field form-control', 'id':'pays'} }) }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="form-group col-md-6">
+                <label for="inputEmail3" class=" control-label">{{ form_label(form.isoville, "Localité") }}</label>
+
+                <div>
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    {{ form_errors(form.isoville) }}
+
+                    {# Génération de l'input. #}
+                    {{ form_widget(form.isoville, {'attr': { 'class': 'task_field form-control', 'id':'ville'} }) }}
+                </div>
+            </div>
+        </div>
+
+
+        <h5 class="couleur-intersa">Autre informations (Optionnelles)</h5>
+        <hr/>
+        <br/>
+
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label>{{ form_label(form.receptionMode, "Mode de communication") }}</label>
+
+                <div>
+                    {% for field in form.receptionMode %}
+                        <li style="list-style-type:none; ">
+                            {{ form_widget(field, {'attr': { 'checked': 'checked'} }) }}
+                            {{ form_label(field) }}
+                        </li>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputEmail3"
+                       class="control-label">{{ form_label(form.dateNaissance, "Date de naissance") }}</label>
+
+                <div>
+                    {% if form.dateNaissance.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label"
+                                   for="inputError"> {{ form_errors(form.date_naissance) }}</label>
+                            {{ form_widget(form.dateNaissance, {'attr': { 'id':'dateNaissance', 'placeholder':'jj/mm/aaaa' } }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.dateNaissance, {'attr': { 'id':'nom', 'placeholder':'jj/mm/aaaa' } }) }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="telephoneMobile">{{ form_label(form.telephoneMobile, "Téléphone mobile") }}</label>
+
+                <div>
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    {{ form_errors(form.telephoneMobile) }}
+
+                    {# Génération de l'input. #}
+                    {{ form_widget(form.telephoneMobile, {'attr': { 'class': 'task_field form-control', 'id':'telephoneMobile'} }) }}
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="telephone_fixe">{{ form_label(form.telephoneFixe, "Téléphone fixe") }}</label>
+
+                <div>
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    {{ form_errors(form.telephoneFixe) }}
+
+                    {# Génération de l'input. #}
+                    {{ form_widget(form.telephoneFixe, {'attr': { 'class': 'task_field form-control', 'id':'telephone_fixe'} }) }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-12">
+                <label class=" control-label col-sm-12">Le donateur peut recevoir les Reçus fiscaux ?</label>
+
+                <div class="col-sm-12">
+                    <div class="radio-inline">
+                        <label>
+                            <input type="radio" name="allow_rf" id="allow_rf1" value="true"
+                                   {% if data['allow_rf'] is defined %}{% if  data['allow_rf'] == "true" %}checked{% endif %}{% else %}checked{% endif %}>
+                            Oui
+                        </label>
+                    </div>
+                    <div class="radio-inline">
+                        <label>
+                            <input type="radio" name="allow_rf" id="allow_rf2" value="false"
+                                   {% if data['allow_rf'] is defined  and  data['allow_rf'] == "false" %}checked{% endif %}>
+                            Non
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+        <div class="col-md-4">
+            <h5 class="couleur-intersa">Coordonnés de paiement : </h5>
+            <hr/>
+            <label for="montant"><label for="montant" class="required">Montant</label></label>
+            {% if  app.session.flashbag.has('error_montant') %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError">
+                        {% for flashMessage in app.session.flashbag.get('error_montant') %}
+                            <li>{{ flashMessage }}</li>
+                        {% endfor %}
+                    </label>
+                    <input type="text" id="montant" name="montant" required="required" placeholder="Montant (en Euros)"
+                           {% if champs['montant'] is defined %}value="{{ champs['montant'] }}"
+                           {% endif %}class="task_field form-control">
+                </div>
+            {% else %}
+                <input type="text" id="montant" name="montant" required="required" placeholder="Montant (en Euros)"
+                       {% if champs['montant'] is defined %}value="{{ champs['montant'] }}"{% endif %}
+                       class="task_field form-control">
+            {% endif %}
+            <br/>
+            <label for="code_activite"><label for="code_activite" class="required">Code Activité</label></label>
+            {% if  app.session.flashbag.has('error_code_activite') %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError">
+                        {% for flashMessage in app.session.flashbag.get('error_code_activite') %}
+                            <li>{{ flashMessage }}</li>
+                        {% endfor %}
+                    </label>
+                    <input type="text" id="code_activite" name="code_activite" required="required"
+                           class="task_field form-control"
+                           {% if champs['code_activite'] is defined %}value="{{ champs['code_activite'] }}"{% endif %} >
+                </div>
+            {% else %}
+                <input type="text" id="code_activite" name="code_activite" required="required"
+                       class="task_field form-control"
+                       {% if champs['code_activite'] is defined %}value="{{ champs['code_activite'] }}"{% endif %} >
+            {% endif %}
+            <br/>
+            {% if type in cheques|keys %}
+                <label for="num_cheque"><label for="num_cheque" class="required">Numero du chèque</label> </label><a
+                    style="font-size: 10px;" class="pull-right" href="#" tabindex="-1"
+                    onClick="enable_field('#num_cheque');"> ( Modifier )</a>
+                <input type="text" id="num_cheque" name="num_cheque" required="required" value="{{ data['chequenum'] }}"
+                       class="task_field form-control " tabindex="-1" readonly>
+                <br/>
+                <label for="num_cheque"><label for="date_cheque" class="required">Date du chèque</label></label>
+                {% if  app.session.flashbag.has('error_date_cheque') %}
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputError">
+                            {% for flashMessage in app.session.flashbag.get('error_date_cheque') %}
+                                <li>{{ flashMessage }}</li>
+                            {% endfor %}
+                        </label>
+                        <input type="text" id="date_cheque" name="date_cheque" required="required"
+                               placeholder="jj/mm/aaaa" class="task_field form-control "
+                               {% if champs['date_cheque'] is defined %}value="{{ champs['date_cheque'] }}"{% endif %}>
+                    </div>
+                {% else %}
+                    <input type="text" id="date_cheque" name="date_cheque" required="required" placeholder="jj/mm/aaaa"
+                           class="task_field form-control "
+                           {% if champs['date_cheque'] is defined %}value="{{ champs['date_cheque'] }}"{% endif %} >
+                {% endif %}
+                <br/>
+            {% endif %}
+            {% if type in pa|keys %}
+                <label for="bic"><label for="bic" class="required">BIC</label></label>
+                {% if  app.session.flashbag.has('error_bic') %}
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputError">
+                            {% for flashMessage in app.session.flashbag.get('error_bic') %}
+                                <li>{{ flashMessage }}</li>
+                            {% endfor %}
+                        </label>
+                        <input type="text" id="bic" name="bic" required="required" placeholder="BIC"
+                               class="task_field form-control "
+                               {% if champs['bic'] is defined %}value="{{ champs['bic'] }}"{% endif %}>
+                    </div>
+                {% else %}
+                    <input type="text" id="bic" name="bic" required="required" placeholder="BIC"
+                           class="task_field form-control "
+                           {% if champs['bic'] is defined %}value="{{ champs['bic'] }}"{% endif %}>
+                {% endif %}
+                <br/>
+                <label for="iban"><label for="iban" class="required">IBAN</label></label>
+                {% if  app.session.flashbag.has('error_iban') %}
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputError">
+                            {% for flashMessage in app.session.flashbag.get('error_iban') %}
+                                <li>{{ flashMessage }}</li>
+                            {% endfor %}
+                        </label>
+                        <input type="text" id="iban" name="iban" required="required" placeholder="IBAN"
+                               class="task_field form-control "
+                               {% if champs['iban'] is defined %}value="{{ champs['iban'] }}"{% endif %}>
+                    </div>
+                {% else %}
+                    <input type="text" id="iban" name="iban" required="required" placeholder="IBAN"
+                           class="task_field form-control "
+                           {% if champs['iban'] is defined %}value="{{ champs['iban'] }}"{% endif %}>
+                {% endif %}
+                <br/>
+                <label for="date_first_pa"><label for="date_first_pa" class="required">Date du premier
+                        prélevement</label></label>
+                {% if  app.session.flashbag.has('error_date_first_pa') %}
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputError">
+                            {% for flashMessage in app.session.flashbag.get('error_date_first_pa') %}
+                                <li>{{ flashMessage }}</li>
+                            {% endfor %}
+                        </label>
+                        <input type="text" id="date_first_pa" name="date_first_pa" required="required"
+                               placeholder="jj/mm/aaaa" class="task_field form-control "
+                               {% if champs['date_first_pa'] is defined %}value="{{ champs['date_first_pa'] }}"{% endif %}>
+                    </div>
+                {% else %}
+                    <input type="text" id="date_first_pa" name="date_first_pa" required="required"
+                           placeholder="jj/mm/aaaa" class="task_field form-control "
+                           {% if champs['date_first_pa'] is defined %}value="{{ champs['date_first_pa'] }}"{% endif %} >
+                {% endif %}
+                <br/>
+                <label for="date_fin_pa"><label for="date_fin_pa" class="required">Date du fin de
+                        prélevement</label></label>
+                {% if  app.session.flashbag.has('error_date_fin_pa') %}
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputError">
+                            {% for flashMessage in app.session.flashbag.get('error_date_fin_pa') %}
+                                <li>{{ flashMessage }}</li>
+                            {% endfor %}
+                        </label>
+                        <input type="text" id="date_fin_pa" name="date_fin_pa" placeholder="jj/mm/aaaa"
+                               class="task_field form-control "
+                               {% if champs['date_fin_pa'] is defined %}value="{{ champs['date_fin_pa']|date('d/m/Y') }}"{% endif %}
+                               autocomplete="off">
+                    </div>
+                {% else %}
+                    <input type="text" id="date_fin_pa" name="date_fin_pa" placeholder="jj/mm/aaaa"
+                           class="task_field form-control "
+                           {% if champs['date_fin_pa'] is defined %}value="{{ champs['date_fin_pa']|date('d/m/Y') }}"{% endif %}
+                           autocomplete="off">
+                {% endif %}
+                <br/>
+                <label for="periodicite"><label for="periodicite" class="required">Périodicité</label></label>
+                {% if  app.session.flashbag.has('error_periodicite') %}
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputError">
+                            {% for flashMessage in app.session.flashbag.get('error_periodicite') %}
+                                <li>{{ flashMessage }}</li>
+                            {% endfor %}
+                        </label>
+                        <SELECT id="periodicite" name="periodicite" required="required"
+                                class="task_field form-control ">
+                            {% for periode in periodes %}
+                                <option value="{{ period.id }}"
+                                        {% if champs['periodicite'] is defined and champs['periodicite']== period.id %}selected="selected"{% endif %}>{{ period.name }}</option>
+                            {% endfor %}
+                        </SELECT>
+                    </div>
+                {% else %}
+                    <SELECT id="periodicite" name="periodicite" required="required" class="task_field form-control ">
+                        {% for periode in periodes %}
+                            <option value="{{ periode.id }}"
+                                    {% if champs['periodicite'] is defined and champs['periodicite']== periode.id %}selected="selected"{% endif %}>{{ periode.name }}</option>
+                        {% endfor %}
+                    </SELECT>
+                {% endif %}
+                <br/>
+            {% endif %}
+            {% if type in cheques|keys  or type in pa|keys or type in virement|keys %}
+                <label for="nom_banque"><label for="nom_banque" class="required">Nom de la banque</label></label>
+                {% if  app.session.flashbag.has('error_nom_banque') %}
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputError">
+                            {% for flashMessage in app.session.flashbag.get('error_nom_banque') %}
+                                <li>{{ flashMessage }}</li>
+                            {% endfor %}
+                        </label>
+                        <input type="text" id="nom_banque" name="nom_banque" required="required"
+                               class="task_field form-control"
+                               {% if champs['nom_banque'] is defined %}value="{{ champs['nom_banque'] }}"{% endif %}>
+                    </div>
+                {% else %}
+                    <input type="text" id="nom_banque" name="nom_banque" required="required"
+                           class="task_field form-control"
+                           {% if champs['nom_banque'] is defined %}value="{{ champs['nom_banque'] }}"{% endif %}>
+                {% endif %}
+            {% endif %}
+
+            {% if type in mix|keys   %}
+                <label for="choix_type"><label for="choix_type" class="required">Choix du type</label></label>
+                {% if  app.session.flashbag.has('error_choix_type')%}
+
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputError">
+                            {% for flashMessage in app.session.flashbag.get('error_choix_type') %}
+                                <li>{{ flashMessage }}</li>
+                            {% endfor %}
+                        </label>
+                        <select name="choice_type" id="choice_type" >
+                            <option value="ces" {% if champs['choice_type'] is defined and champs['choice_type'] == 'ces' %} selected {% endif %} {% if data['choice_type'] is defined and data['choice_type'] == 'ces'%} selected="selected" {% endif %}>Espèce</option>
+                            <option value="cbc" {% if champs['choice_type'] is defined and champs['choice_type'] == 'cbc' %} selected {% endif %} {% if data['choice_type'] is defined and champs['choice_type'] == 'cbc'%} selected="selected" {% endif %} >Bulletin chèque</option>
+                        </select>
+
+                    </div>
+                {% else %}
+                    <select name="choice_type" id="choice_type" >
+                        <option value="ces" {% if champs['choice_type'] is defined and champs['choice_type'] == 'ces' %} selected {% endif %} {% if data['choice_type'] is defined and data['choice_type'] == 'ces'%} selected="selected" {% endif %}>Espèce</option>
+                        <option value="cbc" {% if champs['choice_type'] is defined and champs['choice_type'] == 'cbc' %} selected {% endif %} {% if data['choice_type'] is defined and champs['choice_type'] == 'cbc'%} selected="selected" {% endif %} >Bulletin chèque</option>
+                    </select>
+                {% endif %}
+            {% endif %}
+        </div>
+        </div>
+        {{ form_rest(form) }}
+        <center><input type="submit" value="Enregistrer"/></center>
+        </form>
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+            {% if champs['id'] is defined  %}checkdonateur('{{ champs['id'] }}');
+            {% endif %}
+
+            $('#myModal2').modal('show');
+
+            function checkdonateur(id) {
+                $.ajax({
+                    url: "/intersa/donateur/ajax/exists/id/" + id,
+                    beforeSend: function (xhr) {
+                        ;
+                    }
+                })
+                        .done(function (data) {
+                            $('#donateur_info_block').html(data);
+                            $('#montant').focus();
+                        });
+            }
+            $('#verif_donateur').on('click', function () {
+                checkdonateur($('#value_donateur').val());
+
+            });
+            function submit_donateur() {
+                checkdonateur($('#value_donateur').val());
+                $('#hidden_id_donateur').attr('value', $('#value_donateur').val());
+            }
+
+            function enable_field(myvar) {
+                $(myvar).removeAttr('readonly');
+
+            }
+            $(document).ready(function () {
+                $.getJSON("/villes/id/" + $("#fulldon_donateurbundle_saisietype_pays").val()).done(function (vj) {
+                    var options = '';
+                    for (var i = 0; i < vj.length; i++) {
+                        options += '<option value="' + vj[i].id + '">' + vj[i].name + '</option>';
+                    }
+                    $("#ville").html(options);
+                });
+                $("#fulldon_donateurbundle_saisietype_pays").on('change', function (event) {
+                    event.stopImmediatePropagation();
+                    $('#load_ville').html('<img id="load_villes" src="{{ asset('img/villes_load.gif') }}" />');
+
+                    $.getJSON("/villes/id/" + $(this).val()).done(function (vj) {
+                        var options = '';
+                        for (var i = 0; i < vj.length; i++) {
+                            options += '<option value="' + vj[i].id + '">' + vj[i].name + '</option>';
+                        }
+                        $("#ville").html(options);
+                        $('#load_ville').html('');
+                    });
+                });
+            });
+        </script>
+    {% endblock %}

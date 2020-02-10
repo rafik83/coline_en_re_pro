@@ -1,0 +1,640 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+
+    {% block coque_intersa %}
+        {% set total_emails = 0 %}
+        {% set total_sms = 0 %}
+        {% set nb_tag_emarketing = 0 %}
+        {% set nb_tag_rf = 0 %}
+        {% set nb_tag_courrier = 0 %}
+        {% set nb_tag_newpwd = 0 %}
+        {% set nb_tag_notif = 0 %}
+        {% set nb_tag_confirmdon = 0 %}
+
+        <div class="breadcrumbs" id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li>Tableau de bord</li>
+            </ol>
+        </div>
+        <div class="page-content">
+        <div class="col-md-12">
+        <div class="page-header">
+            <h1>
+                Tableau de bord
+                <small>
+                    <i class="ace-icon fa fa-angle-double-right"></i>
+                    Détails de votre base de données
+                </small>
+            </h1>
+        </div>
+        <!-- /.page-header -->
+        <div>
+            <a href="{{ path('intersa_global_stat_pdf') }}" class="btn btn-info btn-xs"
+               target="_blank"><span class="glyphicon glyphicon-file"></span> Générer un PDF</a>
+            <a href="{{ path('intersa_global_stat_excel') }}" class="btn btn-default  btn-xs"><i class="fa fa-file-excel-o"></i> Générer un Excel</a>
+        </div>
+        <hr/>
+
+        <div class="row">
+        <div class="col-md-6">
+        <div class="widget-box widget-color-dark ui-sortable-handle">
+        <div class="widget-header">
+
+            <h4 class="widget-title">Statistiques eMarketing</h4>
+            <div class="widget-toolbar">
+
+                <a href="#" data-action="collapse">
+                    <i class="ace-icon fa fa-chevron-up"></i>
+                </a>
+
+                <a href="#" data-action="close">
+                    <i class="ace-icon fa fa-times"></i>
+                </a>
+
+            </div>
+        </div>
+        <div class="widget-body">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#stat_marketing_g" data-toggle="tab">Graphique</a></li>
+                        <li><a href="#stat_marketing_c" data-toggle="tab">Chiffres</a></li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="stat_marketing_g">
+                            <div id="marketing_stat" style="width: 100%; height: 300px;"></div>
+                        </div>
+                        <div class="tab-pane " id="stat_marketing_c">
+                            <h3>Chiffres : </h3>
+
+                            {% for tag in data['marketing'] %}
+                                {% set total_emails = total_emails+tag['nbemail'] %}
+                                {% set total_sms = total_sms+tag['nbsms'] %}
+
+                                {% if tag['tag'] == tag_prefix~'-'~tag_notification %}
+                                    {% set nb_tag_notif = tag['nbemail'] %}
+                                {% elseif tag['tag'] == tag_prefix~'-'~tag_courrier %}
+                                    {% set nb_tag_courrier = tag['nbemail'] %}
+                                {% elseif tag['tag'] == tag_prefix~'-'~tag_rf %}
+                                    {% set nb_tag_rf = tag['nbemail'] %}
+                                {% elseif tag['tag'] == tag_prefix~'-'~tag_new_password %}
+                                    {% set nb_tag_newpwd = tag['nbemail'] %}
+                                {% elseif tag['tag'] == tag_prefix~'-'~tag_confirm_don %}
+                                    {% set nb_tag_confirmdon = tag['nbemail'] %}
+                                {% elseif tag['tag'] == tag_prefix~'-'~tag_emarketing %}
+                                    {% set nb_tag_emarketing = tag['nbemail'] %}
+                                {% endif %}
+
+                            {% endfor %}
+                            <b>SMS
+                                : </b>{% if  total_sms is defined and  total_sms is not null %}{{ total_sms }} {% else %} 0 {% endif %}
+                            SMS envoyés<br/>
+                            <b>Total des Emails
+                                : </b>{% if total_emails is defined and  total_emails is not null %}{{ total_emails }} {% else %} 0 {% endif %}
+                            Emails envoyés<br/>
+                            <b>Emails/Emarketing
+                                : </b>{% if nb_tag_emarketing is defined and  nb_tag_emarketing is not null %}{{ nb_tag_emarketing }} {% else %} 0 {% endif %}
+                            Emails envoyés<br/>
+                            <b>Emails/Notification
+                                : </b>{% if nb_tag_notif is defined and  nb_tag_notif is not null %}{{ nb_tag_notif }} {% else %} 0 {% endif %}
+                            Emails envoyés<br/>
+                            <b>Emails/Courriers
+                                : </b>{% if nb_tag_courrier is defined and  nb_tag_courrier is not null %}{{ nb_tag_courrier }} {% else %} 0 {% endif %}
+                            Emails envoyés<br/>
+                            <b>Emails/Reçus fiscaux
+                                : </b>{% if nb_tag_rf is defined and  nb_tag_rf is not null %}{{ nb_tag_rf }} {% else %} 0 {% endif %}
+                            Emails envoyés<br/>
+                            <b>Emails/Mots de passe oubliés
+                                : </b>{% if nb_tag_newpwd is defined and  nb_tag_newpwd is not null %}{{ nb_tag_newpwd }} {% else %} 0 {% endif %}
+                            Emails envoyés<br/>
+                            <b>Emails/Confirmation des dons
+                                : </b>{% if nb_tag_confirmdon is defined and  nb_tag_confirmdon is not null %}{{ nb_tag_confirmdon }} {% else %} 0 {% endif %}
+                            Emails envoyés<br/>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="widget-box widget-color-dark ui-sortable-handle">
+        <div class="widget-header">
+
+            <h4 class="widget-title">Statistiques donateurs</h4>
+            <div class="widget-toolbar">
+
+                <a href="#" data-action="collapse">
+                    <i class="ace-icon fa fa-chevron-up"></i>
+                </a>
+
+                <a href="#" data-action="close">
+                    <i class="ace-icon fa fa-times"></i>
+                </a>
+
+            </div>
+        </div>
+        <div class="widget-body">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#stat_donateur_g" data-toggle="tab">Graphique</a></li>
+                        <li><a href="#stat_donateur_c" data-toggle="tab">Chiffres</a></li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="stat_donateur_g">
+                            <div id="donateur_stat" style="width: 100%; height: 300px;"></div>
+                        </div>
+                        <div class="tab-pane " id="stat_donateur_c">
+                            <h3>Chiffres : </h3>
+                            <h4>Donateurs désactivés</h4>
+                            <b>Donateurs actifs: </b>{{ data['donateur_actif'] }}<br/>
+                            <b>Donateurs inactifs: </b>{{ data['donateur_removed'] }}<br/>
+                            <b>Nombre total de donateurs : </b>{{ data['donateur_actif']+data['donateur_removed'] }}
+                            <br/>
+                            <b>Moyenne d'âge des donateurs : </b>{{ data['moyenne_age'] }}<br/>
+                            <hr/>
+                            <h4>Communications</h4>
+                            <b>Nombre de téléphones portables : </b>{{ data['donateur_tmobile'] }}<br/>
+                            <b>Nombre d'emails : </b>{{ data['donateur_emails'] }}<br/>
+                            <hr/>
+                            <h4>Fidélité</h4>
+                            <b>Nombre de donateurs actifs 0/12 mois : </b>{{ data['nb_12mois'] }}<br/>
+                            <b>Nombre de donateurs actifs 12/24 mois : </b>{{ data['nb_24mois'] }}<br/>
+                            <b>Nombre de donateurs actifs 24/36 mois : </b>{{ data['nb_36mois'] }}<br/>
+                            <hr/>
+
+                            {% if data['disabled_donateur'] is defined and data['disabled_donateur'] is not null %}
+                                <h4>Donateurs désactivés</h4>
+                                {% for d in data['disabled_donateur'] %}
+                                    <b>Nombre de donateurs {{ d['name'] }} :</b>  {{ d['comptage'] }} <br/>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="widget-box widget-color-dark ui-sortable-handle">
+        <div class="widget-header">
+
+            <h4 class="widget-title">Nombre de dons par type</h4>
+            <div class="widget-toolbar">
+
+                <a href="#" data-action="collapse">
+                    <i class="ace-icon fa fa-chevron-up"></i>
+                </a>
+
+                <a href="#" data-action="close">
+                    <i class="ace-icon fa fa-times"></i>
+                </a>
+
+            </div>
+        </div>
+        <div class="widget-body">
+
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#stat_type_g" data-toggle="tab">Graphique</a></li>
+                        <li><a href="#stat_type_c" data-toggle="tab">Chiffres</a></li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="stat_type_g">
+                            <div id="don_stat" style="width: 100%; height: 300px;"></div>
+                        </div>
+                        <div class="tab-pane " id="stat_type_c">
+                            {% set pa_inactif = 0 %}
+                            {% if data['don_pa'] is defined %}{% set pa_inactif = data['don_pa']- data['pa_actif'] %}{% endif %}
+                            <h3>Chiffres : </h3>
+                            <b>Dons PA : </b> {% if data['don_pa'] is defined %}{{ data['don_pa'] }}{% else %}0{% endif %}<br/>
+                            <b>Dons CS : </b> {% if data['don_cs'] is defined %}{{ data['don_cs'] }}{% else %}0{% endif %}<br/>
+                            <b>Dons BC : </b> {% if data['don_bc'] is defined %}{{ data['don_bc'] }}{% else %}0{% endif %}<br/>
+                            <b>Dons ESPECE : </b> {% if data['don_espece'] is defined %}{{ data['don_espece'] }}{% else %}0{% endif %}
+                            <br/>
+                            <b>Dons
+                                VIREMENT : </b> {% if data['don_virement'] is defined %}{{ data['don_virement'] }}{% else %}0{% endif %}
+                            <br/>
+                            <b>Dons
+                                INTERNET : </b> {% if data['don_cb'] is defined %}{{ data['don_cb'] }}{% else %}0{% endif %}
+                            <br/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            {#<div class="panel panel-default">#}
+            {#<!-- Default panel contents -->#}
+            {#<div class="panel-heading">Moyenne des sommes des dons</div>#}
+            {#<div class="panel-body">#}
+            {#<b>Espece:</b>   {{ data['mdon_espece'] }} €<br />#}
+            {#<b>Bulletin chèque : </b>   {{ data['mdon_bc'] }} €<br />#}
+            {#<b>Chèque seul : </b>   {{ data['mdon_cs'] }} €<br />#}
+            {#<b>Prélevement Automatique : </b>   {{ data['mdon_pa'] }} €<br />#}
+            {#<b>Virement : </b>   {{ data['mdon_virement'] }} €<br />#}
+            {#<b>Paypal : </b>   {{ data['mdon_paypal'] }} €#}
+            {#<div id="dons_avg" style="width: 100%; height: 200px;float:left;"></div>#}
+            {#</div>#}
+            {#</div>#}
+
+        </div>
+
+        <div class="col-md-6">
+            <div class="widget-box widget-color-dark ui-sortable-handle">
+                <div class="widget-header">
+
+                    <h4 class="widget-title">Nombre de nouveaux donateurs</h4>
+                    <div class="widget-toolbar">
+
+                        <a href="#" data-action="collapse">
+                            <i class="ace-icon fa fa-chevron-up"></i>
+                        </a>
+
+                        <a href="#" data-action="close">
+                            <i class="ace-icon fa fa-times"></i>
+                        </a>
+
+                    </div>
+                </div>
+                <div class="widget-body">
+                    {% set total = 0 %}
+                    {% set isnull = 1 %}
+                    {% set array_month = {
+                    'Janvier':'01',
+                    'Février':'02',
+                    'Mars':'03',
+                    'Avril':'04',
+                    'Mai':'05',
+                    'Juin':'06',
+                    'Juillet':'07',
+                    'Aout':'08',
+                    'Septembre':'09',
+                    'Octobre':'10',
+                    'Novembre':'11',
+                    'Décembre':'12',
+                    } %}
+
+                    <ul class="nav nav-tabs">
+                        <li><a href="#preyear" data-toggle="tab">Année précédente</a></li>
+                        <li class="active"><a href="#curyear" data-toggle="tab">Année en cours</a></li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div class="tab-pane " id="preyear">
+                            <table class="table table-condensed">
+                                <thead>
+                                <th>Mois</th>
+                                {% for ent in data['entities'] %}
+                                    <th>{{ ent.name }}</th>
+                                {% endfor %}
+                                <th>Total</th>
+                                </thead>
+                                <tbody>
+
+                                {% for key,value in array_month %}
+                                    <tr>
+                                        <td>{{ key }}</td>
+
+                                        {% for ent in data['entities'] %}
+                                            <td>
+                                                {% set isnull = 1 %}
+                                                {% for tnd in data['tab_nouveau_donateur_preyear'] %}
+                                                    {% if tnd['nom_entity']  == ent.name and tnd['mois'] == value %}
+                                                        {{ tnd['cpt'] }}
+                                                        {% set total = total + tnd['cpt'] %}
+                                                        {% set isnull = 0 %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                {% if isnull == 1 %}
+                                                    0
+                                                {% endif %}
+                                            </td>
+                                        {% endfor %}
+                                        <td> {{ total }} </td>
+                                        {% set total = 0 %}
+
+                                    </tr>
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane active" id="curyear">
+                            <table class="table table-condensed">
+                                <thead>
+                                <th>Mois</th>
+                                {% for ent in data['entities'] %}
+                                    <th>{{ ent.name }}</th>
+                                {% endfor %}
+                                <th>Total</th>
+                                </thead>
+                                <tbody>
+
+                                {% for key,value in array_month %}
+                                    <tr {% if value == "now"|date('m') %}
+                                        style="background-color: #F78D1E;"
+                                    {% endif %}
+                                            >
+                                        <td>{{ key }}</td>
+                                        {% for ent in data['entities'] %}
+                                            <td>
+                                                {% set isnull = 1 %}
+                                                {% for tnd in data['tab_nouveau_donateur_curyear'] %}
+                                                    {% if tnd['nom_entity']  == ent.name and tnd['mois'] == value %}
+                                                        {{ tnd['cpt'] }}
+                                                        {% set total = total + tnd['cpt'] %}
+                                                        {% set isnull = 0 %}
+                                                    {% endif %}
+                                                {% endfor %}
+
+                                                {% if isnull == 1 %}
+                                                    0
+                                                {% endif %}
+                                            </td>
+                                        {% endfor %}
+                                        <td> {{ total }} </td>
+                                        {% set total = 0 %}
+                                    </tr>
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="widget-box widget-color-dark ui-sortable-handle">
+                <div class="widget-header">
+
+                    <h4 class="widget-title">Statistiques des retours (PND)</h4>
+                    <div class="widget-toolbar">
+
+                        <a href="#" data-action="collapse">
+                            <i class="ace-icon fa fa-chevron-up"></i>
+                        </a>
+
+                        <a href="#" data-action="close">
+                            <i class="ace-icon fa fa-times"></i>
+                        </a>
+
+                    </div>
+                </div>
+                <div class="widget-body">
+
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#stat_retour_g" data-toggle="tab">Graphique</a></li>
+                        <li><a href="#stat_retour_c" data-toggle="tab">Chiffres</a></li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="stat_retour_g">
+                            <div id="pnd_stat" style="width: 100%; height: 300px;"></div>
+                        </div>
+                        <div class="tab-pane " id="stat_retour_c">
+                            <h3>Chiffres - PND : </h3>
+                            {% for a in data['pnd'] %}
+                                <b>Nombre de PND ({{ a['name'] }}) :</b>  {{ a['cpt'] }} <br/>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="widget-box widget-color-dark ui-sortable-handle">
+                <div class="widget-header">
+
+                    <h4 class="widget-title">Statistiques des prélèvements automatiques</h4>
+                    <div class="widget-toolbar">
+
+                        <a href="#" data-action="collapse">
+                            <i class="ace-icon fa fa-chevron-up"></i>
+                        </a>
+
+                        <a href="#" data-action="close">
+                            <i class="ace-icon fa fa-times"></i>
+                        </a>
+
+                    </div>
+                </div>
+                <div class="widget-body">
+
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#stat_prelevement_g" data-toggle="tab">Graphique</a></li>
+                        <li><a href="#stat_prelevement_c" data-toggle="tab">Chiffres</a></li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="stat_prelevement_g">
+                            <div id="don_pa_stat" style="width: 100%; height: 300px;"></div>
+                            <div id="prelevement_stat" style="width: 100%; height: 300px;"></div>
+                        </div>
+                        <div class="tab-pane " id="stat_prelevement_c">
+                            <h3>Chiffres : </h3>
+                            <b>Dons PA
+                                :</b> {% if data['don_pa'] is defined %}{{ data['don_pa'] }}{% else %}0{% endif %}<br/>
+                            <b>Dons PA en cours : </b> {{ data['pa_actif'] }}<br/>
+                            <b>Dons PA stopés : </b> {{ pa_inactif }}<br/>
+                            <b>Dons PA Actifs sur les 12 derniers mois : </b> {{ data['nb_12mois_pa'] }}<br/>
+                            <b>Dons PA Actifs sur les 12/24 derniers mois : </b> {{ data['nb_24mois_pa'] }}<br/>
+                            <b>Dons PA Stopés depuis le début de l'année : </b> {{ data['stops_pa'] }} <br/>
+                            <b>Prélèvement total : </b> {{ data['pre_rejet'] + data['pre_accept'] }}<br/>
+                            <b>Prélèvements Acceptés : </b> {{ data['pre_accept'] }}<br/>
+                            <b>Prélèvements Rejetés : </b> {{ data['pre_rejet'] }}<br/>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+        </div>
+    {% endblock %}
+        {% block javascripts %}
+            {{ parent() }}
+            {% set total_emails = 0 %}
+            {% set total_sms = 0 %}
+            {% set nb_tag_emarketing = 0 %}
+            {% set nb_tag_rf = 0 %}
+            {% set nb_tag_courrier = 0 %}
+            {% set nb_tag_newpwd = 0 %}
+            {% set nb_tag_notif = 0 %}
+            {% set nb_tag_confirmdon = 0 %}
+            {% for tag in data['marketing'] %}
+                {% set total_emails = total_emails+tag['nbemail'] %}
+                {% set total_sms = total_sms+tag['nbsms'] %}
+
+                {% if tag['tag'] == tag_prefix~'-'~tag_notification %}
+                    {% set nb_tag_notif = tag['nbemail'] %}
+                {% elseif tag['tag'] == tag_prefix~'-'~tag_courrier %}
+                    {% set nb_tag_courrier = tag['nbemail'] %}
+                {% elseif tag['tag'] == tag_prefix~'-'~tag_rf %}
+                    {% set nb_tag_rf = tag['nbemail'] %}
+                {% elseif tag['tag'] == tag_prefix~'-'~tag_new_password %}
+                    {% set nb_tag_newpwd = tag['nbemail'] %}
+                {% elseif tag['tag'] == tag_prefix~'-'~tag_confirm_don %}
+                    {% set nb_tag_confirmdon = tag['nbemail'] %}
+                {% elseif tag['tag'] == tag_prefix~'-'~tag_emarketing %}
+                    {% set nb_tag_emarketing = tag['nbemail'] %}
+                {% endif %}
+            {% endfor %}
+
+            <script>
+
+                google.load("visualization", "1", {packages: ["corechart"]});
+                google.setOnLoadCallback(drawChart);
+                function drawChart() {
+                    var data = google.visualization.arrayToDataTable([
+                        ['Etat donateur', 'Nombre de donateur'],
+                        ['Donateurs actifs', {{ data['donateur_actif'] }}],
+                        ['Donateurs inactifs', {{ data['donateur_removed'] }}]
+
+                    ]);
+
+                    var options = {
+                        title: 'Nombre de donateurs',
+                        pieHole: 0.4
+                    };
+
+                    var chart = new google.visualization.PieChart(document.getElementById('donateur_stat'));
+                    chart.draw(data, options);
+
+                    var data = google.visualization.arrayToDataTable([
+                        ['Type de don', 'Nombre de dons'],
+                        ['Espèces', {{ data['don_espece'] }}],
+                        ['Bulletin chèque', {{ data['don_bc'] }}],
+                        ['Chèque seul', {{ data['don_cs'] }}],
+                        ['Prélèvement Automatique', {{ data['don_pa'] }}],
+                        ['Virement', {{ data['don_virement'] }}],
+                        ['Paypal', {{ data['don_paypal'] }}],
+                        ['Internet', {{ data['don_cb'] }}]
+                    ]);
+
+                    var options = {
+                        title: 'Nombre de dons par type',
+                        pieHole: 0.4
+                    };
+
+                    var chart = new google.visualization.PieChart(document.getElementById('don_stat'));
+                    chart.draw(data, options);
+
+                    var data = google.visualization.arrayToDataTable([
+                        ['Type de don', 'Activité'],
+                        {% for a in data['abo'] %}
+                        {% if a['name'] is null %}
+                        ['En cours', {{ a['cpt'] }}],
+                        {% else %}
+                        ['Stopés : {{  a['name'] }}', {{   a['cpt'] }}],
+                        {% endif %}
+                        {% endfor %}
+
+
+                    ]);
+
+                    var options = {
+                        title: 'Etat des abonnements',
+                        pieHole: 0.4,
+                        colors: ['#DF6D14', '#DF73FF', '#B82010', '#960018', '#982140', '#F02541']
+                    };
+
+                    var chart = new google.visualization.PieChart(document.getElementById('don_pa_stat'));
+                    chart.draw(data, options);
+
+                    var data = google.visualization.arrayToDataTable([
+                        ['Etat prélèvement', 'Nombre de donateur'],
+                        ['Prélèvements actifs', {{ data['pre_accept'] }}],
+                        ['Prélèvements rejetés', {{ data['pre_rejet'] }}]
+
+                    ]);
+
+                    var options = {
+                        title: 'Etats des prélèvements',
+                        pieHole: 0.4,
+                        colors: ['#97BBCD', '#9D3E0C']
+                    };
+                    //PND
+                    var chart = new google.visualization.PieChart(document.getElementById('prelevement_stat'));
+                    chart.draw(data, options);
+
+
+                    var data = google.visualization.arrayToDataTable([
+                        ['Type PND', 'Nombre de PND'],
+                        {% for a in data['pnd'] %}
+                        ['{{  a['name'] }}', {{   a['cpt'] }}],
+                        {% endfor %}
+
+                    ]);
+
+                    var options = {
+                        title: 'Nombre de PND par type',
+                        pieHole: 0.4,
+                        colors: ['#97BBCD', '#9D3E0C']
+                    };
+
+                    var chart = new google.visualization.PieChart(document.getElementById('pnd_stat'));
+                    chart.draw(data, options);
+
+
+                }
+                google.load("visualization", "1", {packages: ["corechart"]});
+                google.setOnLoadCallback(drawCoreChart);
+                function drawCoreChart() {
+                    var data = google.visualization.arrayToDataTable([
+                        ['Type', 'Moyenne'],
+                        ['Espèces', {{ data['mdon_espece'] }}],
+                        ['Bulletin chèque', {{ data['mdon_bc'] }}],
+                        ['Chèque seul', {{ data['mdon_cs'] }}],
+                        ['Prélèvement Automatique', {{ data['mdon_pa'] }}],
+                        ['Virement', {{ data['mdon_virement'] }}],
+                        ['Paypal', {{ data['mdon_paypal'] }}]
+                    ]);
+
+                    var options = {
+                        title: 'Moyenne des dons par type',
+                        hAxis: {title: 'Type de don', titleTextStyle: {color: 'red'}}
+                    };
+
+                    var chart = new google.visualization.ColumnChart(document.getElementById('dons_avg'));
+                    chart.draw(data, options);
+                }
+
+                google.load("visualization", "1", {packages: ["corechart"]});
+                google.setOnLoadCallback(drawCoreChart);
+                function drawCoreChart() {
+                    var data = google.visualization.arrayToDataTable([
+                        ['Type d\'envoi', 'Quantité', { role: 'style' }],
+
+                        ['SMS', {{ total_sms }}, 'color: blue'],
+                        {% for tag in data['marketing'] %}
+
+                        {% if tag['tag'] == tag_prefix~'-'~tag_notification %}
+                        ['Emails/Notifications', {{ nb_tag_notif }}, 'color: silver'],
+                        {% elseif tag['tag'] == tag_prefix~'-'~tag_courrier %}
+                        ['Emails/Courriers', {{ nb_tag_courrier }}, 'color: gold'],
+                        {% elseif tag['tag'] == tag_prefix~'-'~tag_rf %}
+                        ['Emails/Reçus fiscaux', {{ nb_tag_rf }}, 'color: green'],
+                        {% elseif tag['tag'] == tag_prefix~'-'~tag_new_password %}
+                        ['Emails/Mots de passe oubliés', {{ nb_tag_newpwd }}, 'color: #000'],
+                        {% elseif tag['tag'] == tag_prefix~'-'~tag_confirm_don %}
+                        ['Emails/Confirmation des dons', {{ nb_tag_confirmdon }}, 'color: blue'],
+                        {% elseif tag['tag'] == tag_prefix~'-'~tag_emarketing %}
+                        ['Emails/Emarketing', {{ nb_tag_emarketing }}, 'color: #b87333'],
+                        {% endif %}
+
+                        {% endfor %}
+
+                    ]);
+
+                    var options = {
+                        title: 'Consomation eMarketing',
+                        hAxis: {title: 'Type d\'envoi', titleTextStyle: {color: 'red'}},
+                        vAxis: {minValue: 0, format: '#'},
+                        legend: { position: "none" }
+                    };
+
+                    var chart = new google.visualization.ColumnChart(document.getElementById('marketing_stat'));
+                    chart.draw(data, options);
+                }
+            </script>
+        {% endblock %}
+

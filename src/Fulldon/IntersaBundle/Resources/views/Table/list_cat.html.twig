@@ -1,0 +1,135 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+        <div class="breadcrumbs" id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li class="active">Gestion des catégories :</li>
+            </ol>
+        </div>
+        <div class="page-content">
+
+            <div class="col-md-12 pull-left">
+                <div class="page-header">
+                    <h1>
+                        Gestion des catégories
+                        <small>
+                            <i class="ace-icon fa fa-angle-double-right"></i>
+                            Liste des catégories
+                        </small>
+                    </h1>
+                </div>
+                    {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') or is_granted('ROLE_TRIAL') %}
+                            <a href="{{ path('intersa_table_element_new',{'table':table}) }}"
+                               class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus-sign"></span> Ajouter une
+                                catégorie </a>
+                        <hr/>
+                    {% endif %}
+
+                {% for flashMessage in app.session.flashbag.get('info') %}
+                    <div class="alert alert-success">
+                        <span class="glyphicon glyphicon-ok-sign"></span>  {{ flashMessage }}
+                    </div>
+                {% endfor %}
+                {% for flashMessage in app.session.flashbag.get('erreur') %}
+                    <div class="alert alert-danger">
+                        <span class="glyphicon glyphicon-remove-sign"></span>{{ flashMessage }}
+                    </div>
+                {% endfor %}
+                <div class="pagination_desc"><strong>{{ total_elements }}</strong> Périodicité(s)
+                    {% if last_page > 1 %}
+                        - page <strong>{{ current_page }}/{{ last_page }}</strong>
+                        <br/>
+                    {% endif %}
+                </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Libelle</th>
+                        <th>Code</th>
+                        {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') %}
+                            <th></th>
+                        {% endif %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for element in elements %}
+                        <tr>
+                            <td>{{ element.id }}</td>
+                            <td>{{ element.name }}</td>
+                            <td>{{ element.code }}</td>
+                            {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') %}
+                                <td><a class="btn btn-xs btn-default"
+                                       href="{{ path('intersa_table_element_edit', {'table':table,'id':element.id}) }}"><span
+                                                class="glyphicon glyphicon-edit"></span> Modifier </a> <a
+                                            class="btn btn-xs btn-default" href="#"
+                                            onclick="delete_element({{ element.id }})"><span
+                                                class="glyphicon glyphicon-remove"></span> Supprimer </a></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <center>
+            {% if last_page > 1 %}
+                <ul class="pagination pull-center">
+                    <li>
+                        <a href="{{ path('intersa_table_element', { 'table':table, 'page': previous_page }) }}">&laquo;</a>
+                    </li>
+                    {% for page in 1..last_page %}
+                        {% if page >= current_page-4 and page <= current_page+4 %}
+                            {% if   page == current_page-4 or page == current_page+4 %}
+                                {% if   page == current_page-4 %}
+                                    <li>
+                                        <a href="{{ path('intersa_table_element', { 'table':table, 'page': 1 }) }}">1</a>
+                                    </li>
+                                    <li class="disabled"><a href="#">...</a></li>
+                                {% else %}
+                                    <li class="disabled"><a href="#">...</a></li>
+                                    <li>
+                                        <a href="{{ path('intersa_table_element', { 'table':table, 'page': last_page }) }}">{{ last_page }}</a>
+                                    </li>
+                                {% endif %}
+                            {% else %}
+                                {% if page == current_page %}
+                                    <li class="active"><a href="#">{{ page }}</a></li>
+                                {% else %}
+                                    <li>
+                                        <a href="{{ path('intersa_table_element', { 'table':table, 'page': page }) }}">{{ page }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    <li><a href="{{ path('intersa_table_element', { 'table':table, 'page': next_page }) }}">&raquo;</a>
+                    </li>
+                </ul>
+            {% endif %}
+        </center>
+        <div class="modal fade" id="deleteelement" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel"
+             aria-hidden="true">
+
+        </div><!-- /.modal -->
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+
+            function delete_element(id) {
+                $.ajax({
+                    url: "/intersa/ajax/delete/table/{{ table }}/id/" + id,
+                    beforeSend: function (xhr) {
+
+                    }
+                })
+                        .done(function (data) {
+                            $("#deleteelement").html(data);
+                            $("#deleteelement").modal('show');
+                        });
+            }
+
+        </script>
+    {% endblock %}

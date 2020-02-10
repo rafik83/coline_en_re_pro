@@ -1,0 +1,34 @@
+ $("#btn_generate_donateur_exel2").click(function () {
+            var Obj = '';
+            $.ajax({
+                url: "{{ path('download_donateur_export_exel') }}", //'/intersa/export-dons/exel',
+                type: "GET",
+                //data: data,
+                data: Obj, //{mydata: obj}
+                //data: data,
+                //data: JSON.stringify(obj3),
+                //contentType: "application/json; charset=utf-8",
+                //dataType:"json",
+                cache: false,
+                success: function (data)
+                {
+                    console.log(data);
+                    //alert(data);
+
+                },
+                complete: function (com) {
+                    //console.log(com.responseText);
+                    //alert(com.responseText);
+                    console.log(com);
+
+
+
+                },
+                error: function (err) {
+                    console.log(err);
+                    //alert('err');
+                }
+            });
+
+
+        });

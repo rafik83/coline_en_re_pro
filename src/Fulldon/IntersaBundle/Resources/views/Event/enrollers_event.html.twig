@@ -1,0 +1,132 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+        <div class="breadcrumbs" id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li><a href="{{ path('fulldon_bo_events', {'page':1}) }}">Gestion des événements : </a></li>
+                <li class="active">La liste des participants :</li>
+            </ol>
+        </div>
+        <div class="page-content">
+
+            <div class="col-md-12 pull-left">
+                <div class="page-header">
+                    <h1>
+                        Gestion des événements
+                        <small>
+                            <i class="ace-icon fa fa-angle-double-right"></i>
+                            Modification de l' événement : {{ element.titre }}
+                        </small>
+                    </h1>
+                </div>
+
+
+                {% for flashMessage in app.session.flashbag.get('info') %}
+                    <div class="alert alert-success">
+                        <span class="glyphicon glyphicon-ok-sign"></span>{{ flashMessage }}
+                    </div>
+                {% endfor %}
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Nom complet du participant</th>
+                        <th>a payé en tant que</th>
+                        <th>Statut de paiement</th>
+                        <th>Evenements liés</th>
+                        <th>Fiche du du participant</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% set current_id = element.id %}
+                    {% for element in elements %}
+                        <tr>
+                            {% set donateur_ix = element.user.id|donateur %}
+                            <td>
+                                {% if donateur_ix is not null %}
+                                    {{ donateur_ix.nom }} / {{ donateur_ix.prenom }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% set eventOptions = element.eventOption|split('|') %}
+                                {% for eo in eventOptions %}
+                                    {% set eventOption = eo|split(':') %}
+                                    {% if eventOption[0] ==  current_id %}
+                                        Prix : {{ eventOption[1] }} <br/>
+                                        {% if eventOption[2] == 'adh' %}
+                                            Participation en tant que adhérent
+                                        {% elseif eventOption[2] == 'nadh' %}
+                                            Participation en tant que non adhérent
+                                        {% endif %}
+                                    {% endif %}
+
+                                {% endfor %}
+
+                            </td>
+                            <td>
+                                {% if element.transaction.statut.code is defined %}
+                                    {% if element.transaction.statut.code == "paiement_annule" or element.removed == 1 %}<span class="label label-danger arrowed-in arrowed-in-right">Annulé</span>{% endif %}
+                                    {% if element.transaction.statut.code == "attente" %}<span class="label label-warning arrowed-in arrowed-in-right">En attente</span>{% endif %}
+                                    {% if element.transaction.statut.code == "traitement_paiement" %}En cours de traitement{% endif %}
+                                    {% if element.transaction.statut.code == "don_valide" %}<span class="label label-success arrowed-in arrowed-in-right">Validé</span>{% endif %}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% for e in element.events %}
+                                    <a href="{{ path('fulldon_bo_enrollers_event', {'id':e.id}) }}"> {{ e.titre }}</a>
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% if donateur_ix is not null %}
+                                <a href="{{ path('intersa_donateur_gestion',{'id':donateur_ix.id,'cumul':cumul,'date':date}) }}" target="_blank"
+                                   class="btn btn-xs btn-primary">
+                                    <i class="ace-icon fa fa-user "></i>
+                                    <span class="bigger-110">Fiche du donateur</span>
+                                </a>
+                                {% endif %}
+                                <a href="{{ path('intersa_dons_view', {'id': element.id}) }}" target="_blank"
+                                   class="btn btn-xs btn-primary">
+                                    <i class="ace-icon fa fa-money "></i>
+                                    <span class="bigger-110">Fiche du don</span>
+                                </a>
+                            </td>
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+
+        {% javascripts '../app/Resources/Public/js/daterangepicker/moment-with-langs.min.js'
+        '../app/Resources/Public/js/daterangepicker/daterangepicker.js' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '../app/Resources/Public/js/ckeditor_plugins/fulldon.plugin.js' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        <script>
+            (function ($) {
+                $(function () {
+
+                    $('#fulldon_donateurbundle_event_type_dateEvent').datepicker({
+                        language: "fr-FR",
+                        format: "dd/mm/yyyy",
+                        autoclose: true,
+                        todayHighlight: true
+                    })
+                            .on('hide', function () {
+                                var a = $(this);
+                                setTimeout(function () {
+                                    a.show();
+                                }, 2);
+                            })
+                    ;
+
+                });
+            })(jQuery);
+        </script>
+    {% endblock %}

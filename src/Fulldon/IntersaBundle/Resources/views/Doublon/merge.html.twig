@@ -1,0 +1,325 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+        <div class="breadcrumbs" id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li><a href="{{ path('intersa_doublon',{'page':1}) }}"> Liste des doublons potentiels </a></li>
+                <li class="active">Fusion de doublons</li>
+            </ol>
+        </div>
+        <div class="page-content">
+        <div class="col-md-12">
+        <div class="page-header">
+            <h1>
+                Gestion des doublons
+                <small>
+                    <i class="ace-icon fa fa-angle-double-right"></i>
+                    Fusion de doublons
+                </small>
+            </h1>
+        </div>
+        <!-- /.page-header -->
+        {% if app.request.get('vdonateur2') is not null and  app.request.get('vdonateur1') is not null %}
+            <a class="btn btn-primary btn-xs"
+               href="{{ path('intersa_doublon_merge') }}?vdonateur1={{ app.request.get('vdonateur2') }}&vdonateur2={{ app.request.get('vdonateur1') }}"><span
+                        class="glyphicon glyphicon-transfer"></span> Inverser les donateurs</a>
+            <hr/>
+        {% endif %}
+        {% for flashMessage in app.session.flashbag.get('info') %}
+            <div class="alert alert-success">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('warning') %}
+            <div class="alert alert-warning">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+
+        <form method="post" action="">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="alert alert-info"
+                         style="background-color: #f0f0f0;  border-color: #5d5d5d; color: #7f7f7f;">
+                        <h3 class="text-center">Donateur à conserver </h3>
+                        <hr style="border-top-color: #6f6f6f;"/>
+                        <center><img id="LoadingImage1" style="display:none;"
+                                     src="{{ asset('img/ajax-loader.gif') }}"/></center>
+                        <div id="donateur1">
+
+                            {% if vdonateur1 is defined and vdonateur1 is not null %}
+                                {% if   vdonateur1.categories|length > 0 and  'ADHERENTS' in  vdonateur1.categories %}
+                                    <div class="alert alert-warning">
+                                        <i class="fa fa-warning"></i>
+                                        Attention le donnateur ci-dessous est un adhérent !
+                                    </div>
+                                    <br />
+                                {% endif %}
+                                <b>Etat du donateur : </b>{% if vdonateur1.removed %} <label class="label label-danger">Désactivé</label>{% else %}<label class="label label-success">Activé</label>{% endif %}<br />
+                                <b> Date de création : </b>
+                                <br/>{{ vdonateur1.createdAt | date('d/m/Y H:i:s') }}<br/>
+                                <b> Adresse du donateur 1 :</b><br/>
+                                {{ vdonateur1.civilite }} {{ vdonateur1.nom }} {{ vdonateur1.prenom }}<br/>
+                                {% if vdonateur1.nomEntreprise is not empty %}
+                                    {{ vdonateur1.adresse1 }}<br/>
+                                {% endif %}
+                                {% if vdonateur1.adresse1 is not empty %}{{ vdonateur1.adresse1 }}<br/>{% endif %}
+                                {% if vdonateur1.adresse2 is not empty %}{{ vdonateur1.adresse2 }}<br/>{% endif %}
+                                {% if vdonateur1.adresse3 is not empty %}{{ vdonateur1.adresse3 }}<br/>{% endif %}
+                                {% if vdonateur1.adresse4 is not empty %}{{ vdonateur1.adresse4 }}<br/>{% endif %}
+                                {% if vdonateur1.ville is defined and vdonateur1.ville is not null %}{{ vdonateur1.ville.name }}{% endif %}
+                                <br/>
+                                {% if vdonateur1.zipcode is not empty %}{{ vdonateur1.zipcode }}<br/>{% endif %}
+                                {% if vdonateur1.pays is defined and vdonateur1.pays is not null %}{{ vdonateur1.pays.name }}{% endif %}
+                                <br/>
+                                {% if vdonateur1.email is not empty %}<b>Email :</b> {{ vdonateur1.email }}
+                                    <br/>{% endif %}
+                                {% if dons1|length > 0 %}
+                                    <hr style="border-top-color: #6f6f6f;"/>
+                                    <h4>Dons : </h4><br/>
+                                    <table class="table">
+                                        <thead>
+                                        <th> Date</th>
+                                        <th> Montant</th>
+                                        </thead>
+                                        <tbody>
+                                        {% for don in dons1 %}
+                                            <tr>
+                                                <td>{{ don.createdAt|date('d/m/Y') }}</td>
+                                                <td> {{ don.montant }} €</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+
+                                {% endif %}
+                                <b>N.B </b>:
+                                Cochez les informations que vous souhaitez conserver dans la fiche à désactiver. Elles seront alors ajoutées à la fiche concervée.
+                            {% else %}
+                                Le donateur à préserver et qui va réunir toutes les informations attribuées au donateur 2
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+
+                </div>
+                <div class="col-md-6">
+                    <div class="alert alert-info"
+                         style="background-color: #f0f0f0;  border-color: #5d5d5d; color: #7f7f7f;">
+                        <h3 class="text-center">Donateur à désactiver </h3>
+                        <hr style="border-top-color: #6f6f6f;"/>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Informations du donateur 2</h5>
+                                <hr style="border-top-color: #6f6f6f;"/>
+                                <center><img id="LoadingImage2" style="display:none;"
+                                             src="{{ asset('img/ajax-loader.gif') }}"/></center>
+                                <div id="donateur2">
+
+                                    {% if vdonateur2 is defined and vdonateur2 is not null %}
+                                        {% if  vdonateur2.categories|length > 0 and  'ADHERENTS' in  vdonateur2.categories %}
+                                            <div class="alert alert-warning">
+                                                <i class="fa fa-warning"></i>
+                                                Attention le donnateur ci-dessous est un adhérent !
+                                            </div>
+                                            <br />
+                                        {% endif %}
+                                        <b>Etat du donateur : </b>{% if vdonateur2.removed %} <label class="label label-danger">Désactivé</label>{% else %}<label class="label label-success">Activé</label>{% endif %}<br />
+                                        <b> Date de création : </b>
+                                        <br/> {{ vdonateur2.createdAt | date('Y-m-d H:i:s') }}<br/>
+                                        <b> Adresse du donateur 2 :</b><br/>
+                                        {{ vdonateur2.civilite }} {{ vdonateur2.nom }} {{ vdonateur2.prenom }}<br />
+                                        {% if vdonateur2.nomEntreprise is not empty %}
+                                           {{ vdonateur2.adresse1 }} <br/>
+                                        {% endif %}
+                                        <br/>
+                                        {% if vdonateur2.adresse1 is not empty %}{{ vdonateur2.adresse1 }}
+                                            <br/>{% endif %}
+                                        {% if vdonateur2.adresse2 is not empty %}{{ vdonateur2.adresse2 }}
+                                            <br/>{% endif %}
+                                        {% if vdonateur2.adresse3 is not empty %}{{ vdonateur2.adresse3 }}
+                                            <br/>{% endif %}
+                                        {% if vdonateur2.adresse4 is not empty %}{{ vdonateur2.adresse4 }}
+                                            <br/>{% endif %}
+                                        {% if vdonateur2.ville is defined and vdonateur2.ville is not null %}{{ vdonateur2.ville.name }}{% endif %}
+                                        <br/>
+                                        {% if vdonateur2.zipcode is not empty %}{{ vdonateur2.zipcode }}<br/>{% endif %}
+                                        {% if vdonateur2.pays is defined and vdonateur2.pays is not null %}{{ vdonateur2.pays.name }}{% endif %}
+                                        <br/>
+                                        {% if vdonateur2.email is not empty %}<b>Email :</b> {{ vdonateur2.email }}
+                                            <br/>{% endif %}
+                                        {% if dons2|length > 0 %}
+                                            <hr style="border-top-color: #6f6f6f;"/>
+                                            <h4>Dons : </h4><br/>
+                                            <table class="table">
+                                                <thead>
+                                                <th> Date</th>
+                                                <th> Montant</th>
+                                                </thead>
+                                                <tbody>
+                                                {% for don in dons2 %}
+                                                    <tr>
+                                                        <td>{{ don.createdAt|date('d/m/Y') }}</td>
+                                                        <td> {{ don.montant }} €</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+
+                                        {% endif %}
+                                    {% else %}
+                                        Le donateur à supprimer et toutes les informations de ce dernier vont être affectées au donateur 1
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Informations à conserver</h5>
+                                <hr style="border-top-color: #6f6f6f;"/>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="save_civilite"> Civilité
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="save_adresse1"> Appt, étage, escalier ...
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="save_adresse2"> Résidence, Immeuble, Tour,
+                                        Entrée ...
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="save_adresse3"> N° voie et Libellé de voie
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="save_adresse4"> Lieu-dit ou Service de
+                                        Distribution
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="save_zipcode"> Code postal
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="save_ville"> Ville
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="save_email"> Email
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <label for="lots"><label for="Lots" class="required">Identifiant du donateur
+                                1</label></label>
+                        {% if app.request.get('vdonateur1') is null %}
+                            <div class="input-group">
+                          <span class="input-group-btn">
+                            <button class="btn btn-primary btn-xs" onClick="getInfoDonateur(1)" type="button">Afficher
+                            </button>
+                          </span>
+                                <input id="val_do1" type="text" name="donateur1" class=" task_field form-control "
+                                       placeholder="Identifiant du donateur 1" {% if app.request.get('vdonateur1') is not null %} value=" {{ app.request.get('vdonateur1') }} "  readonly="readonly" {% endif %}
+                                       style="width:100%"/>
+                            </div><!-- /input-group -->
+                        {% else %}
+                            <input id="val_do1" type="text" name="donateur1" class=" task_field form-control "
+                                   placeholder="Identifiant du donateur 1" {% if app.request.get('vdonateur1') is not null %} value=" {{ app.request.get('vdonateur1') }} "  readonly="readonly" {% endif %}
+                                   style="width:100%"/>
+                            <br/>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="lots"><label for="Lots" class="required">Identifiant du donateur
+                                2 </label></label>
+                        {% if app.request.get('vdonateur2') is null %}
+                            <div class="input-group">
+                          <span class="input-group-btn">
+                            <button class="btn btn-primary btn-xs" onClick="getInfoDonateur(2)" type="button">Afficher
+                            </button>
+                          </span>
+                                <input type="text" name="donateur2" id="val_do2" class=" task_field form-control"
+                                       placeholder="Identifiant du donateur 2" {% if app.request.get('vdonateur2') is not null %} value=" {{ app.request.get('vdonateur2') }} " readonly="readonly" {% endif %}
+                                       style="width:100%"/>
+                            </div><!-- /input-group -->
+                        {% else %}
+                            <input type="text" name="donateur2" id="val_do2" class=" task_field form-control"
+                                   placeholder="Identifiant du donateur 2" {% if app.request.get('vdonateur2') is not null %} value=" {{ app.request.get('vdonateur2') }} " readonly="readonly" {% endif %}
+                                   style="width:100%"/>
+                        {% endif %}
+                        <br/>
+                    </div>
+                </div>
+            </div>
+            <input type="submit" class="btn btn-primary btn-xs" value="Fusionner les deux donateurs"
+                   style="width:100%"/>
+        </form>
+        <br/>
+        {% if vdonateur1 is defined and vdonateur1 is not null %}
+            <form method="post" action="{{ path('intersa_doublon_merge') }}">
+                <input type="hidden" name="doublon" value="false"/>
+                <input type="hidden"
+                       name="donateur2"  {% if app.request.get('vdonateur2') is not null %} value=" {{ app.request.get('vdonateur2') }} " readonly="readonly" {% endif %}  />
+                <input type="hidden"
+                       name="donateur1"   {% if app.request.get('vdonateur1') is not null %} value=" {{ app.request.get('vdonateur1') }} "  readonly="readonly" {% endif %}   />
+                <input type="submit" class="btn btn-danger btn-xs"
+                       value="Non merci, les deux donateurs ne sont pas des doublons !" style="width:100%"/>
+            </form>
+        {% endif %}
+        </div>
+        </div>
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+
+            function getInfoDonateur(donateur) {
+                var id;
+                if (donateur == 1) {
+                    id = $('#val_do1').val();
+                    $("#LoadingImage1").show();
+                } else {
+                    id = $('#val_do2').val();
+                    $("#LoadingImage2").show();
+                }
+                $.ajax({
+                    url: "/intersa/doublon/infos/did/" + id,
+                    beforeSend: function (xhr) {
+                    }
+                })
+                        .done(function (data) {
+                            $("#LoadingImage1").hide();
+                            $("#LoadingImage2").hide();
+                            if (data) {
+                                if (donateur == 1)
+                                    $("#donateur1").html(data);
+                                else
+                                    $("#donateur2").html(data);
+                            } else {
+                                if (donateur == 1)
+                                    $("#donateur1").html('Donateur introuvable');
+                                else
+                                    $("#donateur2").html('Donateur introuvable');
+                            }
+
+                        });
+            }
+        </script>
+    {% endblock %}

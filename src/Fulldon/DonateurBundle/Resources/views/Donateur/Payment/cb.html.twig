@@ -1,0 +1,65 @@
+{% extends "FulldonDonateurBundle:Donateur:coque_donateur.html.twig" %}
+    {% block coque_donateur %}
+        <div class="row" >
+
+            <div class="col-md-12" >
+
+                <h1  class="couleur-donateur" >{{ "Paiement en ligne"|trans({},'messages') }} </h1>
+                <hr />
+                <ol class="progtrckr" data-progtrckr-steps="3">
+                    <li class="progtrckr-done">{{ "Configuration"|trans({},'messages') }}</li>
+                    <li class="progtrckr-done">{{ "Paiement"|trans({},'messages') }}</li>
+                    <li class="progtrckr-todo">{{ "Validation"|trans({},'messages') }}</li>
+                </ol>
+                <br />
+                <div class="alert alert-info">{{ "Vos coordonnées bancaires"|trans({},'messages') }} : <br />
+
+                    {{ "Veuillez choisir la méthode de paiement qui vous convient"|trans({},'messages') }}.</div>
+                {% for flashMessage in app.session.flashbag.get('info') %}
+                    <div class="alert alert-success">
+                        {{ flashMessage|trans({},'messages') }}
+                    </div>
+                {% endfor %}
+                <form action="{{ path('payment_details', { 'id':don.id}) }}" method="post" class="form-group" >
+                <div class="row" >
+                        <div class="col-md-12" >
+                            <h3> {{ "Méthodes de paiement"|trans({},'messages') }} : </h3>
+                            {{ "Paiement hautement sécurisé par"|trans({},'messages') }} Ogone<br /><br />
+                                {% if  app.session.flashbag.has('error_payment_method')%}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="control-label" for="inputError">
+                                            {% for flashMessage in app.session.flashbag.get('error_payment_method') %}
+                                                <li>{{ flashMessage|trans({},'messages') }}</li>
+                                            {% endfor %}
+                                        </label>
+                                    </div>
+                                {% endif %}
+                            <div style="float:left;margin-right: 5px;">
+                                <label>
+                                    <input type="radio" name="payment_method" value="VISA"> <img  src="{{ asset('img/visa.png') }}"  />
+                                </label>
+                            </div>
+                            <div style="float:left;margin-right: 5px;">
+                                <label>
+                                    <input type="radio" name="payment_method" value="MasterCard"> <img  src="{{ asset('img/mastercard.png') }}" />
+                                </label>
+                            </div>
+                            <div  style="float:left;margin-right: 5px;" >
+                                <label>
+                                    <input type="radio" name="payment_method" value="PAYPAL"> <img   src="{{ asset('img/paypal.png') }}" />
+                                </label>
+                            </div>
+                        </div>
+
+                </div>
+                <hr />
+                <div class="pull-right"><input type="submit" value="{{ "Finaliser le paiement"|trans({},'messages') }}" class="btn btn-primary" /></div>
+                </form>
+            </div>
+        </div>
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+
+    {% endblock %}

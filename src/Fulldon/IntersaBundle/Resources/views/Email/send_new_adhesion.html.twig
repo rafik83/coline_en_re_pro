@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+{% if init['perso'].couleur is defined  and init['perso'].couleur  is not null %}{%  set mycolor = init['perso'].couleur %} {% else %}{%  set mycolor = '#7a6cc0' %}{% endif %}
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+</head>
+<body>
+<div class="container">
+        <div class="row">
+            <div class="col-md-12" style="border: 1px solid {{ mycolor }};margin:0 auto;max-width: 610px;padding:10px;">
+                {% if init['perso'].headerPage is defined  and init['perso'].headerPage  is not null %}
+                    <img src="{{ url_site ~ asset('upload/' ~ init['perso'].id ~'/' ~ init['perso'].headerPage)}}" alt="headerPage" style="width:600px !important;" class="img-responsive" />
+                {% endif %}
+                <br />
+                <br />
+                <div style="padding:20px;">
+                Bonjour {{ donateur.civilite }} {{ donateur.nom }} {{ donateur.prenom }},<br /><br />
+                <div style=" color:{{ mycolor }}">
+                    Votre demande d’adhésion a bien été prise en compte. Vous faites désormais partie des
+
+                    adhérents et adhérentes de l’association{{ assoc_name }}.<br />
+
+                    Toute l’association {{ assoc_name }} et ses bénéficiaires vous remercient
+
+                    chaleureusement ! <br />
+                </div><br />
+                <br />
+                Voici vos identifiants pour accéder à votre espace personnel : <br />
+                <b>Lien : </b> <a href="{{ url('login_donateur') }}">{{ url('login_donateur') }}</a> <br />
+                <b>login : </b>{{ login }}<br />
+                <b>Mot de passe  : </b>{{ password }}<br />
+                <br />
+                    Vous pourrez modifier ces identifiants à tout moment en vous rendant dans la rubrique <a href="{{ url('donateur_account_edit') }}">"Modifier mon compte"</a>.<br />
+
+                Encore un grand merci pour votre soutien,<br /><br />
+
+                <div style="float:right;color:{{ mycolor }}">
+                    L'équipe de {{ assoc_name }}
+                </div>
+                </div>
+                <hr style="color: {{ mycolor }};background-color: {{ mycolor }}; height: 1px; margin: -0.5em 0;padding: 0;" />
+                <center style="font-size:12px;">
+
+                    {% if init['perso'] is defined and init['perso'] is not null %}
+                        {{ init['perso'].adresseAssoc | raw }}
+                    {% endif %}
+
+
+
+                </center>
+
+                <br />
+        </div>
+            </div>
+    </div>
+</body>
+</html>

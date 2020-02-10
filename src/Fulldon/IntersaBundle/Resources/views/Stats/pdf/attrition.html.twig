@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        .couleur-titre {
+            color:#d58512;
+        }
+        th {
+
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<center>
+
+
+
+<h1 style="margin-top:5px;" class="couleur-intersa" >Statistiques d'attrition par ({{ entity }}) et par operation ({{ occasion }})</h1>
+    <hr style="margin:5px 0px 5px 0px;" />
+    <b>Operation : </b>{{ occasion }}
+</center>
+<hr />
+<div class="row">
+    <div class="form-group col-md-12">
+        <table class="table table-condensed" style="width:100%;float:left;">
+            <thead>
+            <tr>
+                <th>Code occasion</th>
+                <th>Cible</th>
+                <th>NB ENVOIS</th>
+                <th>NB A VIE =0</th>
+                <th>%</th>
+                <th>NB A VIE <=5</th>
+                <th>%</th>
+                <th>NB A VIE <=11</th>
+                <th>%</th>
+
+            </tr>
+            </thead>
+            <tbody id="content" >
+            {% for r in data['result'] %}
+                <tr class="">
+
+                    <td>{{ r.code }}</td>
+                    <td>{{ r.cible }}</td>
+                    <td>{{ r.pros }}</td>
+                    <td>{{ r.nb0 }}</td>
+                    <td>{% if r.pros != 0 %}{{ ((r.nb0/r.pros)*100)|round(2) }}{% else %} 0 {% endif %}</td>
+                    <td>{{ r.nb5 }}</td>
+                    <td>{% if r.pros != 0 %}{{ ((r.nb5/r.pros)*100)|round(2) }}{% else %} 0 {% endif %}</td>
+                    <td>{{ r.nb11 }}</td>
+                    <td>{% if r.pros != 0 %}{{ ((r.nb11/r.pros)*100)|round(2) }}{% else %} 0 {% endif %}</td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+
+</body>
+</html>

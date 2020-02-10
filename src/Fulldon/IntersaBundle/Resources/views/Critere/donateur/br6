@@ -1,0 +1,15 @@
+ 
+php app/console doctrine:generate:entities Fulldon\IntersaBundle:SauvgardeDonateur
+{% include 'FulldonIntersaBundle:Critere:ligne_index_critere.html.twig' with {'sgdonateurs': sgdonateurs,
+                                                                                             'data': data,'col_display': col_display,
+                                                                                                   'last_page': last_page,'previous_page': previous_page,'current_page': current_page,
+                                                                                                   'next_page': next_page,'total_critere': total_critere} %}
+
+
+
+
+
+{% include 'FulldonIntersaBundle:Critere:ligne_index_critere.html.twig' with {'sgdonateurs': sgdonateurs,
+      
+
+                                                                                       'data': data,'col_display': col_display,'pager':pager} %}

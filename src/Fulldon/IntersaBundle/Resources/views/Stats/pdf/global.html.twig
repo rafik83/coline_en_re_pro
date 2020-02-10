@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        .couleur-titre {
+            color:#d58512;
+        }
+        th {
+
+            text-align: left;
+        }
+        .sub_total {
+            background-color: #1AC5EC;
+            font-weight: bold;
+            color:white;
+        }
+    </style>
+</head>
+<body>
+<center>
+
+
+
+<h1 style="margin-top:5px;" class="couleur-intersa" >Statistiques globales par entité ({{ entity }})</h1>
+    <hr style="margin:5px 0px 5px 0px;" />
+<b>Date : </b>{{ date_debut|date('d/m/Y H:i:s') }} - {{ date_fin|date('d/m/Y H:i:s') }}
+</center>
+<hr />
+{% set total_pros = 0 %}
+{% set total_comptage = 0 %}
+{% set total_cumul = 0 %}
+{% set total_moyenne = 0 %}
+<div class="row">
+    <div class="form-group col-md-12">
+        <table class="table table-condensed" style="width:100%;float:left;">
+            <thead>
+            <tr>
+                <th>Code occasion</th>
+                <th>Cible</th>
+                <th>NB ENVOIS</th>
+                <th>NB DONS</th>
+                <th>TX DE RDT</th>
+                <th>Montant Collecté</th>
+                <th>Don MOYEN </th>
+            </tr>
+            </thead>
+            <tbody id="content" >
+            {% for r in data['result'] %}
+                <tr class="">
+
+                    <td>{{ r.code }}</td>
+                    <td>{{ r.cible }}</td>
+                    <td>{{ r.pros }}</td>
+                    <td>{{ r.comptage }}</td>
+                    <td>{% if r.pros != 0 %}{{ (r.comptage/r.pros)|round }}{% else %} 0 {% endif %}</td>
+                    <td>{{ r.cumul }}</td>
+                    <td>{{ r.moyenne|round }}</td
+
+                </tr>
+                {% set total_pros = total_pros + r.pros %}
+                {% set total_comptage = total_comptage + r.comptage %}
+                {% set total_cumul = total_cumul + r.cumul %}
+                {% set total_moyenne = total_moyenne + r.moyenne %}
+            {% endfor %}
+            {# total #}
+            <tr class="label-info sub_total">
+                <td colspan="2"  > TOTAL </td>
+                <td>{{ total_pros }}</td>
+                <td>{{ total_comptage }}</td>
+                <td></td>
+                <td>{{ total_cumul }}€</td>
+                <td>{{ (total_moyenne/(data['result']|length))|round }}€</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+
+</body>
+</html>

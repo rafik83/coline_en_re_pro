@@ -1,0 +1,92 @@
+var myArray = [];
+            var i = 0;
+            if (CodePostale != '') {
+                //var results = [{"codepostale": CodePostale}, {"array": arr}];
+                myArray['codepostale'][i] = CodePostale ;
+                i++ ;
+            }
+
+            if (TelFixe != '') {
+                //var results = [{"telfixe": TelFixe}, {"array": arr}];
+                 myArray['telfixe'][i] = TelFixe ;
+                i++ ;
+            }
+
+            if (Entreprise != '') {
+                var results = [{"entreprise": Entreprise}, {"array": arr}];
+            }
+
+            if (Status != '') {
+                var results = [{"status": Status}, {"array": arr}];
+            }
+
+            if (CategorieId != '') {
+                var results = [{"categorieId": CategorieId}, {"array": arr}];
+            }
+
+            if (PaysId != '') {
+                var results = [{"paysId": PaysId}, {"array": arr}];
+            }
+            if (VilleId != '') {
+                var results = [{"villeId": VilleId}, {"array": arr}];
+            }
+ alert(myArray);
+
+            //alert(categorieId);
+
+
+
+            var text = '{ "employees" : [' +
+                    '{ "firstName":"John" , "lastName":"Doe" },' +
+                    '{ "firstName":"Anna" , "lastName":"Smith" },' +
+                    '{ "firstName":"Peter" , "lastName":"Jones" } ]}';
+
+            var obj = JSON.parse(text);
+            alert(obj);
+
+
+var obj = array(
+                    'field1' => '1',
+                    'field2' => '2',
+                    'field3' => '3',
+            );
+
+
+ var myArray = [];
+            var i = 0;
+            if (CodePostale != '') {
+                //var results = [{"codepostale": CodePostale}, {"array": arr}];
+                myArray[i] = CodePostale;
+                i++;
+            }
+
+            if (TelFixe != '') {
+                //var results = [{"telfixe": TelFixe}, {"array": arr}];
+                myArray[i] = TelFixe;
+                i++;
+            }
+
+ var results = {"forecastday": [
+            {
+                    "period":0,
+                    "icon":"chancerain",
+                    "icon_url":"http://icons-ak.wxug.com/i/c/k/chancerain.gif",
+                    "title":"lundi",
+                    "fcttext":"Couvert dans la matinée, ensuite partiellement nuageux avec un risque de pluie. Température maximale 72F. Vents en provenance du NNO à 5-10 mph. Risques de précipitations 50%.",
+                    "fcttext_metric":"Couvert dans la matinée, ensuite partiellement nuageux avec un risque de pluie. Température maximale 22C. Vents en provenance du NNO à 5-15 km/h. Risques de précipitations 50%.",
+                    "pop":"50"
+            }],"name":"Mike Jones","id":111}
+
+
+
+
+//var results = {"foo-bar": 12345};
+
+$params->{'foo-bar'};
+
+            //var results = {"_links": {"self": "https://api.twitch.tv/kraken/streams/gmansoliver", "channel": "https://api.twitch.tv/kraken/channels/gmansoliver"}, "stream": null}
+           
+            //var results = [{"firstname": "rafik"}, {"lastname": "turki"}, {"array": arr}];
+            //var results =  [{"location":"USA","email":"test@test.com","sex":"male","age":"Unkown","other":null,"profile":{"net":["55","56"],"networks":[{"site_url":"http://site.com","network":"test","username":"mike"},{"site_url":"http://site.com/2","network":"test2","username":"mike2"}]},"name":"Mike Jones","id":111}]
+            //+ "categorie=" + categorieId
+            // var json_donateur = JSON.stringify(arr);

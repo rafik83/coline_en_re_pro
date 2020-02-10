@@ -1,0 +1,25 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <form action="{{ path("intersa_donateur_disable",{'id': donateur.id}) }}" method="POST">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="confirmDeleteLabel">Désactivation du donateur</h4>
+        </div>
+        <div class="modal-body">
+
+
+            <label for="motif"><label for="motif" class="required">Motif de désactivation du donateur  #{{ donateur.id }} :</label></label>
+            <SELECT name="motif"  class="task_field form-control " >
+                {% for motif in motifs %}
+                    <option value="{{ motif.id }}">{{ motif.name }}</option>
+                {% endfor %}
+            </SELECT>
+            <br />
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+            <input type="submit" class="btn btn-danger" value="Désactiver le donateur" ></a>
+        </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,349 @@
+{% extends "FulldonIntersaBundle::layout.html.twig" %}
+{% block body %}
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-3">
+                <h3 style="margin-top:5px;" class="couleur-intersa" >Gestion globale </h3>
+                <hr />
+
+                <div class="list-group">
+                    <a href="#" class="list-group-item"><span class="glyphicon glyphicon-user"></span> Gestion des donateurs</a>
+                    <a href="#" class="list-group-item active"><span class="glyphicon glyphicon-transfer"></span> Gestion des reçus fiscaux</a>
+                    <a href="#" class="list-group-item "><span class="glyphicon glyphicon-euro"></span> Gestion des transactions</a>
+                    <a href="#" class="list-group-item ">
+                        <span class="glyphicon glyphicon-pencil"></span> Saisie en série
+                    </a>
+                    <a href="#" class="list-group-item "><span class="glyphicon glyphicon-bell"></span> Gestion des tâches</a>
+                    <a href="#" class="list-group-item "><span class="glyphicon glyphicon-send"></span> Retours courriers (PND) </a>
+                    <a href="#" class="list-group-item "><span class="glyphicon glyphicon-random"></span> Gestion des doublons</a>
+                </div>
+
+            </div>
+            <div class="col-md-9">
+                <h3 style="margin-top:5px;" class="couleur-intersa" >Gestion des reçus fiscaux</h3>
+                <hr />
+                <ol class="breadcrumb">
+                    <li><a href="#">Accueil</a></li>
+                    <li><a href="#">Gestion des RF</a></li>
+                </ol>
+                <div class="row">
+
+
+                    <div class="col-md-6">
+                        <h4 style="margin-top:5px;" class="couleur-intersa" >Statistiques<div class="pull-right"><input type="Login" class="form-control" id="inputEmail3" placeholder="jj/mm/aaaa"></div></h4>
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-6"> Nombre des RF générés : </div><div class="col-md-6 pull-right"><span class="badge">250</span></div>
+                            <div class="col-md-6"> Nombre total des donation :  </div><div class="col-md-6"><span class="badge">300</span></div>
+                            <div class="col-md-6"> Nombre des RF courriers : </div><div class="col-md-6"><span class="badge">150</span></div>
+                            <div class="col-md-6"> Nombre des RF email : </div><div class="col-md-6"><span class="badge">100</span></div>
+                            <div class="col-md-6"> pas de RF: </div><div class="col-md-6"><span class="badge">50</span></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="list-group">
+                            <a href="#" data-toggle="modal" data-target="#myModal5" class="list-group-item"><span class="glyphicon glyphicon-file"></span>Génération manuelle des RF </a>
+                            <a href="#" data-toggle="modal" data-target="#myModal4" class="list-group-item "><span class="glyphicon glyphicon-book"></span> Genération des rapports </a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <hr />
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="inputEmail3" class="col-sm-5 control-label">Identifiant</label>
+                                <input type="Login" class="form-control" id="inputEmail3" placeholder="identifiant">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="inputPassword3" class="col-sm-5 control-label">Année</label>
+                                <select class="form-control">
+                                    <option>2014</option>
+                                    <option>2013</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="inputEmail3" class="col-sm-5 control-label">Lot</label>
+                                <input type="Login" class="form-control" id="inputEmail3" placeholder="lot">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="inputPassword3" class="col-sm-5 control-label">Etat</label>
+                                <select class="form-control">
+                                    <option>Sans recu fiscal</option>
+                                    <option>Avec reçu fiscal</option>
+                                    <option>Aucun</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="inputPassword3" class="col-sm-5 control-label">Type d'envoie</label>
+                                <select class="form-control">
+                                    <option>Email</option>
+                                    <option>Courrier</option>
+                                    <option>Aucun</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="inputPassword3" class="col-sm-5 control-label">Code activité</label>
+                                <input type="Login" class="form-control" id="inputEmail3" placeholder="code activité">
+                            </div>
+                        </div>
+                        <div class="form-group pull-right">
+                            <div class="col-sm-12 bouton-center">
+                                <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-filter" ></span> Filtrer</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <table class="table table-condensed">
+                            <thead>
+                            <tr>
+                                <th>#REF RF</th>
+                                <th>Date de création </th>
+                                <th>Numéro du lot</th>
+                                <th>Nom complet du bénificiaire</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="">
+                                <td>312452425</td>
+                                <td>01/01/2014</td>
+                                <td>312643218</td>
+                                <td>nom prénom</td>
+                                <td>
+
+                                    &nbsp;
+                                    <a  data-toggle="modal" data-target="#myModal1">
+                                        <span class="glyphicon glyphicon-print"></span> Imprimer
+                                    </a>
+                                    &nbsp;
+                                    <a  data-toggle="modal" data-target="#myModal2">
+                                        <span class="glyphicon glyphicon-wrench"></span> Regulariser
+                                    </a>
+                                    &nbsp;
+                                    <a  data-toggle="modal" data-target="#myModal3">
+                                        <span class="glyphicon glyphicon-envelope"></span> Envoyer par email
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr class="">
+                                <td>312452425</td>
+                                <td>01/01/2014</td>
+                                <td>312643218</td>
+                                <td>nom prénom</td>
+                                <td>
+
+                                    &nbsp;
+                                    <a  data-toggle="modal" data-target="#myModal">
+                                        <span class="glyphicon glyphicon-print"></span> Imprimer
+                                    </a>
+                                    &nbsp;
+                                    <a  data-toggle="modal" data-target="#myModal">
+                                        <span class="glyphicon glyphicon-wrench"></span> Regulariser
+                                    </a>
+                                    &nbsp;
+                                    <a  data-toggle="modal" data-target="#myModal">
+                                        <span class="glyphicon glyphicon-envelope"></span> Envoyé par email
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr class="">
+                                <td>312452425</td>
+                                <td>01/01/2014</td>
+                                <td>312643218</td>
+                                <td>nom prénom</td>
+                                <td>
+                                    <a  data-toggle="modal" data-target="#myModal">
+                                        <span class="glyphicon glyphicon-print"></span> Imprimer
+                                    </a>
+                                    &nbsp;
+                                    <a  data-toggle="modal" data-target="#myModal">
+                                        <span class="glyphicon glyphicon-wrench"></span> Regulariser
+                                    </a>
+                                    &nbsp;
+                                    <a  data-toggle="modal" data-target="#myModal">
+                                        <span class="glyphicon glyphicon-envelope"></span> Envoyé par email
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <center>
+                            <ul class="pagination">
+                                <li><a href="#">&laquo;</a></li>
+                                <li><a href="#">1</a></li>
+                                <li><a href="#">2</a></li>
+                                <li><a href="#">3</a></li>
+                                <li><a href="#">4</a></li>
+                                <li><a href="#">5</a></li>
+                                <li><a href="#">&raquo;</a></li>
+                            </ul>
+                        </center>
+                    </div>
+                </div>
+
+            </div> <!-- /container -->
+        </div>
+    </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabe1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Impression d'un reçu fiscal</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <span class="glyphicon glyphicon-warning-sign" ></span>  Attention vous êtes sur le point d'imprimer un reçu fiscal déjà génerer et peut être traité, consultez <a href="#" class="alert-link">l'aide</a> pour plus d'informations
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="inputPassword3" class=" control-label">Nature du document à imprimer</label>
+                            <select class="form-control">
+                                <option>Reçu fiscal</option>
+                                <option>Duplicata du RF</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="inputPassword3" class=" control-label">Emplacement de l'impression</label>
+                            <select class="form-control">
+                                <option>Banque d'impression</option>
+                                <option>En local</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">annuler</button>
+                    <button type="button" class="btn btn-primary">imprimer</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- Modal -->
+    <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabe1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Régulariser une donation</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <span class="glyphicon glyphicon-warning-sign" ></span>  Attention vous êtes sur le point de régulariser une donation ou un reçu fiscal, consultez <a href="#" class="alert-link">l'aide</a> pour plus d'informations
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="inputPassword3" class=" control-label">Action : </label>
+                            <select class="form-control">
+                                <option>Génerer un reçu fiscal</option>
+                                <option>Génerer une duplicata</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">annuler</button>
+                    <button type="button" class="btn btn-primary">Générer</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabe1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Envoyer le RF par email</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <span class="glyphicon glyphicon-warning-sign" ></span>  Attention vous êtes sur le point d'envoyer un email au donateur : (email: envoyé) cette action est spécialement dédié pour les interventions urgentes, consultez <a href="#" class="alert-link">l'aide</a> pour plus d'informations
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="inputPassword3" class=" control-label">Nature du document à envoyer</label>
+                            <select class="form-control">
+                                <option>Reçu fiscal</option>
+                                <option>Duplicata du RF</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">annuler</button>
+                    <button type="button" class="btn btn-primary">Envoyer</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal4" tabindex="-1" role="dialog" aria-labelledby="myModalLabe1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Géneration du rapports</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="inputPassword3" class=" control-label">Date de début : </label>
+                            <input type="Login" class="form-control" id="inputEmail3" placeholder="jj/mm/aaaa">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label for="inputPassword3" class=" control-label">Date de fin : </label>
+                            <input type="Login" class="form-control" id="inputEmail3" placeholder="jj/mm/aaaa">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">annuler</button>
+                    <button type="button" class="btn btn-primary">Générer</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <div class="modal fade" id="myModal5" tabindex="-1" role="dialog" aria-labelledby="myModalLabe1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Générer manuellement les Reçus fiscaux</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <span class="glyphicon glyphicon-warning-sign" ></span>  Attention !! La géneration des reçux fiscaux manuellement remplacera la génération automatique cette action est vraiment déconseillée, consultez <a href="#" class="alert-link">l'aide</a> pour plus d'informations
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="inputPassword3" class=" control-label">Les lots disponible pour la génération des RFs :</label>
+                            <select class="form-control">
+                                <option>Lot #64313sd54d16 - 01/01/2014 </option>
+                                <option>Lot #645986164616 - 02/01/2014 </option>
+                                <option>Lot #64313sd54d1b - 03/01/2014 </option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">annuler</button>
+                    <button type="button" class="btn btn-primary">Générer</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+{% endblock %}

@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+    <link rel="shortcut icon" href="{{ asset("img/favicon.png") }} ">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{% block title %}Login{% endblock %}</title>
+    <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+    {% block stylesheets %}
+        {% stylesheets '../app/Resources/Public/css/global/*' %}
+        <link rel="stylesheet" type="text/css" charset="UTF-8" media="all" href="{{ asset_url }}"/>
+        {% endstylesheets %}
+        {% stylesheets '../app/Resources/Public/css/global/onepage/onepage_auth.css' %}
+        <link rel="stylesheet" type="text/css" charset="UTF-8" media="all" href="{{ asset_url }}"/>
+        {% endstylesheets %}
+    {% endblock %}
+    {% if init['perso'].couleur is defined and init['perso'].couleur is not null%}
+        <style type="text/css">
+            .couleur-donateur {
+                color: {{ init['perso'].couleur }} !important;
+            }
+            .background-donateur {
+                background-color: {{ init['perso'].couleur }}  !important;
+            }
+            a.list-group-item.active, a.list-group-item.active:hover, a.list-group-item.active:focus {
+                background-color: {{ init['perso'].couleur }} !important;
+                border-color: {{ init['perso'].couleur }} !important;
+            }
+            .pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+                background-color: {{ init['perso'].couleur }} !important;
+                border-color: {{ init['perso'].couleur }} !important;
+            }
+            a, a:hover {
+                color: #000000;
+            }
+            .datepicker td.active, .datepicker td.active:hover {
+                background-color: {{ init['perso'].couleur }} !important;
+                background-image: -webkit-linear-gradient(top, {{ init['perso'].couleur }}, {{ init['perso'].couleur }})!important;;
+            }
+
+            .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open .dropdown-toggle.btn-default      {
+
+                background-color: #fff;
+                text-shadow: 0 0 0 #000 !important;
+            }
+            .btn-default {
+                background-color: {{ init['perso'].couleur }};
+                border-color: {{ init['perso'].couleur }};
+                font-weight: bold;
+                color : #fff;
+                text-shadow: 0 1px 0 {{ init['perso'].couleur }};
+            }
+            .list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
+                text-shadow: 0 -1px 0 {{ init['perso'].couleur }} !important;
+                background-image: -webkit-linear-gradient(top, {{ init['perso'].couleur }} 0%, {{ init['perso'].couleur }}) !important;
+                background-image: -webkit-gradient(linear, left top, left bottom, from({{ init['perso'].couleur }}), to({{ init['perso'].couleur }})) !important;
+                background-image: linear-gradient(to bottom, {{ init['perso'].couleur }} 0%, {{ init['perso'].couleur }} 100%) !important;
+                filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff428bca', endColorstr='#ff3278b3', GradientType=0);
+                background-repeat: repeat-x;
+                border-color: {{ init['perso'].couleur }} ;
+            }
+            .panel-primary > .panel-heading {
+                background-image: -webkit-linear-gradient(top, {{ init['perso'].couleur }} 0%, {{ init['perso'].couleur }} 100%) !important;
+                background-image: -o-linear-gradient(top, {{ init['perso'].couleur }} 0%, {{ init['perso'].couleur }} 100%) !important;
+                background-image: -webkit-gradient(linear, left top, left bottom, from({{ init['perso'].couleur }}), to({{ init['perso'].couleur }})) !important;
+                background-image: linear-gradient(to bottom, {{ init['perso'].couleur }} 0%, {{ init['perso'].couleur }} 100%) !important;
+                filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff428bca', endColorstr='#ff357ebd', GradientType=0) !important;
+                background-repeat: repeat-x;
+            }
+            .big-title {
+                font-family: 'Raleway', sans-serif !important;
+                border: 0px;
+                padding:10px 5px 10px 5px;
+                background-color:{{ init['perso'].couleur }};
+                color:#fff
+            }
+
+        </style>
+    {% endif %}
+
+
+</head>
+<body>
+
+<div id="wrap">
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" style="padding:5px 10px 0 0;color:#428bca;font-style:italic;font-weight:bold;font-size: 25px;" href=#">
+                    {% if init['perso'].logo is defined and init['perso'].logo is not null %}
+                        <img src="{{ asset('upload/' ~ init['perso'].id ~'/' ~ init['perso'].logo)}}" alt="logo" height="40" />
+                    {% else %}
+                        <img src="{{ asset('img/logo_donateur.png') }}" />
+                    {% endif %}
+                </a>
+            </div>
+            {%  set current_route = app.request.get('_route') %}
+            {%  set params = app.request.attributes.get('_route_params') %}
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#"><span class="glyphicon glyphicon-home" ></span> {{ "Accueil"|trans({},'messages') }}</a></li>
+                    <li ><a href="#"> <span class="glyphicon glyphicon-headphones"></span> {{ "Aide & support"|trans({},'messages') }} </a></li>
+                    <li>
+                        <span class="glyphicon glyphicon-globe btn-lg " style="margin-top: 4px;float:left;"></span><a href="{{ path(current_route, params | merge({"_locale": "fr"})) }}" style="float:left;" >Français</a> <a style="float:left;padding-left: 4px;" href="{{ path(current_route, params | merge({"_locale": "en"})) }}">English</a>
+                    </li>
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right ">
+                    {% if is_granted('ROLE_DONATEUR') %}
+
+                    <li><a href="{{ path('donateur_rf',{'page':1}) }}"><span class=" background-donateur badge pull-right" style="margin-left: 10px;" >  {% if init is defined %}{{ init['data'].cpt }}{% else %}0{% endif %} {{ "nouveaux reçu(s)"|trans({},'messages') }} </span>&nbsp;<span class="glyphicon glyphicon-file" style="float:right;"></span>  </a></li>
+                    <li class="active"><a href="{{ path('logout_donateur') }}"><span class="glyphicon glyphicon-off"></span> {{ "Déconnexion"|trans({},'messages') }}</a></li>
+                    {% elseif is_granted('IS_AUTHENTICATED_ANONYMOUSLY') %}
+                        <li ><a href="{{ path('login_donateur') }}"><span class="glyphicon glyphicon-user"></span> {{ "Connexion"|trans({},'messages') }}</a></li>
+                    {% endif %}
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+{% block body %}
+{% endblock %}
+</div>
+<div id="footer" class="hidden-print" style="padding:10px;" >
+    <div class="container" >
+        <p class="text-muted col-xs-6">Fulldon 2016</p><p class=" pull-right col-xs-6 hidden-xs" style="text-align: right;"> <img  src="{{ asset('img/ogone.png') }}" /> <img  src="{{ asset('img/visa.png') }}" /> <img  src="{{ asset('img/paypal.png') }}" /> <img  src="{{ asset('img/mastercard.png') }}" /></p>
+        <div class="visible-xs col-xs-12">
+            <center> <img  src="{{ asset('img/ogone.png') }}" /> <img  src="{{ asset('img/visa.png') }}" /> <img  src="{{ asset('img/paypal.png') }}" /> <img  src="{{ asset('img/mastercard.png') }}" /></center>
+        </div>
+    </div>
+</div>
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    {% javascripts '../app/Resources/Public/js/bootstrap.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/bootstrap-colorpicker.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/bootstrap-datepicker.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/jquery.form.min.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/locales/*' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', '{{ google_analytics_code }}', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+{% endblock %}
+
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+{% if init['perso'].couleur is defined  and init['perso'].couleur  is not null %}{%  set mycolor = init['perso'].couleur %} {% else %}{%  set mycolor = '#7a6cc0' %}{% endif %}
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12" style="border: 1px solid {{ mycolor }};margin:0 auto;max-width: 610px;padding:10px;">
+            {% if init['perso'].headerPage is defined  and init['perso'].headerPage  is not null %}
+                <img src="{{ url_site ~ asset('upload/' ~ init['perso'].id ~'/' ~ init['perso'].headerPage)}}" alt="headerPage" style="width:600px !important;" class="img-responsive" />
+            {% endif %}
+            <br />
+            <br />
+            <div style="padding:20px;">
+                Cher {{ donateur.civilite }} {{ donateur.nom }} {{ donateur.prenom }},<br /><br />
+
+                    Vous avez oublié votre mot de passe pour vous connecter à votre espace personnel
+
+                    {{ assoc_name }} ? <br /><br />
+                    <b></b>
+                    <b>Votre email  : {{ donateur.email }} </b><br /><br />
+                    <b>Votre login : {{ donateur.user.username }} </b><br /><br />
+                    <b>Votre nouveau mot de passe  : {{ new_pass }} </b><br /><br />
+
+
+                    Vous pourrez ensuite le modifier en vous rendant dans la rubrique <a href="{{ url('donateur_account_edit') }}">"Modifier mon compte"</a>.<br /><br /><br />
+
+
+                    <div style="float:right;color:{{ mycolor }}">
+                        L'équipe de {{ assoc_name }}
+                    </div>
+
+            </div>
+            <hr style="color: {{ mycolor }};background-color: {{ mycolor }}; height: 1px; margin: -0.5em 0;padding: 0;" />
+                <center style="font-size:12px;">
+                    {%  set params = app.request.attributes.get('_route_params') %}
+                    {% if init['perso'] is defined %}
+                        {% if params['_locale'] == 'fr' %}
+                            {{ init['perso'].rfMessage | raw }}
+                        {% elseif params['_locale'] == 'en' %}
+                            {{ init['perso'].rfMessageEn | raw }}
+                        {% endif %}
+                    {% endif %}
+                    {% if init['perso'] is defined and init['perso'] is not null %}
+                        {{ init['perso'].adresseAssoc | raw }}
+                    {% endif %}
+
+
+
+                </center>
+
+                <br />
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+</div>
+
+
+<div id="footer">
+    <center style="font-size:10px;" >
+
+    </center>
+</div>
+</body>
+</html>

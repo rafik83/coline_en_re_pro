@@ -1,0 +1,511 @@
+
+
+
+https://fontawesome.com/icons?d=gallery 
+https://fontawesome.com/icons/edit?style=regular
+
+------------------------------
+
+$actual_link = (isset($_SERVER['HTTPS']) ? "https" : "http");//http ou https
+        // $_SERVER['HTTP_HOST'] = clpro.dev
+        return $JsonResponse = new JsonResponse(array('tab' => $_SERVER['REQUEST_URI']));
+        
+
+----------------------------------
+  <!--button id="btn_consulte_de" type="button" class="btn btn-default btn-xs" onclick="consulterDessinER({#{ r2['id'] }#})">
+      <span class="glyphicon glyphicon-wrench"></span>&nbsp; Consulter dessin
+  </button-->
+
+-----------------------------------------------
+// filtre + tous les champs Not NULL
+        if (!is_null($montant_min) && !is_null($montant_max) && !is_null($date_min) && !is_null($date_max)) {
+
+
+            if (is_null($email_donateur)) {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+AND d.created_at >= '" . $date_min . "'  AND d.created_at <= '" . $date_max . "'
+
+GROUP BY user_id
+
+HAVING cumul >= '" . $montant_min . "'  AND  cumul <= '" . $montant_max . "'";
+            } else {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+AND d.created_at >= '" . $date_min . "'  AND d.created_at <= '" . $date_max . "' AND dt.email = '" . $email_donateur . "'
+
+GROUP BY user_id
+
+HAVING cumul >= '" . $montant_min . "'  AND  cumul <= '" . $montant_max . "'";
+            }
+        }
+
+//email_donateur
+        // filtre + tous les champs NULL
+        if (is_null($montant_min) && is_null($montant_max) && is_null($date_min) && is_null($date_max)) {
+
+            if (is_null($email_donateur)) {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+AND d.created_at >= '" . $date_min . "'  AND d.created_at <= '" . $date_max . "'
+
+GROUP BY user_id
+
+HAVING cumul >= '" . $montant_min . "'  AND  cumul <= '" . $montant_max . "'";
+            } else {
+
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+AND d.created_at >= '" . $date_min . "'  AND d.created_at <= '" . $date_max . "' AND dt.email = '" . $email_donateur . "'
+
+GROUP BY user_id
+
+HAVING cumul >= '" . $montant_min . "'  AND  cumul <= '" . $montant_max . "'";
+            }
+        }
+
+//filtre par montant
+        if (!is_null($montant_min) && !is_null($montant_max) && is_null($date_min) && is_null($date_max)) {
+
+            if (is_null($email_donateur)) {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+
+GROUP BY user_id
+
+HAVING cumul >= '" . $montant_min . "'  AND  cumul <= '" . $montant_max . "'";
+            } else {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 AND dt.email = '" . $email_donateur . "'
+
+
+GROUP BY user_id
+
+HAVING cumul >= '" . $montant_min . "'  AND  cumul <= '" . $montant_max . "'";
+            }
+        }
+
+
+        if (!is_null($montant_min) && !is_null($montant_max) && !is_null($date_min) && is_null($date_max)) {
+
+            if (is_null($email_donateur)) {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+AND d.created_at >= '" . $date_min . "' 
+
+
+GROUP BY user_id
+
+HAVING cumul >= '" . $montant_min . "'  AND  cumul <= '" . $montant_max . "'";
+            } else {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+AND d.created_at >= '" . $date_min . "' AND dt.email = '" . $email_donateur . "'
+
+
+GROUP BY user_id
+
+HAVING cumul >= '" . $montant_min . "'  AND  cumul <= '" . $montant_max . "'";
+            }
+        }
+
+
+        if (!is_null($montant_min) && !is_null($montant_max) && is_null($date_min) && !is_null($date_max)) {
+
+            if (is_null($email_donateur)) {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+AND d.created_at <= '" . $date_max . "' 
+
+
+GROUP BY user_id
+
+HAVING cumul >= '" . $montant_min . "'  AND  cumul <= '" . $montant_max . "'";
+            } else {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+AND d.created_at <= '" . $date_max . "' AND dt.email = '" . $email_donateur . "'
+
+
+GROUP BY user_id
+
+HAVING cumul >= '" . $montant_min . "'  AND  cumul <= '" . $montant_max . "'";
+            }
+        }
+
+
+        //filtre  montant + cas particulier montant1
+        if (!is_null($montant_min) && is_null($montant_max) && is_null($date_min) && is_null($date_max)) {
+
+            if (is_null($email_donateur)) {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+
+
+GROUP BY user_id
+
+HAVING cumul >= '" . $montant_min . "'   ";
+            } else {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0  AND dt.email = '" . $email_donateur . "'
+
+
+
+GROUP BY user_id
+
+HAVING cumul >= '" . $montant_min . "'   ";
+            }
+        }
+
+
+        //filtre  montant + cas particulier montant2
+
+        if (is_null($montant_min) && !is_null($montant_max) && is_null($date_min) && is_null($date_max)) {
+
+            if (is_null($email_donateur)) {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+
+
+GROUP BY user_id
+
+HAVING cumul <= '" . $montant_max . "'   ";
+            } else {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0  AND dt.email = '" . $email_donateur . "'
+
+
+
+GROUP BY user_id
+
+HAVING cumul <= '" . $montant_max . "'   ";
+            }
+        }
+
+
+        // filtre par date
+        if (!is_null($montant_min) && is_null($montant_max) && !is_null($date_min) && !is_null($date_max)) {
+
+            if (is_null($email_donateur)) {
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+AND d.created_at >= '" . $date_min . "'  AND d.created_at <= '" . $date_max . "'
+
+GROUP BY user_id
+
+HAVING cumul >= '" . $montant_min . "' ";
+            } else {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+AND d.created_at >= '" . $date_min . "'  AND d.created_at <= '" . $date_max . "' AND dt.email = '" . $email_donateur . "'
+
+GROUP BY user_id
+
+HAVING cumul >= '" . $montant_min . "' ";
+            }
+        }
+
+
+        if (is_null($montant_min) && !is_null($montant_max) && !is_null($date_min) && !is_null($date_max)) {
+
+            if (is_null($email_donateur)) {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+AND d.created_at >= '" . $date_min . "'  AND d.created_at <= '" . $date_max . "'
+
+GROUP BY user_id
+
+HAVING  cumul <= '" . $montant_max . "'";
+            } else {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+AND d.created_at >= '" . $date_min . "'  AND d.created_at <= '" . $date_max . "' AND dt.email = '" . $email_donateur . "'
+
+GROUP BY user_id
+
+HAVING  cumul <= '" . $montant_max . "'";
+            }
+        }
+
+        if (is_null($montant_min) && is_null($montant_max) && !is_null($date_min) && !is_null($date_max)) {
+
+            if (is_null($email_donateur)) {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+AND d.created_at >= '" . $date_min . "'  AND d.created_at <= '" . $date_max . "'
+
+GROUP BY user_id ";
+            } else {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+AND d.created_at >= '" . $date_min . "'  AND d.created_at <= '" . $date_max . "' AND dt.email = '" . $email_donateur . "'
+
+GROUP BY user_id ";
+            }
+        }
+
+
+
+        // FILTRE PAR DATE + CAS PARTICULIER DATEMIN1
+        if (is_null($montant_min) && is_null($montant_max) && !is_null($date_min) && is_null($date_max)) {
+
+            if (is_null($email_donateur)) {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+AND d.created_at >= '" . $date_min . "' 
+
+
+GROUP BY user_id  ";
+            } else {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+AND d.created_at >= '" . $date_min . "' AND dt.email = '" . $email_donateur . "'
+
+
+GROUP BY user_id  ";
+            }
+        }
+
+
+        // FILTRE PAR DATE + CAS PARTICULIER DATEMIN2
+        if (is_null($montant_min) && is_null($montant_max) && is_null($date_min) && !is_null($date_max)) {
+
+            if (is_null($email_donateur)) {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+AND d.created_at <= '" . $date_max . "' 
+
+
+GROUP BY user_id  ";
+            } else {
+
+                $query = "SELECT d.id as don_id,d.user_id,dt.id as donateur_id,dt.nom as nom,dt.prenom as prenom,dt.email as email_donateur,sp.code as statut_don, SUM(d.montant) AS cumul,MAX(d.created_at) AS dernier_don,dt.removed as statut_donateur,mp.libelle as mode_paiement,dt.nom_entreprise as entreprise   FROM coline_en_re_full_db.don d
+LEFT JOIN coline_en_re_full_db.donateur dt ON dt.id=d.user_id
+LEFT JOIN coline_en_re_full_db.mode_paiement mp on d.mode_id=mp.id
+LEFT JOIN coline_en_re_full_db.transaction tr on d.transaction_id = tr.id
+
+LEFT JOIN coline_en_re_full_db.statut_paiement sp on  tr.status_id = sp.id
+
+WHERE dt.removed=0 AND d.removed=0 
+
+AND d.created_at <= '" . $date_max . "' AND dt.email = '" . $email_donateur . "'
+
+
+GROUP BY user_id  ";
+            }
+        }
+-------------------------------------------------------------------------------
+
+function flipsort(id) {
+            var curcn = $('#sort_' + id).attr('class');
+            if (curcn === 'fa fa-lg fa-sort') {
+                console.log('here');
+                $('#sort_' + id).removeClass(curcn);
+                $('#sort_' + id).addClass("fa fa-lg fa-sort-asc");
+                var str = "{{ path('elastic_donateur') }}?{{ params }}&sortelement=" + id + "&sortdirection=asc";
+                var div = document.createElement('div');
+                div.innerHTML = str
+                var decoded = div.firstChild.nodeValue;
+                window.location.href = decoded;
+
+            }
+            if (curcn === 'fa fa-lg fa-sort-asc') {
+                $('#sort_' + id).removeClass(curcn);
+                $('#sort_' + id).addClass('fa fa-lg fa-sort-desc');
+                var str = "{{ path('elastic_donateur') }}?{{ params }}&sortelement=" + id + "&sortdirection=desc";
+                var div = document.createElement('div');
+                div.innerHTML = str
+                var decoded = div.firstChild.nodeValue;
+                window.location.href = decoded;
+            }
+            if (curcn === 'fa fa-lg fa-sort-desc') {
+                $('#sort_' + id).removeClass(curcn);
+                $('#sort_' + id).addClass('fa fa-lg fa-sort-asc');
+                var str = "{{ path('elastic_donateur') }}?{{ params }}&sortelement=" + id + "&sortdirection=asc";
+                var div = document.createElement('div');
+                div.innerHTML = str
+                var decoded = div.firstChild.nodeValue;
+                window.location.href = decoded;
+            }
+
+        }

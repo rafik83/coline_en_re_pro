@@ -1,0 +1,165 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+    <div class="breadcrumbs" id="breadcrumbs">
+        <script type="text/javascript">
+            try {
+                ace.settings.check('breadcrumbs', 'fixed')
+            } catch (e) {
+            }
+        </script>
+        <ol class="breadcrumb">
+            <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+            <li><a href="{{ path('intersa_advanced_stats') }}">Statistiques avancées</a></li>
+            <li class="active">Facture de production</li>
+        </ol>
+    </div>
+    <div class="page-content">
+        <div class="page-header">
+            <h1>
+                Rapport d'utilisation
+                <small>
+                    <i class="ace-icon fa fa-angle-double-right"></i>
+                </small>
+            </h1>
+        </div>
+        <!-- /.page-header -->
+
+        <a href="#" onclick="document.forms['pdf'].submit()" class="btn btn-info"><span
+                    class="glyphicon glyphicon-file"></span> Générer un PDF</a>
+
+        <a href="#" onclick="document.forms['excel'].submit()" class="btn btn-default"><img
+                    src="{{ asset('img/excel.png') }}"/> Générer un Excel</a>
+
+        <form action="{{ path('intersa_advanced_stats_bill_pdf') }}" method="post" name="pdf" target="_blank">
+            <input type="hidden" name="pdf_date_debut" value="{{ date_debut|date('d/m/Y') }}"/>
+            <input type="hidden" name="pdf_date_fin" value="{{ date_fin|date('d/m/Y') }}"/>
+        </form>
+
+        <form action="{{ path('intersa_advanced_stats_bill_excel') }}" method="post" name="excel" target="_blank">
+            <input type="hidden" name="excel_date_debut" value="{{ date_debut|date('d/m/Y') }}"/>
+            <input type="hidden" name="excel_date_fin" value="{{ date_fin|date('d/m/Y') }}"/>
+        </form>
+
+        {% for flashMessage in app.session.flashbag.get('info') %}
+            <div class="alert alert-success">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('warning') %}
+            <div class="alert alert-warning">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+
+        {% set total_new_donateur = 0 %}
+        {% set total_dons_ponc = 0 %}
+        {% set total_dons_pa = 0 %}
+        {% set total_dons_cs = 0 %}
+        {% set total_dons_bc = 0 %}
+        {% set total_dons_espece = 0 %}
+        {% set total_topages = 0 %}
+        {% set total_emails = 0 %}
+        {% set total_duplicatas = 0 %}
+        {% set total_rf = 0 %}
+        {% set total_maj_donateur = 0 %}
+        {% set total_maj_dons = 0 %}
+
+        <div class="row">
+            <div class=" col-md-12">
+                <hr />
+                <b>Date : </b>{{ date_debut|date('d/m/Y H:i:s') }} - {{ date_fin|date('d/m/Y H:i:s') }}
+                <hr/>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Jour </th>
+                        <th>Nb nouveaux donateurs</th>
+                        <th>Nb des dons ponctuels</th>
+                        <th>Nb des dons prélèvements</th>
+                        <th>Nb des dons CS</th>
+                        <th>Nb des dons BC</th>
+                        <th>Nb des dons espèce</th>
+                        <th>Nb des topages </th>
+                        <th>Nb des emails </th>
+                        <th>Nb des duplicatas </th>
+                        <th>Nb des Rfs </th>
+                        <th>Nb MAJ donateurs </th>
+                        <th>Nb MAJ dons </th>
+                    </tr>
+                    </thead>
+                    <tbody id="content">
+                    {% for r in data['result'] %}
+                        <tr class="">
+                            <td>{{ r.created_at | date('d/m/Y') }}</td>
+                            <td>{{ r.nb_new_donateur|test_val  }}</td>
+                            <td>{{ r.nb_don_ponctuel|test_val  }}</td>
+                            <td>{{ r.nb_don_prelevement|test_val  }}</td>
+                            <td>{{ r.nb_cs|test_val  }}</td>
+                            <td>{{ r.nb_bc|test_val  }}</td>
+                            <td>{{ r.nb_espece|test_val  }}</td>
+                            <td>{{ r.nb_topage|test_val  }}</td>
+                            <td>{{ r.nb_email|test_val  }}</td>
+                            <td>{{ r.nb_duplicata|test_val  }}</td>
+                            <td>{{ r.nb_rf|test_val  }}</td>
+                            <td>{{ r.maj_donateur|test_val  }}</td>
+                            <td>{{ r.maj_don|test_val  }}</td>
+
+
+
+
+                        </tr>
+                        {% set total_new_donateur = total_new_donateur + r.nb_new_donateur %}
+                        {% set total_dons_ponc = total_dons_ponc + r.nb_don_ponctuel %}
+                        {% set total_dons_pa = total_dons_pa  + r.nb_don_prelevement %}
+                        {% set total_dons_cs = total_dons_cs + r.nb_cs %}
+                        {% set total_dons_bc = total_dons_bc + r.nb_bc %}
+                        {% set total_dons_espece = total_dons_espece + r.nb_espece %}
+                        {% set total_topages = total_topages + r.nb_topage %}
+                        {% set total_emails = total_emails + r.nb_email %}
+                        {% set total_duplicatas = total_duplicatas + r.nb_duplicata %}
+                        {% set total_rf = total_rf + r.nb_rf %}
+                        {% set total_maj_donateur = total_maj_donateur + r.maj_donateur %}
+                        {% set total_maj_dons = total_maj_dons + r.maj_don %}
+
+                    {% endfor %}
+                    {# total #}
+                    <tr class="label-info" style="font-weight: bold;color:white;">
+                        <td > TOTAL</td>
+                        <td>{{ total_new_donateur }}</td>
+                        <td>{{ total_dons_ponc }}</td>
+                        <td>{{ total_dons_pa }}</td>
+                        <td>{{ total_dons_cs }}</td>
+                        <td>{{ total_dons_bc }}</td>
+                        <td>{{ total_dons_espece }}</td>
+                        <td>{{ total_topages }}</td>
+                        <td>{{ total_emails }}</td>
+                        <td>{{ total_duplicatas }}</td>
+                        <td>{{ total_rf }}</td>
+                        <td>{{ total_maj_donateur }}</td>
+                        <td>{{ total_maj_dons }}</td>
+
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    {% endblock %}
+    {% block javascripts %}
+    {{ parent() }}
+
+
+    <script>
+
+        $(document).ready(function () {
+            $("div.holder").jPages({
+                containerID: "content",
+                perPage: 10
+            });
+
+        });
+
+    </script>
+{% endblock %}

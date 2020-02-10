@@ -1,0 +1,79 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+    <div class="breadcrumbs" id="breadcrumbs">
+        <ol class="breadcrumb">
+            <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+            <li class="active">Personnalisation des reçus fiscaux ({{ filetype }}) Pour l'entité
+                : {{ entite.name }}</li>
+        </ol>
+    </div>
+<div class="page-content">
+
+    <div class="col-md-12 pull-left">
+        <div class="page-header">
+            <h1>
+                Personnalisation des reçus fiscaux
+                <small>
+                    <i class="ace-icon fa fa-angle-double-right"></i>
+                    Type : {{ filetype }}, entité :  {{ entite.name }}
+                </small>
+            </h1>
+            </div>
+            {% for flashMessage in app.session.flashbag.get('info') %}
+                <div class="alert alert-success">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+
+            <div class="row">
+                <div class="col-md-12">
+                    <form action="{{ path('intersa_perso_form_rf',{'code':code, 'identity':identity}) }}"
+                          method="post" {{ form_enctype(form) }}>
+
+                        <br/>
+                        {% if form.template.vars.errors|length %}
+                            {# Affichage des erreurs pour ce champ précis. #}
+                            <div class="form-group has-error">
+                                <label class="control-label"
+                                       for="inputError">{{ form_errors(form.template) }}</label>
+
+                                <div class="input-group col-md-12">
+                                    {{ form_widget(form.template, {'attr': {'class': 'task_field form-control', 'id':'template' } }) }}
+                                </div>
+                            </div>
+                        {% else %}
+                            {# Génération de l'input. #}
+                            <div class="input-group col-md-12">
+                                {{ form_widget(form.template, {'attr': {'class': 'task_field form-control', 'id':'template'} }) }}
+                            </div>
+                        {% endif %}
+                        <br/>
+                        {{ form_rest(form) }}
+                        <div class="widget-toolbox padding-8 clearfix">
+
+                            <button class="btn btn-xs btn-success pull-right" type="submit">
+                                <span class="bigger-110">Valider les modifications</span>
+
+                                <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endblock %}
+    {% block javascripts %}
+    {{ parent() }}
+    {% javascripts '@FulldonIntersaBundle/Resources/public/js/*' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/ckeditor_plugins/fulldon.plugin.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script>
+
+    </script>
+{% endblock %}

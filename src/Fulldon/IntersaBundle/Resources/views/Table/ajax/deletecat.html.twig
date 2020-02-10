@@ -1,0 +1,15 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="confirmDeleteLabel">Suppression des catégories</h4>
+        </div>
+        <div class="modal-body">
+            Vous voulez vraiment supprimer Cette catégorie  "{{ element.name }}" ?
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+            <a type="button" class="btn btn-primary" href="{{ path("intersa_table_element_delete",{'table':table,'id': element.id}) }}">Supprimer</a>
+        </div>
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->

@@ -1,0 +1,256 @@
+<?php
+
+/*
+ * This file is part of the fulldon project
+ *
+ * (c) SAMI BOUSSACSOU <boussacsou@intersa.fr>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Fulldon\DonateurBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+use Fulldon\IntersaBundle\Event\HistoryLogEvent;
+use Fulldon\IntersaBundle\Listener;
+use Fulldon\IntersaBundle\Event\LogVar;
+use Fulldon\IntersaBundle\Entity\Log;
+
+/**
+ * @ORM\Entity(repositoryClass="Fulldon\DonateurBundle\Entity\DonateurRepository")
+ * @ORM\Table(name="donateur", indexes={
+ * @ORM\Index(name="search_donateur_idx", columns={"id", "nom", "prenom", "email", "pays_id", "ville_id", "id_foyer"}),
+ * @ORM\Index(name="stat_donateur_idx", columns={"id", "email", "telephone_mobile", "telephone_fixe", "removed"}),
+ * @ORM\Index(name="id_donateur_idx", columns={"id"}),
+ * @ORM\Index(name="nom_donateur_idx", columns={"nom"}),
+ * @ORM\Index(name="prenom_donateur_idx", columns={"prenom"}),
+ * @ORM\Index(name="email_donateur_idx", columns={"email"}),
+ * @ORM\Index(name="pays_donateur_idx", columns={"pays_id"}),
+ * @ORM\Index(name="ville_donateur_idx", columns={"ville_id"}),
+ * @ORM\Index(name="foyer_donateur_idx", columns={"id_foyer"}),
+ * @ORM\Index(name="stat_rem_donateur_idx", columns={"removed"}),
+ * @ORM\Index(name="stat_donateur_idx", columns={"motif_donateur_id","removed"})
+ * })
+ * @ORM\HasLifecycleCallbacks
+ *
+ */
+class Donateur {
+
+    //CONST _LOG_TYPE_INFO_DONATEUR_ = 1;
+
+    /**
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @ORM\Column(name="nom", type="string", length=255, nullable=true)
+     */
+    private $nom;
+
+    /**
+     * @ORM\Column(name="prenom", type="string", length=255, nullable=true)
+     */
+    private $prenom;
+
+    /**
+     * @ORM\Column(name="civilite", type="string", length=255, nullable=true)
+     */
+    private $civilite;
+
+    /**
+     * @ORM\Column(name="email", type="string", length=255, nullable=true)
+     */
+    private $email;
+
+    /**
+     * @ORM\Column(name="datenaissance", type="date",nullable=true)
+     */
+    private $dateNaissance;
+
+    /**
+     * @ORM\Column(name="iso_pays", type="string", length=255, nullable=true)
+     */
+    private $isopays;
+
+    /**
+     * @ORM\Column(name="iso_ville", type="string", length=255, nullable=true)
+     */
+    private $isoville;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Pays")
+     * @ORM\JoinColumn(nullable=true, name="pays_id" )
+     */
+    private $pays;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Ville")
+     * @ORM\JoinColumn(nullable=true, name="ville_id"  )
+     */
+    private $ville;
+
+    /**
+     * @ORM\Column(name="adresse1", type="text", nullable=true)
+     */
+    private $adresse1;
+
+    /**
+     * @ORM\Column(name="adresse2", type="text",nullable=true)
+     */
+    private $adresse2;
+
+    /**
+     * @ORM\Column(name="adresse3", type="text",nullable=true)
+     */
+    private $adresse3;
+
+    /**
+     * @ORM\Column(name="adresse4", type="text",nullable=true)
+     */
+    private $adresse4;
+
+    /**
+     * @ORM\Column(name="adresse5", type="text",  nullable=true)
+     */
+    private $adresse5 = null;
+
+    /**
+     * @ORM\Column(name="telephone_mobile", type="text",  nullable=true)
+     */
+    private $telephoneMobile;
+
+    /**
+     * @ORM\Column(name="telephone_fixe", type="text",  nullable=true)
+     */
+    private $telephoneFixe;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="ReceptionMode" , cascade={"persist"})
+     */
+    private $receptionMode;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="CategoryDonateur", inversedBy="donateurs")
+     * @ORM\JoinColumn(nullable=true);
+     */
+    private $categories;
+
+    /**
+     * @ORM\Column(name="zipcode", type="string", length=7, nullable=true)
+     */
+    private $zipcode;
+
+    /**
+     * @ORM\Column(name="allow_rf", type="boolean" )
+     */
+    private $allowRf;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Fulldon\SecurityBundle\Entity\User", cascade={"persist"})
+     * @ORM\JoinColumn(name="user_id",nullable=true);
+     */
+    private $user;
+
+    /**
+     * @ORM\Column(name="created_at", type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(name="removed", type="boolean" )
+     */
+    private $removed;
+
+    /**
+     * @ORM\Column(name="removed_at", type="datetime", nullable=true)
+     */
+    protected $removedAt;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Fulldon\DonateurBundle\Entity\MotifDisableDonateur")
+     * @ORM\JoinColumn( name="motif_donateur_id", nullable=true);
+     */
+    protected $motif;
+
+    /**
+     * @ORM\Column(name="ref_donateur", type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $refDonateur;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="SituationFamiliale")
+     * @ORM\JoinColumn(nullable=true, name="situationfamiliale_id" )
+     */
+    private $situationFamiliale;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="SituationProfessionnelle")
+     * @ORM\JoinColumn(nullable=true, name="situationpro_id" )
+     */
+    private $situationProfessionnelle;
+
+    /**
+     * @ORM\Column(name="enfants", type="string", length=7, nullable=true)
+     */
+    private $enfants;
+
+    /**
+     * @ORM\Column(name="fourchette_min", type="string", length=7, nullable=true)
+     */
+    private $fourchetteMin;
+
+    /**
+     * @ORM\Column(name="fourchette_max", type="string", length=7, nullable=true)
+     */
+    private $fourchetteMax;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="StatutDonateur")
+     * @ORM\JoinColumn(nullable=true, name="statut_donateur" )
+     */
+    private $statutDonateur;
+
+    /**
+     * @ORM\Column(name="commentaire", type="text", nullable=true)
+     */
+    private $commentaire;
+
+    /**
+     * @ORM\Column(name="nom_entreprise", type="string", nullable=true)
+     */
+    private $nomEntreprise;
+    
+     
+   /**
+     *@ORM\ManyToOne(targetEntity="FoyerDonateur")
+     * @ORM\JoinColumn(nullable=true, name="id_foyer")
+     */
+    private $foyer;
+    
+    
+    
+    
+    
+
+   
+
+//    public function __construct() {
+//        $this->createdAt = new \Datetime();
+//        $this->receptionMode = new ArrayCollection();
+//        $this->categories = new ArrayCollection();
+//       // $this->foyer = new ArrayCollection();
+//    }
+
+    
+//    public function __toString() {
+//        return (string) $this->getFoyer();
+//    }
+}

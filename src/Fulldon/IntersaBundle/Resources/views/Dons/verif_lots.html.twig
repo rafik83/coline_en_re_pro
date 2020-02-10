@@ -1,0 +1,190 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+<div class="breadcrumbs" id="breadcrumbs">
+    <ol class="breadcrumb">
+        <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+        <li class="active"> Vérification des lots  </li>
+    </ol>
+    </div>
+        <div class="page-content" >
+
+            <div class="col-md-12 pull-left">
+                <div class="page-header">
+                    <h1>
+                        Vérification des lots
+                        <small>
+                            <i class="ace-icon fa fa-angle-double-right"></i>
+                            Vérification des lots saisis à travers la saisie en série
+                        </small>
+                    </h1>
+                </div><!-- /.page-header -->
+
+                        {% if is_granted('ROLE_INTERSA_N1')  %}
+                        <a class="btn btn-primary btn-xs"  href="#"  data-toggle="modal" data-target="#verifalllots"><span class="glyphicon glyphicon-saved"></span> Valider tous les lots</a>
+                        {% endif %}
+
+                <hr />
+                {% for flashMessage in app.session.flashbag.get('info') %}
+                    <div class="alert alert-success">
+                        <span class="glyphicon glyphicon-ok-sign" ></span>  {{ flashMessage }}
+                    </div>
+                {% endfor %}
+                {% for flashMessage in app.session.flashbag.get('erreur') %}
+                    <div class="alert alert-danger">
+                        <span class="glyphicon glyphicon-remove-sign" ></span>{{ flashMessage }}
+                    </div>
+                {% endfor %}
+                    <div class="pagination_desc"><strong>{{ total_elements }}</strong> Lot(s) en attente
+                        {% if last_page > 1 %}
+                            - page <strong>{{ current_page }}/{{ last_page }}</strong>
+                            <br />
+                        {% endif %}
+                    </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Lot</th>
+                        <th>Type</th>
+                        <th>Statistiques</th>
+                        <th>Etat</th>
+                        {% if is_granted('ROLE_INTERSA_N1')  %}
+                        <th>Traitements</th>
+                        {% endif %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for element in elements %}
+                        <tr {% if element.verifDone %}class="success"{% else %}class="alert-info"{% endif %}>
+                            <td width="1">{{ element.id }}</td>
+                            <td width="1">{{ element.lot }}</td>
+                            <td width="1">{{ element.type }}</td>
+                            <td width="150" id="{{ element.lot }}"><center><img id="LoadingImage" src="{{ asset('img/ajax-loader.gif') }}" /></center></td>
+                            <td>
+
+                                {% if element.verifDone %}
+                                <span class="label label-success"><span class="glyphicon glyphicon-ok "></span>  Vérifié</span>
+                                {% else %}
+                                <span class="label label-info"><span class="glyphicon glyphicon-import "></span>  En cours de vérification</span>
+                                {% endif %}
+                            </td>
+                            {% if is_granted('ROLE_INTERSA_N1')  %}
+                            <td width="400">
+
+                                {% if element.verifDone %}
+                                    {% if element.type == 'PA' %}
+                                        Génération disponible que par commande .
+                                    {% else %}
+                                        <a  href="{{ path('intersa_rf') }}?rf={{ element.lot }}"  class="btn btn-success btn-xs">
+                                            <span class="glyphicon glyphicon-transfer"></span>&nbsp; Générer les Rfs
+                                        </a>
+                                    {% endif %}
+                                {% else %}
+                                    <a  href="#"  class="btn btn-info btn-xs" data-toggle="modal" data-target="#veriflots" onclick="verif_lots('{{ element.lot }}')">
+                                        <span class="glyphicon glyphicon-ok-sign "></span>&nbsp; Valider la vérification du lot</a>
+                                {% endif %}</td>
+                            {% endif %}
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <center>
+        {% if last_page > 1 %}
+            <ul class="pagination pull-center">
+                <li><a href="{{ path('intersa_verif_lot', { 'page': previous_page }) }}">&laquo;</a></li>
+                {% for page in 1..last_page %}
+                    {% if page == current_page %}
+                    <li class="active"><a href="#">{{ page }}</a></li>
+                    {% else %}
+                    <li><a href="{{ path('intersa_verif_lot', { 'page': page }) }}">{{ page }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                <li><a href="{{ path('intersa_verif_lot', { 'page': next_page }) }}">&raquo;</a></li>
+            </ul>
+            {% endif %}
+        </center>
+        <div class="modal fade" id="deletecause" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+
+        </div><!-- /.modal -->
+        <div class="modal fade" id="veriflots" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="confirmDeleteLabel">Vérification des lots</h4>
+                    </div>
+                    <div class="modal-body" id="verif_lot_body">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                        <a type="button" class="btn btn-primary" id="verif_lot_href">Valider</a>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+
+        <div class="modal fade" id="verifalllots" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="confirmDeleteLabel">Valider tous les lots</h4>
+                    </div>
+                    <div class="modal-body" id="verif_lot_body">
+                        <div class="alert alert-warning"><strong>Attention ! L'action suivante validera tous les lots (<b>{{ verif_total }}</b> Lots) .</strong></div>
+                        Voulez vous continuer ?
+                    </div>
+                    <div class="modal-footer">
+                        <form method="post" action="{{ path('intersa_verif_all_lot') }}" >
+                            <input type="hidden" name="{{ verif_total }}" />
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                            <input type="submit" class="btn btn-primary"  value="Je confirme mon action" />
+                        </form>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+            function getStats(lot) {
+                $("#LoadingImage").show();
+                $.ajax({
+                    url: "/intersa/verif/lots/ajax/lot/"+lot,
+                    beforeSend: function( xhr ) {
+                        ;
+                    }
+                })
+                        .done(function( data ) {
+                            $("#LoadingImage").hide();
+                            $('#'+lot).html(data);
+
+                        });
+
+            }
+
+            function load_lots(){
+
+                {% for element in elements %}
+                getStats('{{ element.lot }}');
+                {% endfor %}
+
+            }
+            function verif_lots(mylot) {
+                            $("#verif_lot_href").attr('href','/intersa/verifok/lots/lot/'+mylot);
+                            $("#verif_lot_body").html(' Vous voulez valider la vérification du lot  #'+mylot+' ?');
+            }
+            function verif_all_lots() {
+                alert('verify');
+            }
+
+
+        </script>
+    {% endblock %}

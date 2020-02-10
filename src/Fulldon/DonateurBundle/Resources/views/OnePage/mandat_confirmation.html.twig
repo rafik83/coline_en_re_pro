@@ -1,0 +1,62 @@
+{% extends "FulldonDonateurBundle:Donateur:coque_donateur.html.twig" %}
+    {% block coque_donateur %}
+        <style type="text/css">
+            .iframe-responsive-wrapper        {
+                position: relative;
+            }
+
+            .iframe-responsive-wrapper .iframe-ratio {
+                display: block;
+                width: 100%;
+                height: auto;
+            }
+
+            .iframe-responsive-wrapper iframe {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+        <div class="row" >
+            {% for flashMessage in app.session.flashbag.get('error') %}
+                <div class="alert alert-danger">
+                    <i class="fa fa-minus-circle fa-lg "></i> {{ flashMessage }}
+                </div>
+            {% endfor %}
+            {% for flashMessage in app.session.flashbag.get('success') %}
+                <div class="alert alert-success">
+                    <i class="fa fa-check fa-lg "></i>  {{ flashMessage }}
+                </div>
+            {% endfor %}
+            <div class="col-md-6" >
+                <div class="iframe-responsive-wrapper">
+                    <img class="iframe-ratio" src="data:image/gif;base64,R0lGODlhEAAJAIAAAP///wAAACH5BAEAAAAALAAAAAAQAAkAAAIKhI+py+0Po5yUFQA7"/>
+                    <iframe src="{{ url('assets_mandat', {'token': mandat_filename}) }}" width="800px" height="400px" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+                </div>
+            </div>
+            <div class="col-md-6" >
+                <h3> Signature du Mandat de prélèvement SEPA</h3>
+                <hr />
+                <form action="{{ path('fulldon_donateur_onepage_confirm_mandat') }}" method="POST">
+                    Merci de bien vouloir saisir le code à 4 chiffres qui a été envoyé par SMS sur votre mobile.<br />
+                    <b>Code SMS :</b><input type="text" name="sms_code" class="form-control input-sm form-control" required="required"/><br />
+                    Avant de procéder à la signature du mandat, merci de bien vouloir vérifier l'exactitude de toutes les données qui y figurent. <br />
+                    <input type="hidden" name="mandat_telephone"  value="{{ mandat_telephone }}" />
+                    <input type="hidden" name="mandat_filename"  value="{{ mandat_filename }}" />
+                    <input type="hidden" name="indicatif"  value="{{ indicatif }}" />
+                    <div class="checkbox">
+                        <label>
+                            <input name="mandat_check" id="mandat_check" type="checkbox" required="required" > <b >{{ "J'ai vérifié l'exactitude des informations portées sur le mandat."|trans({},'messages') }}</b>
+                        </label>
+                    </div>
+                    <input type="submit" class="btn btn-default" value=" Valider les informations bancaires" />
+                </form>
+            </div>
+        </div>
+        <br />
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+    {% endblock %}

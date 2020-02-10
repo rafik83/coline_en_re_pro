@@ -1,0 +1,87 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+<div class="breadcrumbs" id="breadcrumbs">
+    <ol class="breadcrumb">
+        <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+        <li><a href="{{ path('intersa_marketing', {'page':1}) }}">eMarketing</a></li>
+        <li class="active">Statistiques eMarketing</li>
+    </ol>
+    </div>
+<div class="page-content">
+<div class="col-md-12">
+    <div class="page-header">
+        <h1>
+            eMarketing
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                Statistiques de la campagne emailing
+            </small>
+        </h1>
+    </div><!-- /.page-header -->
+
+    {% for flashMessage in app.session.flashbag.get('warn') %}
+        <div class="alert alert-warning">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+    {% if result is not null %}
+    <div id="campagne_stat" style="width: 100%; height: 300px;"></div>
+    <div class="miftah">
+        <table>
+        <tr><td><div class="element" style="background-color: #388f54;float:left;margin-right:5px;border: 1px solid #000;"></div><div  style="float:left;margin-right:10px;">Emails envoyés :  <b>({{ result['sent'] }})</b></div></td></tr>
+        <tr><td><div class="element" style="background-color: #e51616;float:left;margin-right:5px;border: 1px solid #000;"></div><div  style="float:left;margin-right:10px;">total des emails rejetés :  <b>({{ result['rejects'] }})</b> </div></td></tr>
+        <tr><td><div class="element" style="background-color: #890d0d;float:left;margin-right:5px;border: 1px solid #000;"></div><div  style="float:left;margin-right:10px;">Emails rejetés définitivement :  <b>({{ result['hard_bounces'] }})</b> </div></td></tr>
+        <tr><td><div class="element" style="background-color: #ec5b5b;float:left;margin-right:5px;border: 1px solid #000;"></div><div  style="float:left;margin-right:10px;">Emails rejetés partiellement  :  <b>({{ result['soft_bounces'] }})</b></div></td></tr>
+        <tr><td><div class="element" style="background-color: #fb9a50;float:left;margin-right:5px;border: 1px solid #000;"></div><div  style="float:left;margin-right:10px;">Désabonnement via Fulldon  : <b>({{ result['unsubs'] }})</b></div></td></tr>
+        <tr><td><div class="element" style="background-color: #000;float:left;margin-right:5px;border: 1px solid #000;"></div><div  style="float:left;margin-right:10px;">Emails spamé : <b>({{ result['complaints'] }})</b></div></td></tr>
+        <tr><td><div class="element" style="background-color: #adda55;float:left;margin-right:5px;border: 1px solid #000;"></div><div  style="float:left;margin-right:10px;">Emails ouverts par les donateurs : <b>({{ result['opens'] }})</b></div></td></tr>
+        <tr><td><div class="element" style="background-color: #678233;float:left;margin-right:5px;border: 1px solid #000;"></div><div  style="float:left;margin-right:10px;">Ouverture unique des emails : <b>({{ result['unique_opens'] }})</b></div></td></tr>
+        <tr><td><div class="element" style="background-color: #009ee0;float:left;margin-right:5px;border: 1px solid #000;"></div><div  style="float:left;margin-right:10px;">Cliques sur les emails :  <b>({{ result['clicks'] }})</b></div></td></tr>
+        <tr><td><div class="element" style="background-color: #0041a0;float:left;margin-right:5px;border: 1px solid #000;"></div><div  style="float:left;margin-right:10px;">Cliques unique sur les emails :  <b>({{ result['unique_clicks'] }})</b></div></td></tr>
+        </table>
+    </div>
+    {% endif %}
+    </div>
+    </div>
+    {% endblock %}
+
+
+    {% block javascripts %}
+    {{ parent() }}
+    <script>
+        {% if result is not null %}
+        google.load("visualization", "1", {packages:["corechart"]});
+        google.setOnLoadCallback(drawCoreChart);
+        function drawCoreChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Type d\'envoi', 'Quantité',  { role: 'style' }],
+
+                ['Envoyé',     {{ result['sent'] }}, 'color: #388f54'],
+                ['Rejetés',     {{ result['rejects'] }}, 'color: #e51616'],
+                ['Rejet permanent',     {{ result['hard_bounces'] }}, 'color: #890d0d'],
+                ['Rejet passager',     {{ result['soft_bounces'] }}, 'color: #ec5b5b'],
+                ['Désabonnement',     {{ result['unsubs'] }}, 'color: #fb9a50'],
+                ['Spam',     {{ result['complaints'] }}, 'color: #000'],
+                ['Ouverture',     {{ result['opens'] }}, 'color: #adda55'],
+                ['Ouvertures uniques',     {{ result['unique_opens'] }}, 'color: #678233'],
+                ['Cliques ',     {{ result['clicks'] }}, 'color: #009ee0'],
+                ['Cliques uniques ',     {{ result['unique_clicks'] }}, 'color: #0041a0'],
+
+
+            ]);
+
+            var options = {
+                title: 'Consomation eMarketing',
+                hAxis: {title: 'Type d\'envoi', titleTextStyle: {color: 'red'}},
+                vAxis: {minValue:0, format:'#'},
+                legend: { position: "none" }
+
+            };
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('campagne_stat'));
+            chart.draw(data, options);
+            {% endif %}
+        }
+    </script>
+
+    {% endblock %}

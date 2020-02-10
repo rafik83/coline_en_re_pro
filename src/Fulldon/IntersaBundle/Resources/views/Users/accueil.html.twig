@@ -1,0 +1,100 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+        <div class="breadcrumbs" id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li class="active">Gestion des utilisateurs et rôles </li>
+            </ol>
+        </div>
+
+        <div class="page-content">
+                <div class="col-md-12">
+                    {% for flashMessage in app.session.flashbag.get('info') %}
+                        <div class="alert alert-success">
+                            {{ flashMessage }}
+                        </div>
+                    {% endfor %}
+                    {% for flashMessage in app.session.flashbag.get('erreur') %}
+                        <div class="alert alert-danger">
+                            {{ flashMessage }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="col-md-6">
+                    <h3 style="margin-top:5px;" class="couleur-admin" >Gestion des utilisateurs : <div class="pull-right"><a class="btn btn-primary btn-sm" href="{{ path('intersa_users_new') }}"><i class="fa fa-plus"></i> Ajouter un utilisateur</a></div> </h3>
+                    <hr />
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Utilisateur</th>
+                            <th>Rôle</th>
+                            <th>Activité</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.username }}</td>
+                                <td>
+                                    <ul>
+                                    {% for role in user.roles  %}
+                                       <li> {{ role.name }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                </td>
+                                <td>
+                                    {% if user.isEnabled == 1 %}
+                                        <span class="glyphicon glyphicon-ok"></span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-minus-sign"></span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ path('intersa_users_edit',{'id' : user.id} ) }}"><span class="glyphicon glyphicon-pencil" ></span></a>&nbsp;
+                                    <a href="#"  onclick="delete_user({{ user.id }})"><span class="glyphicon glyphicon-remove " ></span></a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="col-md-6">
+                    <h3 style="margin-top:5px;" class="couleur-admin" >Rôles : </h3>
+                    <hr />
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Rôle</th>
+                            <th>Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for role in roles %}
+                            <tr>
+                                <td>{{ role.name }}</td>
+                                <td>{{ role.desc }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+        </div> <!-- /container -->
+        <!-- Modal -->
+        <div class="modal fade" id="deleteuser" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+
+        </div><!-- /.modal -->
+
+
+
+
+{% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        {% javascripts '@FulldonIntersaBundle/Resources/public/js/*' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+    {% endblock %}

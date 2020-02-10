@@ -1,0 +1,88 @@
+{% extends "FulldonDonateurBundle:Donateur:coque_donateur.html.twig" %}
+    {% block coque_donateur %}
+        <div class="row" >
+
+            <div class="col-xs-12 pull-left">
+                <h2 style="margin-top:5px;" class="couleur-donateur" >{{ "Reçus fiscaux"|trans({},'messages') }} </h2>
+                <hr />
+                {% for flashMessage in app.session.flashbag.get('info') %}
+                    <div class="alert alert-success">
+                        {{ flashMessage|trans({},'messages') }}
+                    </div>
+                {% endfor %}
+                {% for flashMessage in app.session.flashbag.get('erreur') %}
+                    <div class="alert alert-danger">
+                        {{ flashMessage|trans({},'messages') }}
+                    </div>
+                {% endfor %}
+                {% for flashMessage in app.session.flashbag.get('warning') %}
+                    <div class="alert alert-warning">
+                        {{ flashMessage|trans({},'messages') }}
+                    </div>
+                {% endfor %}
+                    <div class="pagination_desc"><strong>{{ total_dons }}</strong> {{ "reçu(s) disponible(s) pour téléchargement"|trans({},'messages') }}.
+                        {% if last_page > 1 %}
+                            - page <strong>{{ current_page }}/{{ last_page }}</strong>
+                            <br />
+                        {% endif %}
+                    </div>
+                <table class="table table-condensed table-responsive">
+                    <thead>
+                    <tr>
+                        <th>{{ "Date"|trans({},'messages') }}</th>
+                        <th>{{ "Montant"|trans({},'messages') }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for rf in rfs %}
+                        <tr class="alert-info">
+
+                            <td>{{ rf.don.createdAt | date('Y-m-d H:i:s') }}</td>
+                            <td>{{ rf.don.montant }}€</td>
+                            <td>
+                                {% if rf.nom is not null and rf.nom != '' %}
+                                    <div class="pull-right">
+                                            <a href="{{ path('donateur_rf_send_mail', {'id':rf.id}) }}" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-envelope"></span>  {{ "Recevoir par email"|trans({},'messages') }} </a>
+                                            <a target="_blank" href="{{ path('assets_show_rf',{'id': rf.id})}}" class="btn btn-xs btn-default" ><span class="glyphicon glyphicon-download-alt"></span>  {{ "Télécharger"|trans({},'messages') }}  </a>
+                                    </div>
+                                    {% else  %}
+
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <center>
+        {% if last_page > 1 %}
+            <ul class="pagination pull-center">
+                <li><a href="{{ path('donateur_history', { 'page': previous_page }) }}">&laquo;</a></li>
+                {% for page in 1..last_page %}
+                    {% if page == current_page %}
+                    <li class="active"><a href="#">{{ page }}</a></li>
+                    {% else %}
+                    <li><a href="{{ path('donateur_history', { 'page': page }) }}">{{ page }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                <li><a href="{{ path('donateur_history', { 'page': next_page }) }}">&raquo;</a></li>
+            </ul>
+            {% endif %}
+        </center>
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+
+            $('#fulldon_donateurbundle_dontype_abonnement_actif').on('click', function(){
+                if($('#fulldon_donateurbundle_dontype_abonnement_actif').is(':checked')) {
+                    $('#abo_date').show();
+                } else {
+                    $('#abo_date').hide();
+                }
+            });
+        </script>
+    {% endblock %}

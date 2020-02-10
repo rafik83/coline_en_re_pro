@@ -1,0 +1,53 @@
+{% extends "FulldonDonateurBundle:Donateur:coque_donateur.html.twig" %}
+    {% block coque_donateur %}
+        <div class="row" >
+
+            <div class="col-md-12 pull-left">
+                <h3 style="margin-top:5px;" class="couleur-donateur" >Don :#{{ don.id }} </h3>
+                <hr />
+                <ol class="breadcrumb">
+                    <li><a href="{{ path('donateur_account') }}">Accueil</a></li>
+                    <li><a href="{{ path('donateur_history',{'page':1}) }}">Historique</a></li>
+                    <li class="active">Don :#{{ don.id }} </li>
+                </ol>
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <h4 style="margin-top:5px;" class="couleur-donateur" >Informations sur le don : </h4>
+                        <hr />
+                        <b>Statut : </b>
+                        {% if don.transaction.statut.code is defined %}
+                        {{ don.transaction.statut.libelle }}
+                    {% else %}
+                        Abondonné
+                        {% endif %}<br />
+                        <b>Montant  :</b>                     {{ don.montant }} Euros<br />
+                        {% if  don.modePaiement is not null %}
+                        <b>Mode de paiement : </b>{{ don.modePaiement.libelle }} <br />
+                        {% endif %}
+                        <b>Date de du don : </b>{{ don.createdAt|date('Y-m-d H:i:s') }}<br />
+                        <b>Type de don : </b>
+                        {% if don.ispa %}
+                            Don régulier : {% if don.abonnement.actif == 0 %}Desactivé{% else %}Activé {% endif %}
+                        {% else %}
+                            Don ponctuel
+                        {% endif %}
+                        <br />
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+
+            $('#fulldon_donateurbundle_dontype_abonnement_actif').on('click', function(){
+                if($('#fulldon_donateurbundle_dontype_abonnement_actif').is(':checked')) {
+                    $('#abo_date').show();
+                } else {
+                    $('#abo_date').hide();
+                }
+            });
+        </script>
+    {% endblock %}

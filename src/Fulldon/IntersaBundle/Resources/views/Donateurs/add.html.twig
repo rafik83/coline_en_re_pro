@@ -1,0 +1,921 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+    {% stylesheets '../app/Resources/Public/css/global/jquery-ui/*' %}
+    <link rel="stylesheet" type="text/css" charset="UTF-8" media="all" href="{{ asset_url }}"/>
+    {% endstylesheets %}
+
+    <!--style>
+        label {
+            font-size: 12px !important;
+            font-weight: bold !important;
+            padding: 2px !important;
+            margin: 0 !important;
+        }
+    </style-->
+{% endblock %}
+{% block coque_intersa %}
+    <div class="breadcrumbs" id="breadcrumbs">
+        <ol class="breadcrumb">
+            <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+            <li><a href="{{ path('elastic_donateur') }}">Gestion des donateurs</a></li>
+            <li class="active">Nouveau donateur</li>
+        </ol>
+    </div>
+    <div class="page-content">
+        <form action="{{ path('intersa_donateur_add') }}" method="post" class="form-group" {{ form_enctype(form) }}>
+            <div class="page-header">
+                <h1>
+                    Gestion des donateurs
+                    <small>
+                        <i class="ace-icon fa fa-angle-double-right"></i>
+                        Ajouter un nouveau donateur
+                    </small>
+                </h1>
+            </div>
+            <!-- /.page-header -->
+            <div class="widget-toolbox padding-8 clearfix">
+
+
+                <button class="btn btn-xs btn-success pull-right" type="submit">
+                    <span class="bigger-110">Créer le donateur</span>
+
+                    <i class="ace-icon fa fa-save icon-on-right"></i>
+                </button>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-4">
+                    <div class="widget-box">
+                        <div class="widget-header">
+                            <h4 class="widget-title title-plus">Informations générales</h4>
+
+
+                        </div>
+
+                        <div class="widget-body">
+                            <div class="widget-main">
+                                <div  >
+                                    <div class="checkbox " style="padding-left:25px;">
+                                        <label>
+                                            <input name="company_check" id="company_check" type="checkbox"> <b
+                                                style="font-size:12px;">{{ "Le donateur représente une organisation ou une société "|trans({},'messages') }}</b>
+                                        </label>
+                                    </div>
+
+                                    <div style="display:none;"  id="is_company" >
+                                        <label for="nomEntreprise" class=" label-plus">{{ form_label(form.nomEntreprise, "Nom de l'entreprise ") }} <span id="req-raison_social"></span></label>
+                                        <div >
+                                            {# Affichage des erreurs pour ce champ précis. #}
+                                            {{ form_errors(form.nomEntreprise) }}
+
+                                            {# Génération de l'input. #}
+                                            {{ form_widget(form.nomEntreprise, {'attr': { 'class': 'task_field form-control', 'id':'nomEntreprise'} }) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+
+                                    <label for="inputEmail3"
+                                           class=" control-label">{{ form_label(form.civilite, "Civilité") }} </label>
+
+                                    <div>
+                                        {# Affichage des erreurs pour ce champ précis. #}
+                                        {{ form_errors(form.civilite) }}
+
+                                        {# Génération de l'input. #}
+                                        {{ form_widget(form.civilite, {'attr': {'class': 'task_field form-control input-sm', 'id':'civilite'} }) }}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label for="inputEmail3" class=" control-label">{{ form_label(form.nom, "Nom") }} </label>
+
+                                    <div>
+                                        {% if form.nom.vars.errors|length %}
+                                            {# Affichage des erreurs pour ce champ précis. #}
+                                            <div class="form-group has-error">
+                                                <label class="control-label"
+                                                       for="inputError"> {{ form_errors(form.nom) }}</label>
+                                                {{ form_widget(form.nom, {'attr': {'class': 'task_field form-control input-sm', 'id':'inputError', 'placeholder':'Nom' } }) }}
+                                            </div>
+                                        {% else %}
+                                            {# Génération de l'input. #}
+                                            {{ form_widget(form.nom, {'attr': {'class': 'task_field form-control input-sm', 'id':'nom', 'placeholder':'Nom' } }) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="inputEmail3"
+                                           class=" control-label">{{ form_label(form.prenom, "Prénom") }}</label>
+
+                                    <div>
+                                        {% if form.prenom.vars.errors|length %}
+                                            {# Affichage des erreurs pour ce champ précis. #}
+                                            <div class="form-group has-error">
+                                                <label class="control-label"
+                                                       for="inputError"> {{ form_errors(form.prenom) }}</label>
+                                                {{ form_widget(form.prenom, {'attr': {'class': 'task_field form-control input-sm', 'id':'prenom', 'placeholder':'Prénom' } }) }}
+                                            </div>
+                                        {% else %}
+                                            {# Génération de l'input. #}
+                                            {{ form_widget(form.prenom, {'attr': {'class': 'task_field form-control input-sm', 'id':'prenom', 'placeholder':'Prénom' } }) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="inputEmail3"
+                                           class=" control-label">{{ form_label(form.dateNaissance, "Date de naissance") }}</label>
+
+                                    <div>
+                                        {% if form.dateNaissance.vars.errors|length %}
+                                            {# Affichage des erreurs pour ce champ précis. #}
+                                            <div class="form-group has-error">
+                                                <label class="control-label"
+                                                       for="inputError"> {{ form_errors(form.dateNaissance) }}</label>
+                                                {{ form_widget(form.dateNaissance, {'attr': { 'id':'dateNaissance', 'placeholder':'jj/mm/aaaa', 'class': 'task_field form-control input-sm' } }) }}
+                                            </div>
+                                        {% else %}
+                                            {# Génération de l'input. #}
+                                            {{ form_widget(form.dateNaissance, {'attr': { 'id':'nom', 'placeholder':'jj/mm/aaaa', 'class': 'task_field form-control input-sm' } }) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="inputEmail3"
+                                           class=" control-label">{{ form_label(form.categories, "Catégorie") }}</label>
+
+                                    <div>
+                                        {# Affichage des erreurs pour ce champ précis. #}
+                                        {{ form_errors(form.categories) }}
+
+                                        {# Génération de l'input. #}
+                                        {{ form_widget(form.categories, {'attr': { 'class': 'task_field form-control input-sm', 'id':'cat_don'} }) }}
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="proposition" style="z-index: 100;background-color: #fff;color:#000;opacity:0.70;height: 300px;width:100%;overflow:auto;display:none;">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <center>
+                                    <img id="load_data" src="{{ asset('img/ajax-loader.gif') }}" />
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.span -->
+
+                <div class="col-xs-12 col-sm-4">
+                    <div class="widget-box">
+                        <div class="widget-header">
+                            <h4 class="widget-title title-plus">Communication</h4>
+
+                        </div>
+
+                        <div class="widget-body">
+                            <div class="widget-main">
+                                <div>
+                                    <label for="inputEmail3"
+                                           class=" control-label">{{ form_label(form.email, "Email") }} </label>
+
+
+
+                                    <div>
+                                        {#% if form.email.vars.errors|length %#}
+                                            {# Affichage des erreurs pour ce champ précis. #}
+                                            <!--div class="form-group has-error">
+                                                <label class="control-label"
+                                                       for="inputError"> {#{ form_errors(form.email) }#}</label>
+                                                {#{ form_widget(form.email, {'attr': { 'class': 'task_field form-control input-sm', 'id':'email'} }) }#}
+                                            </div-->
+                                        {#% else %#}
+                                            {# Génération de l'input. #}
+                                            {#{ form_widget(form.email, {'attr': { 'class': 'task_field form-control input-sm', 'id':'email'} }) }#}
+                                        {#% endif %#}
+                                        {{ form_widget(form.email, {'attr': { 'class': 'task_field form-control input-sm', 'id':'email'} }) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="div_message_error_mail" style="display: none"></div>
+                            <div>
+                                <label for="telephoneMobile"
+                                       class=" control-label">{{ form_label(form.telephoneMobile, "Téléphone mobile") }}</label>
+
+                                <div>
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    {{ form_errors(form.telephoneMobile) }}
+
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.telephoneMobile, {'attr': { 'class': 'task_field form-control input-sm', 'id':'telephoneMobile'} }) }}
+                                </div>
+                            </div>
+                            <div>
+                                <label for="telephone_fixe"
+                                       class=" control-label">{{ form_label(form.telephoneFixe, "Téléphone fixe") }}</label>
+
+                                <div>
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    {{ form_errors(form.telephoneFixe) }}
+
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.telephoneFixe, {'attr': { 'class': 'task_field form-control input-sm', 'id':'telephone_fixe'} }) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-header">
+                        <h4 class="widget-title title-plus">Adresse postale</h4>
+
+                    </div>
+
+                    <div class="widget-body">
+                        <div class="widget-main">
+
+                            <div>
+                                <label for="inputEmail3"
+                                       class=" label-plus">{{ form_label(form.isopays, "Pays") }}</label>
+
+                                <div>
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    {{ form_errors(form.isopays) }}
+
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.isopays, {'attr': { 'class': 'task_field form-control input-sm', 'id':'pays'} }) }}
+                                </div>
+                            </div>
+                            <div>
+                                <label for="inputEmail3"
+                                       class=" label-plus">{{ form_label(form.zipcode, "Code postal ") }}</label>
+
+                                <div>
+                                    {% if form.zipcode.vars.errors|length %}
+                                        {# Affichage des erreurs pour ce champ précis. #}
+                                        <div class="form-group has-error">
+                                            <label class="label-plus"
+                                                   for="inputError"> {{ form_errors(form.zipcode) }}</label>
+                                            {{ form_widget(form.zipcode, {'attr': { 'class': 'task_field form-control', 'id':'codepostal'} }) }}
+                                        </div>
+                                    {% else %}
+                                        {# Génération de l'input. #}
+                                        {{ form_widget(form.zipcode, {'attr': { 'class': 'task_field form-control', 'id':'zipcode'} }) }}
+                                    {% endif %}
+
+                                </div>
+                            </div>
+                            <div>
+                                <label for="inputEmail3"
+                                       class=" label-plus">{{ form_label(form.isoville, "Ville") }}</label>
+
+                                <div>
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    {{ form_errors(form.isoville) }}
+
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.isoville, {'attr': { 'class': 'task_field form-control', 'id':'ville'} }) }}
+                                </div>
+                            </div>
+
+
+                            <div>
+                                <label for="inputEmail3"
+                                       class=" label-plus">{{ form_label(form.adresse3, "Numéro + libellé de la voie (rue, avenue...) ") }}</label>
+
+                                <div>
+                                    {% if form.adresse3.vars.errors|length %}
+                                        {# Affichage des erreurs pour ce champ précis. #}
+                                        <div class="form-group has-error">
+                                            <label class="label-plus"
+                                                   for="inputError"> {{ form_errors(form.adresse3) }}</label>
+                                            {{ form_widget(form.adresse3, {'attr': { 'class': 'task_field form-control', 'id':'adresse3'} }) }}
+                                        </div>
+                                    {% else %}
+                                        {# Génération de l'input. #}
+                                        {{ form_widget(form.adresse3, {'attr': { 'class': 'task_field form-control', 'id':'adresse3'} }) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="inputEmail3"
+                                       class=" label-plus">{{ form_label(form.adresse1, "N° appartement ou boîte aux lettres - étage - couloir - escalier ") }}</label>
+
+                                <div>
+                                    {% if form.adresse1.vars.errors|length %}
+                                        {# Affichage des erreurs pour ce champ précis. #}
+                                        <div class="form-group has-error">
+                                            <label class="label-plus"
+                                                   for="inputError"> {{ form_errors(form.adresse1) }}</label>
+                                            {{ form_widget(form.adresse1, {'attr': { 'class': 'task_field form-control', 'id':'adresse1'} }) }}
+                                        </div>
+                                    {% else %}
+                                        {# Génération de l'input. #}
+                                        {{ form_widget(form.adresse1, {'attr': { 'class': 'task_field form-control', 'id':'adresse1'} }) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div>
+                                <label for="inputEmail3"
+                                       class=" label-plus">{{ form_label(form.adresse2, "Entrée - bâtiment - immeuble - résidence ") }}</label>
+
+                                <div>
+                                    {% if form.adresse2.vars.errors|length %}
+                                        {# Affichage des erreurs pour ce champ précis. #}
+                                        <div class="form-group has-error">
+                                            <label class="label-plus"
+                                                   for="inputError"> {{ form_errors(form.adresse2) }}</label>
+                                            {{ form_widget(form.adresse2, {'attr': { 'class': 'task_field form-control', 'id':'adresse2'} }) }}
+                                        </div>
+                                    {% else %}
+                                        {# Génération de l'input. #}
+                                        {{ form_widget(form.adresse2, {'attr': { 'class': 'task_field form-control', 'id':'adresse2'} }) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+
+                            <div>
+                                <label for="inputEmail3"
+                                       class=" label-plus">{{ form_label(form.adresse4, "BP - Lieu dit ") }}</label>
+
+                                <div>
+                                    {% if form.adresse4.vars.errors|length %}
+                                        {# Affichage des erreurs pour ce champ précis. #}
+                                        <div class="form-group has-error">
+                                            <label class="label-plus"
+                                                   for="inputError"> {{ form_errors(form.adresse4) }}</label>
+                                            {{ form_widget(form.adresse4, {'attr': { 'class': 'task_field form-control', 'id':'adresse4'} }) }}
+                                        </div>
+                                    {% else %}
+                                        {# Génération de l'input. #}
+                                        {{ form_widget(form.adresse4, {'attr': { 'class': 'task_field form-control', 'id':'adresse4'} }) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.span -->
+
+            <div class="col-xs-12 col-sm-4">
+                <div class="widget-box">
+                    <div class="widget-header">
+                        <h4 class="widget-title title-plus">Configuration</h4>
+
+                    </div>
+
+                    <div class="widget-body">
+                        <div class="widget-main">
+
+
+                            <div>
+                                <label for="inputEmail3"
+                                       class=" label-plus">{{ form_label(form.receptionMode, "Mode de communication") }}</label>
+
+                                <div>
+                                    {% for field in form.receptionMode %}
+                                        <li style="list-style-type:none; ">
+                                            {{ form_widget(field, {'attr': { 'checked': 'checked'} }) }}
+                                            {{ form_label(field) }}
+                                        </li>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+
+                            <div>
+                                <label class=" label-plus col-sm-12">Accepte les Reçus Fiscaux ?</label>
+
+                                <div class="col-sm-12">
+                                    <div class="radio-inline">
+                                        <label>
+                                            <input type="radio" name="allow_rf" id="allow_rf1" value="true"
+                                            {% if data['allow_rf'] is defined %}{% if  data['allow_rf'] == "true" %}checked{% endif %}{% else %}checked{% endif %}>
+                                        Oui
+                                    </label>
+                                </div>
+                                <div class="radio-inline">
+                                    <label>
+                                        <input type="radio" name="allow_rf" id="allow_rf2" value="false"
+                                               {% if data['allow_rf'] is defined  and  data['allow_rf'] == "false" %}checked{% endif %}>
+                                        Non
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="situationProfessionnelle"
+                                   class=" label-plus">{{ form_label(form.commentaire, "Commentaire") }}</label>
+
+                            <div>
+                                {# Affichage des erreurs pour ce champ précis. #}
+                                {{ form_errors(form.commentaire) }}
+
+                                {# Génération de l'input. #}
+                                {{ form_widget(form.commentaire, {'attr': { 'class': 'task_field form-control input-sm', 'id':'commentaire'} }) }}
+                            </div>
+                        </div>
+
+
+                        <!-- /section:plugins/input.chosen -->
+                    </div>
+                </div>
+            </div>
+            <div class="widget-box">
+                <div class="widget-header">
+                    <h4 class="widget-title title-plus"  >Autres informations</h4>
+
+                </div>
+
+                <div class="widget-body">
+                    <div class="widget-main">
+
+                        <div>
+                            <label for="situationFamiliale"
+                                   class=" label-plus">{{ form_label(form.telephoneMobile, "Situation familiale") }}</label>
+
+                            <div>
+                                {# Affichage des erreurs pour ce champ précis. #}
+                                {{ form_errors(form.situationFamiliale) }}
+
+                                {# Génération de l'input. #}
+                                {{ form_widget(form.situationFamiliale, {'attr': { 'class': 'task_field form-control input-sm ', 'id':'situationFamiliale'} }) }}
+                            </div>
+                        </div>
+                        <div>
+                            <label for="situationProfessionnelle"
+                                   class=" label-plus">{{ form_label(form.situationProfessionnelle, "Situation professionnelle") }}</label>
+
+                            <div>
+                                {# Affichage des erreurs pour ce champ précis. #}
+                                {{ form_errors(form.situationProfessionnelle) }}
+
+                                {# Génération de l'input. #}
+                                {{ form_widget(form.situationProfessionnelle, {'attr': { 'class': 'task_field form-control input-sm', 'id':'situationProfessionnelle'} }) }}
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <label for="statutDonateur"
+                                   class=" label-plus">{{ form_label(form.statutDonateur, "Statut donateur") }}</label>
+
+                            <div>
+                                {# Affichage des erreurs pour ce champ précis. #}
+                                {{ form_errors(form.statutDonateur) }}
+
+                                {# Génération de l'input. #}
+                                {{ form_widget(form.statutDonateur, {'attr': { 'class': 'task_field form-control input-sm', 'id':'statutDonateur'} }) }}
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <label class=" label-plus">Fourchette de revenus du foyer</label>
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="fourchetteMin"
+                                           class=" label-plus">{{ form_label(form.fourchetteMin, "Min") }}</label>
+
+                                    <div>
+                                        {# Affichage des erreurs pour ce champ précis. #}
+                                        {{ form_errors(form.fourchetteMin) }}
+
+                                        {# Génération de l'input. #}
+                                        {{ form_widget(form.fourchetteMin, {'attr': { 'class': 'task_field form-control input-sm', 'id':'fourchetteMin'} }) }}
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="fourchetteMax"
+                                           class=" label-plus">{{ form_label(form.fourchetteMax, "Max") }}</label>
+
+                                    <div>
+                                        {# Affichage des erreurs pour ce champ précis. #}
+                                        {{ form_errors(form.fourchetteMax) }}
+
+                                        {# Génération de l'input. #}
+                                        {{ form_widget(form.fourchetteMax, {'attr': { 'class': 'task_field form-control input-sm', 'id':'fourchetteMax'} }) }}
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.span -->
+</div>
+<!-- /.row -->
+
+
+
+
+{{ form_rest(form) }}
+</form>
+</div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {#% javascripts '../app/Resources/Public/js/jquery-ui/jquery-ui.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %#}
+    <script>
+
+
+
+        //type="text/javascript"
+        $('#company_check').on('click', function () {
+            if ($('#company_check').is(':checked')) {
+                $("#is_company").show();
+                // Remove the required asterique in the nom field
+                $('#req-nom').text('');
+                $('#fulldon_donateurbundle_intersadonateurtype_nom').removeAttr('required');
+                $('#req-raison_social').text('*');
+                $("#fulldon_donateurbundle_intersadonateurtype_nomEntreprise").attr('required', 'required');
+                if (global_type != null && global_choice != null) {
+                    intializeDedu(1);
+                }
+            } else {
+                $("#is_company").hide();
+                // the name field become required when the user uncheck the company checkbox.
+                $('#req-nom').text('*');
+                $("#nom").attr('required', 'required');
+                $('#req-raison_social').text('');
+                $("#raison_social").removeAttr('required');
+                if (global_type != null && global_choice != null) {
+                    intializeDedu(0);
+                }
+            }
+        });
+
+        //                $(document).ready(function() {
+        //                    $.getJSON("/villes/id/"+$("#fulldon_donateurbundle_intersadonateurtype_pays").val()).done(function( vj ) {
+        //                        var options = '';
+        //                        for (var i = 0; i < vj.length; i++) {
+        //                            options += '<option value="' + vj[i].id + '">' + vj[i].name + '</option>';
+        //                        }
+        //                        $("#ville").html(options);
+        //                    });
+        //                    $("#fulldon_donateurbundle_intersadonateurtype_pays").on('change', function(event){
+        //                        event.stopImmediatePropagation();
+        //                        $.getJSON("/villes/id/"+$(this).val()).done(function( vj ) {
+        //                            var options = '';
+        //                            for (var i = 0; i < vj.length; i++) {
+        //                                options += '<option value="' + vj[i].id + '">' + vj[i].name + '</option>';
+        //                            }
+        //                            $("#ville").html(options);
+        //                        });
+        //                    });
+        //                });
+
+        (function ($) {
+            $(function () {
+
+                $('#fulldon_donateurbundle_intersadonateurtype_dateNaissance').datepicker({
+                    startView: 'decade',
+                    language: "fr-FR",
+                    format: "dd/mm/yyyy",
+                    autoclose: true,
+                    todayHighlight: true
+                })
+                        .on('hide', function () {
+                            var a = $(this);
+                            setTimeout(function () {
+                                a.show();
+                            }, 2);
+                        })
+                        ;
+
+            });
+        })(jQuery);
+        var accentMap = {
+            "á": "a",
+            "à": "a",
+            "â": "a",
+            "ä": "a",
+            "ç": "c",
+            "é": "e",
+            "è": "e",
+            "ê": "e",
+            "ë": "e",
+            "î": "i",
+            "ï": "i",
+            "ô": "o",
+            "ö": "o",
+            "ù": "u",
+            "û": "u",
+            "ü": "u",
+            "'": " "
+
+        };
+        var normalize = function (term) {
+            var ret = "";
+            for (var i = 0; i < term.length; i++) {
+                ret += accentMap[ term.charAt(i) ] || term.charAt(i);
+            }
+            return ret;
+        };
+        var current_localite;
+        var checkZipcode = $('#fulldon_donateurbundle_intersadonateurtype_zipcode').val();
+        var current_cities = new Array();
+        if (checkZipcode.length != 0) {
+            callCpApi(checkZipcode, '');
+
+        }
+        function callCpApi(zipcode, pays) {
+
+            var _urldqe = 'https://prod2.dqe-software.com/';
+            var pays = 'FRA';
+            var vliscence = 'INTERSA12';
+            var current_pays = $("#fulldon_donateurbundle_intersadonateurtype_isopays").val();
+            if (current_pays == 'FR') {
+                //DQE
+                $.ajax({
+
+                    url: _urldqe + "CP/?Pays=" + pays + "&CodePostal=" + zipcode + "&Licence=" + vliscence,
+
+                    dataType: 'jsonp',
+
+                    jsonp: "callback",
+
+                    crossDomain: true,
+
+                    jsonpCallback: "afficheCp"
+                }).done(function (data) {
+
+                });
+            }
+        }
+        function callAdrApi(adresse, localite) {
+            var _urldqe = 'https://prod2.dqe-software.com/';
+            var pays = 'FRA';
+            var vliscence = 'INTERSA12';
+            var current_pays = $("#fulldon_donateurbundle_intersadonateurtype_isopays").val();
+
+            if (current_pays == 'FR') {
+                //DQE
+                $.ajax({
+
+                    url: _urldqe + "ADR/?Pays=" + pays + "&IDLocalite=" + localite + "&Adresse=" + adresse + "&Licence=" + vliscence,
+
+                    dataType: 'jsonp',
+
+                    jsonp: "callback",
+
+                    crossDomain: true,
+
+                    jsonpCallback: "afficheAdr"
+                }).done(function (data) {
+                });
+            }
+        }
+        var timeoutReference;
+        var timeoutReferenceAdr;
+
+        $('input#fulldon_donateurbundle_intersadonateurtype_zipcode').keypress(function () {
+
+            var el = this; // copy of this object for further usage
+
+            if (timeoutReference)
+                clearTimeout(timeoutReference);
+            timeoutReference = setTimeout(function () {
+                verifycp.call(el);
+            }, 3000);
+        });
+        $('input#fulldon_donateurbundle_intersadonateurtype_zipcode').blur(function () {
+            verifycp.call(this);
+        });
+        $('input#fulldon_donateurbundle_intersadonateurtype_adresse3').keypress(function () {
+            var el = this; // copy of this object for further usage
+            $('input#fulldon_donateurbundle_intersadonateurtype_adresse3').val(normalize($('input#fulldon_donateurbundle_intersadonateurtype_adresse3').val()));
+            if (timeoutReference)
+                clearTimeout(timeoutReference);
+            timeoutReference = setTimeout(function () {
+                verifyAdr.call(el);
+            }, 400);
+
+        });
+        $('input#fulldon_donateurbundle_intersadonateurtype_adresse3').blur(function () {
+            verifyAdr.call(this);
+        });
+        function verifycp() {
+            // we only want to execute if a timer is pending
+            if (!timeoutReference) {
+                return;
+            }
+            // reset the timeout then continue on with the code
+            timeoutReference = null;
+
+            //
+            // Code to execute here
+            //
+            var pays = $('#fulldon_donateurbundle_intersadonateurtype_isopays').val();
+            var zipcode = $('#fulldon_donateurbundle_intersadonateurtype_zipcode').val();
+            if (zipcode.length != 0 || pays.length != 0) {
+                // ajax
+                callCpApi(zipcode, pays);
+
+            }
+
+        }
+        function verifyAdr() {
+            // we only want to execute if a timer is pending
+            if (!timeoutReference) {
+                return;
+            }
+            // reset the timeout then continue on with the code
+            timeoutReference = null;
+
+            //
+            // Code to execute here
+            //
+            var adresse = $('#fulldon_donateurbundle_intersadonateurtype_adresse3').val();
+            var localite = current_localite;
+            if (adresse.length > 3) {
+                // ajax
+                callAdrApi(adresse, localite);
+
+            }
+        }
+        function afficheCp(RtnData) {
+
+            current_cities = new Array();
+            _listeVilleChoix = [];
+            var repcp = eval('(' + RtnData + ')');
+            pos = 0;
+            var resultat = new Array();
+            $.each(repcp, function (nomRes, res) {
+                resultat[nomRes] = res;
+                _listeVilleChoix.push({label: resultat[nomRes].CodePostal + ' ' + resultat[nomRes].Localite + ' ' + resultat[nomRes].LieuDit, value: resultat[nomRes].CodePostal + '' + resultat[nomRes].Localite + ' ' + resultat[nomRes].LieuDit, id: pos, codeville: resultat[nomRes].IDLocalite, ville: resultat[nomRes].Localite, lieudit: resultat[nomRes].LieuDit, cp: resultat[nomRes].CodePostal});
+                pos = pos + 1;
+
+            });
+            if (_listeVilleChoix.length > 1) {
+                var tags = new Array();
+                for (var i = 0; i < _listeVilleChoix.length; i++) {
+                    tags[i] = _listeVilleChoix[i].ville.trim();
+                    current_cities[_listeVilleChoix[i].ville.trim()] = _listeVilleChoix[i].codeville;
+                }
+                $("#fulldon_donateurbundle_intersadonateurtype_isoville").autocomplete({
+                    source: function (request, response) {
+                        var matcher = new RegExp("^" + $.ui.autocomplete.escapeRegex(request.term), "i");
+                        response($.grep(tags, function (item) {
+                            return matcher.test(item);
+                        }));
+                    },
+                    change: function () {
+                        current_localite = current_cities[$(this).val().toUpperCase()];
+
+                    }
+                });
+            } else {
+                console.log(current_localite);
+                $("#fulldon_donateurbundle_intersadonateurtype_isoville").autocomplete({source: [], change: []});
+                // Afficher la ville
+                current_localite = _listeVilleChoix[0].codeville;
+                $('#fulldon_donateurbundle_intersadonateurtype_isoville').val(_listeVilleChoix[0].ville);
+
+            }
+        }
+        function afficheAdr(RtnData) {
+            $("#fulldon_donateurbundle_intersadonateurtype_adresse3").autocomplete({source: [], change: []});
+            _listeAdrChoix = [];
+            var tags = new Array();
+            var repcp = eval('(' + RtnData + ')');
+            pos = 0;
+            var resultat = new Array();
+            $.each(repcp, function (nomRes, res) {
+                resultat[nomRes] = res;
+                _listeAdrChoix.push({label: resultat[nomRes].CodePostal + ' ' + resultat[nomRes].Localite + ' ' + resultat[nomRes].LieuDit, value: resultat[nomRes].CodePostal + '' + resultat[nomRes].Localite + ' ' + resultat[nomRes].LieuDit, id: pos, codeville: resultat[nomRes].IDLocalite, ville: resultat[nomRes].Localite, lieudit: resultat[nomRes].LieuDit, cp: resultat[nomRes].CodePostal, adr: resultat[nomRes].Numero + " " + resultat[nomRes].Voie});
+                pos = pos + 1;
+
+            });
+            if (_listeAdrChoix.length >= 1) {
+
+                for (var i = 0; i < _listeAdrChoix.length; i++) {
+                    tags[i] = _listeAdrChoix[i].adr.trim();
+                }
+
+                $("#fulldon_donateurbundle_intersadonateurtype_adresse3").autocomplete({
+                    source: function (request, response) {
+                        var matcher = new RegExp("^" + $.ui.autocomplete.escapeRegex(request.term), "i");
+                        response($.grep(tags, function (item) {
+                            return matcher.test(item);
+                        }));
+                    }
+                });
+
+            }
+        }
+
+        function checkdonateur_byname(nom, prenom) {
+            $.ajax({
+                url: "/intersa/add/donateur/ajax/exists/nom/" + nom + "/prenom/" + prenom,
+                beforeSend: function (xhr) {
+                    ;
+                }
+            })
+                    .done(function (data) {
+                        if (data.length != 0) {
+                            if (typeof curdonateur == 'undefined' || curdonateur == null) {
+
+                                $('#proposition').css('opacity', 0.80);
+                                $('#proposition').html('<div class="pull-right"><a href="#" onclick="close_proposition(1)" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-remove"></span> Ignorer les propositions </a> </div>');
+                                $('#proposition').append(data);
+                            } else {
+                                $('#result_eclate').html(data);
+                            }
+
+                        } else {
+                            if (typeof curdonateur == 'undefined' || curdonateur == null) {
+                                $('#proposition').hide();
+                            } else {
+                                $('#result_eclate').html('Aucun donateur trouvé !');
+                            }
+                        }
+
+                    });
+        }
+        var timeoutReference;
+        $(document).ready(function () {
+            $('#value_donateur').focus();
+            $('input#fulldon_donateurbundle_intersadonateurtype_prenom').keypress(function () {
+                var el = this; // copy of this object for further usage
+
+                if (timeoutReference)
+                    clearTimeout(timeoutReference);
+                timeoutReference = setTimeout(function () {
+                    doneTyping.call(el);
+                }, 3000);
+            });
+            $('input#fulldon_donateurbundle_intersadonateurtype_prenom').blur(function () {
+
+                doneTyping.call(this);
+            });
+        });
+        $(document).ready(function () {
+            $('input#fulldon_donateurbundle_intersadonateurtype_nom').keypress(function () {
+                var el = this; // copy of this object for further usage
+
+                if (timeoutReference)
+                    clearTimeout(timeoutReference);
+                timeoutReference = setTimeout(function () {
+                    doneTyping.call(el);
+                }, 3000);
+            });
+            $('input#fulldon_donateurbundle_intersadonateurtype_nom').blur(function () {
+                doneTyping.call(this);
+            });
+        });
+        function doneTyping() {
+            // we only want to execute if a timer is pending
+            if (!timeoutReference) {
+                return;
+            }
+            // reset the timeout then continue on with the code
+            timeoutReference = null;
+
+            //
+            // Code to execute here
+            //
+            var nom = $('#fulldon_donateurbundle_intersadonateurtype_nom').val();
+            var prenom = $('#fulldon_donateurbundle_intersadonateurtype_prenom').val();
+            if (nom.length != 0 || prenom.length != 0) {
+                $('#proposition').show();
+                checkdonateur_byname(nom, prenom);
+            }
+
+        }
+        function close_proposition(id) {
+            if (id == 1) {
+                $('#proposition').hide();
+            } else {
+                $('#proposition_eclate').hide();
+                curdonateur = null;
+            }
+
+        }
+
+        //$(document).ready(function () {
+
+
+
+        // });
+
+
+
+
+
+    </script>
+{% endblock %}
+

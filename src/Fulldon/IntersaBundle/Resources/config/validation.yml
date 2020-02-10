@@ -1,0 +1,10 @@
+Fulldon\IntersaBundle\Entity\Personnalisation:
+    properties:
+        logo:
+            - File:
+                maxSize: "1024k"
+                mimeTypesMessage: "Veuillez uploder un logo valide "
+        couleur:
+            - Length:
+                min: 7
+                max: 7

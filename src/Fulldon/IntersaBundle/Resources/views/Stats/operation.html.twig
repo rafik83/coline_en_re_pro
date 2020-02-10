@@ -1,0 +1,138 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+
+    <div class="breadcrumbs" id="breadcrumbs">
+        <script type="text/javascript">
+            try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+        </script>
+            <ul class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li><a href="{{ path('intersa_advanced_stats') }}">Statistiques avancées</a></li>
+                <li class="active">Statistiques par entité ({{ entity }}) et par operation ({{ occasion }})</li>
+            </ul>
+        </div>
+    <div class="page-content">
+        <div class="col-md-12 pull-left">
+            <div class="page-header">
+                <h1>
+                    Statistiques globales
+                    <small>
+                        <i class="ace-icon fa fa-angle-double-right"></i>
+                        Entité : {{ entity }}, Operation : {{ occasion }}
+                    </small>
+                </h1>
+            </div>
+
+
+            <a href="#" onclick="document.forms['pdf'].submit()" class="btn btn-info" ><span class="glyphicon glyphicon-file"></span> Générer un PDF</a>
+
+        <a href="#" onclick="document.forms['excel'].submit()"  class="btn btn-default" ><img src="{{ asset('img/excel.png') }}" /> Générer un Excel</a>
+<hr />
+    <form action="{{ path('intersa_advanced_stats_operation_pdf') }}" method="post" name="pdf" target="_blank">
+        <input type="hidden" name="pdf_occasion" value="{{ occasion }}"/>
+        <input type="hidden" name="pdf_entity" value="{{ entity }}" />
+    </form>
+    <form action="{{ path('intersa_advanced_stats_operation_excel') }}" method="post" name="excel" target="_blank">
+        <input type="hidden" name="excel_occasion" value="{{ occasion }}"/>
+        <input type="hidden" name="excel_entity" value="{{ entity }}" />
+    </form>
+<b>Operation : </b>{{ occasion }}
+<hr />
+{% for flashMessage in app.session.flashbag.get('info') %}
+    <div class="alert alert-success">
+        {{ flashMessage }}
+    </div>
+{% endfor %}
+{% for flashMessage in app.session.flashbag.get('warning') %}
+    <div class="alert alert-warning">
+        {{ flashMessage }}
+    </div>
+{% endfor %}
+
+{% set total_pros = 0 %}
+{% set total_comptage = 0 %}
+{% set total_cumul = 0 %}
+{% set total_moyenne = 0 %}
+<div class="row">
+
+    <div class="form-group col-md-12">
+        <table class="table table-condensed">
+            <thead>
+            <tr>
+                <th>Code d'activité</th>
+                <th>Cible</th>
+                <th>Pianiste</th>
+                <th>hôte</th>
+                <th>Date</th>
+                <th>Moyenne des notes</th>
+                <th>Moyenne des notes (comptage de 10)</th>
+                <th>NB ENVOIS</th>
+                <th>NB DONS</th>
+                <th>TX DE RDT</th>
+                <th>Montant Collecté</th>
+                <th>Don MOYEN </th>
+            </tr>
+            </thead>
+            <tbody id="content" >
+            {% for r in data['result'] %}
+                <tr class="">
+                    {% set  pianiste = r.code|get_pianiste() %}
+                    {% set  hote = r.code|get_hote() %}
+                    {% set  date = r.code|get_date_concert() %}
+                    {% set  moyenne = r.code|get_moyenne() %}
+                    {% set  moyenne_ten = r.code|get_moyenne_ten() %}
+
+                    <td>{{ r.code }}</td>
+                    <td>{{ r.cible }}</td>
+                    <td>{{ pianiste }}</td>
+                    <td>{{ hote }}</td>
+                    <td>{{ date }}</td>
+                    <td>{{ moyenne }}</td>
+                    <td>{{ moyenne_ten }}</td>
+                    <td>{{ r.pros }}</td>
+                    <td>{{ r.comptage }}</td>
+                    <td>{% if r.pros != 0 %}{{ (r.comptage/r.pros)|round }}{% else %} 0 {% endif %}</td>
+                    <td>{{ r.cumul }}€</td>
+                    <td>{{ r.moyenne|round }}€</td>
+
+                    {% set total_pros = total_pros + r.pros %}
+                    {% set total_comptage = total_comptage + r.comptage %}
+                    {% set total_cumul = total_cumul + r.cumul %}
+                    {% set total_moyenne = total_moyenne + r.moyenne %}
+
+                </tr>
+            {% endfor %}
+            {# total #}
+            <tr class="label-info" style="font-weight: bold;color:white;">
+                <td colspan="6"  > TOTAL </td>
+
+                <td>{{ total_pros }}</td>
+                <td>{{ total_comptage }}</td>
+                <td></td>
+                <td>{{ total_cumul }}€</td>
+                <td>{% if (data['result']|length) != 0 %}{{ (total_moyenne/(data['result']|length))|round }}€ {% else %}0{% endif %}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+</div>
+
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+
+
+        <script>
+
+            $(document).ready(function() {
+                $("div.holder").jPages({
+                    containerID : "content",
+                    perPage: 10
+                });
+
+            });
+
+        </script>
+    {% endblock %}

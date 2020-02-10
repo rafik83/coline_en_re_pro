@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        #footer{
+            position:fixed;
+            bottom:0;
+            left:0;
+            height:100px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body style="height: 1200px;width:100%;margin:0px;margin-top:100px;">
+
+<div style="text-align: left;margin-left:60%;margin-bottom: 50px;">
+{{ donateur.id }}<br />
+{{ donateur.civilite }} {{ donateur.prenom }} {{ donateur.nom }}<br />
+{% if donateur.adresse1 is not null %} {{ donateur.adresse1 }}<br /> {% endif %}
+{% if donateur.adresse2 is not null %} {{ donateur.adresse2 }}<br /> {% endif %}
+{% if donateur.adresse3 is not null %} {{ donateur.adresse3 }}<br /> {% endif %}
+{% if donateur.adresse4 is not null %} {{ donateur.adresse4 }}<br /> {% endif %}
+    {{ donateur.zipcode }} {{ donateur.ville.name }}<br />
+</div>
+<br />
+<div style="text-align: left;margin-left:70%;padding-top: 10px;margin-bottom: 20px;">
+Pantin, le {{ "now"|date('d/m/Y') }}
+</div>
+
+<i>Votre n° donateur </i>: {{ donateur.refDonateur }}<br />
+<i>Votre référence unique de mandat </i>: {{ don.abonnement.rum }}<br />
+    <br />
+    <br />
+    <br />
+<div style="width: 100%;margin-bottom: 50px;font-size: 18px;">
+Cher Madame, Monsieur, <br />
+
+Vous avez choisi de soutenir régulièrement AIDES et l’ensemble de ses actions de lutte contre le sida et
+
+les hépatites. Je vous remercie vivement de votre confiance et de votre contribution à ce combat.<br /><br />
+
+Votre prélèvement de {{ don.montant }} € (hors don exceptionnel) démarrera comme convenu le {{ don.abonnement.dateFirstPa|date('d/m/Y') }}. <br /><br />
+
+Vos prélèvements suivants seront présentés le 05 de chaque {% if don.abonnement.periodicite.code == 3 %} trimestre {% elseif don.abonnement.periodicite.code == 10 %} année {% else %} {{don.abonnement.periodicite.code  }} mois {% endif %}.
+
+Pour vous informer de nos actions et de l’utilisation de vos dons, nous vous adresserons le journal
+
+trimestriel Entr'AIDES, sauf demande inverse de votre part.<br />
+
+Vous pouvez également consulter notre site www.aides.org et y découvrir l'espace dédié aux donateurs
+
+(pour créer un compte et accéder à votre espace personnel, vous devrez renseigner votre adresse e-mail
+
+et votre numéro de donateur). <br /><br />
+
+Dans cet espace, vous pouvez nous indiquer vos changements d’adresses,
+
+d’e-mail, de téléphone, télécharger un duplicata de votre reçu fiscal et trouver des informations qui vous
+
+Vous remerciant à nouveau pour votre engagement à nos côtés, je vous prie de croire, Cher Monsieur,
+</div>
+<div style="text-align: left;margin-left:80%;margin-bottom: 50px;">
+Pascale Mavinga <br />
+Service Donateurs, <br />
+Tel : 01 41 83 46 54 <br />
+E-mail : dons@aides.org <br />
+</div>
+
+P.S. : Vos dons à AIDES sont déductibles à 66% de l'impôt sur le revenu dans la limite de 20% du revenu imposable.<br /> <br /> <br />
+<div id="footer">
+<center style="font-size:10px;" >
+
+Association Reconnue d’Utilité Publique – Habilitée à recevoir des dons et à bénéficier de donations, assurances-vie et legs
+
+AIDES - Tour Essor - 14, rue Scandicci - 93508 PANTIN CEDEX - Tél: 01 41 83 46 46 – Fax : 01 41 83 46 59 - www.aides.org
+
+Labélisée « don en confiance » par le Comité de la Charte
+
+Numéro d’ICS : FR 84 ZZZ 392 221
+</center>
+</div>
+</body>
+</html>

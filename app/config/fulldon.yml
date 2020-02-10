@@ -1,0 +1,266 @@
+#custom parametersgit
+parameters:
+    max_articles_on_listepage: 10
+    path_scan: "%scan_url%"
+    prepare_pa: 4
+    prelevement_jour: 05 
+    assoc_name: 'Coline en ré'
+    assoc_iban: FR7630004028370001013067694
+    assoc_bic: BNPAFRPPPAA
+    assoc_sepa: FR81ZZZ660771
+    assoc_banque_name : COLINE EN RE
+    seuil_rf: 5
+    seuil_pnd : 2
+    folder_app: coline_en_re
+    #Réseaux sociaux
+    twitter_id: coline_en_re
+    facebook_id: jeanfrancois.galliot.3
+#    administrator_email:  padie@intersa.fr,turki@intersa.fr,moussaoui@intersa.fr,rehahlia@intersa.fr,giraud@intersa.fr,n.taourirt@coline-en-re.com
+    administrator_email: turki@intersa.fr
+#    fulldon_admins: danion@intersa.fr,padie@intersa.fr,giraud@intersa.fr,moussaoui@intersa.fr,rehahlia@intersa.fr,turki@intersa.fr
+    fulldon_admins: turki@intersa.fr
+#    mailer_sender: coline@coline-en-re.com
+    mailer_sender: turki@intersa.fr
+#    url_site: http://donner.coline-en-re.com
+    url_site: http://clpro.dev
+
+    mailer_host: email-smtp.eu-west-1.amazonaws.com
+    mailer_user: AKIAITUHAWPRPJVCVALQ
+    mailer_password: AnfZOju9TUp4ir2St9cAw7hHup0wDcltbNFsnP3e5nVq
+    mailer_port: 587
+    mailer_encryption: tls
+    auth_mode: login
+    scan_convert: /media/windows_share/FULLDONV2/SCAN_CONVERT_PROD
+    scan_url:  /media/windows_share/COLINE_EN_RE
+    elastic_db_name: coline_en_re
+#subscription
+    subscription_cb: 1
+    subscription_online: 1
+    donor_space: 1
+#Google analytics
+    google_analytics: UA-57685703-1
+#mandrill
+    prefix_tag: coline
+    subaccount: coline_en_re
+
+    subject_email_log: \PROD LOG/:ERROR FULLDON COLINE EN RE
+
+    fulldb_driver: pdo_mysql
+    fulldb_host: 178.170.71.43
+    fulldb_port: null
+    fulldb_name: final_fulldon
+    fulldb_user: root
+    fulldb_password: baxe6Equ
+
+#locations
+#imgsecure
+#Internationalization
+jms_i18n_routing:
+    default_locale: fr
+    locales: [fr, en, de]
+    strategy: prefix_except_default
+#payment
+jms_payment_core:
+    secret: someS3cretP4ssw0rd
+#Ogone
+ets_payment_ogone:
+    pspid:     colineenre
+    shain:     colineenre115prod=8Ta5(T
+    shaout:    colineenre115prod=8Ta5(TOUT
+    debug:     false
+    utf8:      true
+
+    api:
+        user: fulldon
+        password: nm)h7N5Qh(
+
+    design:
+        tp:
+        title:
+        bgColor:
+        txtColor:
+        tblBgColor:
+        tblTxtColor:
+        buttonBgColor:
+        buttonTxtColor:
+        fontType:
+        logo:
+
+    redirection:
+        accept_url:
+        decline_url:
+        exception_url:
+        cancel_url:
+        back_url:
+
+#elastic search
+
+fos_elastica:
+    clients:
+        default: { host: localhost, port: 9200 }
+    indexes:
+        coline_en_re:
+            client: default
+            settings:
+                index:
+                    analysis:
+                        analyzer:
+                            custom_french_analyzer:
+                                type: custom
+                                tokenizer: keyword
+                                filter: ["asciifolding", "lowercase", "french_stem", "stop_fr"]
+                        filter:
+                            stop_fr:
+                                type: "stop"
+                                stopwords: ["l", "m", "t", "qu", "n", "s", "j", "d"]
+            types:
+                cause:
+                    mappings:
+                        id:
+                            type: integer
+                        libelle: {type: "string",analyzer: custom_french_analyzer}
+                        code: {type: "string",analyzer: custom_french_analyzer}
+                    persistence:
+                        driver: orm
+                        model: Fulldon\DonateurBundle\Entity\Cause
+                        provider: ~
+                        listener:
+                            immediate: ~
+                        finder: ~
+                donateur:
+                    mappings:
+                        id:
+                            type: integer
+                        refDonateur:
+                            type: integer
+                        isopays:
+                            type: string
+                        civilite: ~
+                        email: ~
+                        nom: {type: "string",analyzer: custom_french_analyzer}
+                        prenom: {type: "string",analyzer: custom_french_analyzer}
+                        nomEntreprise: ~
+                        dateNaissance:
+                            type: date
+                        createdAt:
+                            type: date
+                        isoville: ~
+                        adresse1: ~
+                        adresse2: ~
+                        adresse3: ~
+                        adresse4: ~
+                        zipcode: ~
+                        allowRf: ~
+                        removed: ~
+                        categories:
+                            type: nested
+                            properties :
+                                name : ~
+                                code : ~
+                                id :
+                                    type : integer
+                        receptionMode:
+                            type: object
+                            properties:
+                                name : ~
+                                code : ~
+                                id :
+                                    type : integer
+                        telephoneMobile: ~
+                    persistence:
+                        driver: orm
+                        model: Fulldon\DonateurBundle\Entity\Donateur
+                        provider:
+                            debug_logging: false
+                            batch_size: 1000
+                        listener:
+                            immediate: ~
+                            logger: false
+                        finder: ~
+                don:
+                    mappings:
+                        id:
+                            type: integer
+                        modePaiement:
+                            type: object
+                            properties:
+                                libelle : ~
+                                codeSolution : ~
+                                id :
+                                    type : integer
+                        rfs:
+                            type: nested
+                            properties:
+                                id :
+                                    type : integer
+                        montant:
+                            type: double
+                        lot: ~
+                        dateFiscale:
+                            type: date
+                        createdAt:
+                            type: date
+                        type:
+                            type: object
+                            properties:
+                               libelle : ~
+                               code : ~
+                               id :
+                                   type : integer
+                        abonnement:
+                            type: object
+                            properties:
+                                dateFinPa:
+                                    type: date
+                                iban: ~
+                                bic: ~
+                                rum: ~
+                                disabledAt:
+                                    type: date
+                        ispa: ~
+                        user:
+                            type: object
+                            properties:
+                                id:
+                                    type: integer
+                        removed: ~
+                        removedAt:
+                            type: date
+                        cause:
+                            type: object
+                            properties:
+                                code: {type: "string",analyzer: custom_french_analyzer}
+                                codeOccasion:
+                                    type: object
+                                    properties:
+                                        code: {type: "string",analyzer: custom_french_analyzer}
+                                        codeCompagne:
+                                            type: object
+                                            properties:
+                                                code: {type: "string",analyzer: custom_french_analyzer}
+
+                        transaction:
+                            type: object
+                            properties:
+                                statut:
+                                    type: object
+                                    properties:
+                                        id:
+                                            type: integer
+                                        code: ~
+                                cheque:
+                                    type: object
+                                    properties:
+                                        numeroCheque: ~
+                    persistence:
+                        driver: orm
+                        model: Fulldon\DonateurBundle\Entity\Don
+                        provider:
+                            batch_size: 1000
+                        listener:
+                            immediate: ~
+                        finder: ~
+
+
+
+

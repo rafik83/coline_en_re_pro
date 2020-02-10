@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html  style="margin:0;padding:0;">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body style=" margin:0;height: 431px;padding: 20px;">
+<h3>{{ assoc_name }}</h3>
+<hr />
+<h4 class="couleur-donateur">{{ "Mandat de prélèvement SEPA"|trans({},'messages') }}:</h4>
+<table>
+    <tr><td><b>Coordonnées bancaires: </b></td><td>BIC: {{ don.abonnement.bic }} / IBAN: {{ don.abonnement.iban }}</td></tr>
+    <tr>   <td><b>Nom : </b></td><td>{{ donateur.prenom }} {{ donateur.nom }}</td></tr>
+    <tr>    <td><b>Référence unique du mandat :</b></td><td> {{ don.abonnement.rum }}</td></tr>
+    <tr>    <td><b>Montant :</b></td><td> {{ don.montant }} €</td></tr>
+    <tr>    <td><b>Périodicité :</b></td><td> {{ don.abonnement.periodicite.name }} </td></tr>
+    <tr>    <td><b>Adresse : </b></td><td>{{ donateur.adresse1 }} {{ donateur.adresse2 }} {{ donateur.adresse3 }}
+            {% if donateur.isoville  is defined and donateur.isoville  is not null %}
+                {{ donateur.isoville  }}
+            {% endif %}
+            {% if donateur.isopays  is defined and donateur.isopays  is not null %}
+                - {{ donateur.isopays  }}
+            {% endif %}
+            <br /></td></tr>
+    <tr>  <td><b>Numéro de mobile : </b></td><td>+{{ indicatif }}{{ telephone }}</td></tr>
+    </tr>
+</table>
+<br />
+</body>
+</html>

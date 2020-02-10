@@ -1,0 +1,81 @@
+ <div class="tab-pane">
+                <br/>
+
+                <table class="table table-condensed" id="liste_sg_don">
+                    <thead>
+                        <tr>
+
+                            <th>Titre</th>
+                            <th>Description</th>
+                            <th>Date Création</th>
+                            <!--th>Critére de Recherche</th-->
+                            <th>Chercher</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="content">
+
+                        {% for sgdon in sgdons %}
+                            <tr id="{{sgdon.id}}">
+                                <td>
+                                    {{sgdon.title}}
+                                </td> 
+                                <td>
+                                    {{sgdon.description}}
+                                </td> 
+                                <td>
+                                    {{sgdon.createdAt|date('d/m/Y')}}
+                                </td>
+                                <td>
+
+                                    <button id="btn_search_{{sgdon.id}}" onclick="SearchSuperDon({{sgdon.id}})"  class="btn btn-default btn-xs"><span>Chercher</span></button>
+                                </td> 
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <center>
+
+                    {% if pager is defined and pager is not null %}
+                        {# Pager #}
+                        {% if pager.haveToPaginate %}
+                            {% set state = '' %}
+                            <ul class="pagination pull-center">
+                                {# back #}
+                                {% if pager.hasPreviousPage %}
+                                    {% set state = 'paginate_button first' %}
+                                    <li class="{{ state }}"><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateIndex({{ pager.getCurrentPage() -1 }})">&laquo;&nbsp;{{ 'Previous'|trans }}</a></li>
+                                    {% else %}
+                                    <li class="disabled">
+                                        <span>&laquo;&nbsp;{{ 'Previous'|trans }}</span>
+                                    </li>
+                                {% endif %}
+                                {# pages 1 2 3 ... #}
+                                {% for givenPage in 1..pager.getNbPages() %}
+                                    {% set state = '' %}
+                                    {% if  pager.getCurrentPage()  == givenPage %}
+                                        {% set state = 'active' %}
+                                    {% endif %}
+                                    <li class="{{ state }}"><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateIndex({{ givenPage }})">{{ givenPage }}</a></li>
+                                    {%  endfor %}
+
+
+                                {# forward #}
+                                {% set state = '' %}
+                                {% if pager.hasNextPage %}
+                                    <li class="{{ state }}" ><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateIndex({{ pager.getCurrentPage() +1}})">{{ 'Next'|trans }}&nbsp;&raquo;</a></li>
+                                    {% else %}
+                                    <li class="disabled">
+                                        <span>&laquo;&nbsp;{{ 'Next'|trans }}</span>
+                                    </li>
+                                {% endif %}
+
+
+
+                            {% endif %}
+                        {% endif %}
+
+
+                </center>
+
+            </div>

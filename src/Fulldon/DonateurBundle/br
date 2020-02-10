@@ -1,0 +1,16 @@
+ *@ORM\Table(name="foyer_donateur", indexes={@ORM\Index(name="search_foyer_idx", columns={"id"})})
+
+
+
+/**
+     * @ORM\OneToMany(targetEntity="Donateur", mappedBy="foyer")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $donateurs;
+
+    public function __construct()
+    {
+        // your own logic
+        $this->donateurs = new ArrayCollection();
+       
+    }

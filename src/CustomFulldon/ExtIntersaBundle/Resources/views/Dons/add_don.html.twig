@@ -1,0 +1,357 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+        {% set cheques = { 'BC':'BC','CS':'CS' } %}
+        {% set pa = { 'PA':'PA' } %}
+        {% set virement = { 'VIREMENT':'VIREMENT' } %}
+        <div class="breadcrumbs" id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li><a href="{{ path('intersa_donateur') }}">Gestion des donateurs</a></li>
+                <li><a href="{{ path('intersa_donateur_gestion', {'id':donateur.id,'cumul':cumul|round(2, 'floor'),'date':date|date('d/m/Y')}) }}">Gestion du donateur
+                        #{{ donateur.id }}</a></li>
+                <li class="active"> Ajout d'un don pour le donateur #{{ donateur.id }} </li>
+            </ol>
+        </div>
+        <div class="page-content">
+        <div class="col-md-12">
+
+        <h3 style="margin-top:5px;" class="couleur-intersa"> Ajout d'un don pour le donateur #{{ donateur.id }} </h3>
+        <hr/>
+        
+
+        <form action="{{ path('intersa_dons_add', {'id':donateur.id, 'type': type}) }}" method="POST">
+        <label for="montant"><label for="montant" class="required">Montant</label></label>
+        {% if  app.session.flashbag.has('error_montant') %}
+            {# Affichage des erreurs pour ce champ précis. #}
+            <div class="form-group has-error">
+                <label class="control-label" for="inputError">
+                    {% for flashMessage in app.session.flashbag.get('error_montant') %}
+                        <li>{{ flashMessage }}</li>
+                    {% endfor %}
+                </label>
+                <input type="text" id="montant" name="montant" required="required" placeholder="Montant (en Euros)"
+                       class="task_field form-control"
+                       {% if champs['montant'] is defined %}value="{{ champs['montant'] }}" {% endif %} >
+            </div>
+        {% else %}
+            <input type="text" id="montant" name="montant" required="required" placeholder="Montant (en Euros)"
+                   {% if champs['montant'] is defined %}value="{{ champs['montant'] }}" {% endif %}
+                   class="task_field form-control">
+        {% endif %}
+        <br/>
+        <label for="code_activite"><label for="code_activite" class="required">Code activité</label></label>
+        {% if  app.session.flashbag.has('error_code_activite') %}
+            {# Affichage des erreurs pour ce champ précis. #}
+            <div class="form-group has-error">
+                <label class="control-label" for="inputError">
+                    {% for flashMessage in app.session.flashbag.get('error_code_activite') %}
+                        <li>{{ flashMessage }}</li>
+                    {% endfor %}
+                </label>
+                <input type="text" id="code_activite" name="code_activite" required="required" autocomplete="off"
+                       class="task_field form-control"
+                       {% if champs['code_activite'] is defined %}value="{{ champs['code_activite'] }}" {% endif %}  >
+            </div>
+        {% else %}
+            <input type="text" id="code_activite" name="code_activite" required="required" autocomplete="off"
+                   class="task_field form-control"
+                   {% if champs['code_activite'] is defined %}value="{{ champs['code_activite'] }}" {% endif %} >
+        {% endif %}
+        <br/>
+        <label for="date_fiscal"><label for="date_fiscale" class="required">Date Fiscale</label></label>
+        {% if  app.session.flashbag.has('error_date_fiscale') %}
+            {# Affichage des erreurs pour ce champ précis. #}
+            <div class="form-group has-error">
+                <label class="control-label" for="inputError">
+                    {% for flashMessage in app.session.flashbag.get('error_date_fiscale') %}
+                        <li>{{ flashMessage }}</li>
+                    {% endfor %}
+                </label>
+                <input type="text" id="date_fiscale" name="date_fiscale" placeholder="jj/mm/aaaa"
+                       class="task_field form-control "
+                       {% if champs['date_fiscale'] is defined %}value="{{ champs['date_fiscale'] }}"{% endif %}
+                       autocomplete="off">
+            </div>
+        {% else %}
+            <input type="text" id="date_fiscale" name="date_fiscale" placeholder="jj/mm/aaaa"
+                   class="task_field form-control "
+                   {% if champs['date_fiscale'] is defined %}value="{{ champs['date_fiscale'] }}"{% endif %}
+                   autocomplete="off">
+        {% endif %}
+        <br/>
+        {% if type in cheques|keys %}
+            <label for="num_cheque"><label for="num_cheque" class="required">Numero du chèque</label> </label>
+            <input type="text" id="num_cheque" name="num_cheque"
+                   value="{% if champs['num_cheque'] is defined %}{{ champs['num_cheque'] }}{% endif %}"
+                   class="task_field form-control ">
+            <br/>
+            <label for="num_cheque"><label for="date_cheque" class="required">Date du chèque</label></label>
+            {% if  app.session.flashbag.has('error_date_cheque') %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError">
+                        {% for flashMessage in app.session.flashbag.get('error_date_cheque') %}
+                            <li>{{ flashMessage }}</li>
+                        {% endfor %}
+                    </label>
+                    <input type="text" id="date_cheque" name="date_cheque" placeholder="jj/mm/aaaa"
+                           class="task_field form-control "
+                           {% if champs['date_cheque'] is defined %}value="{{ champs['date_cheque'] }}"{% endif %}
+                           autocomplete="off">
+                </div>
+            {% else %}
+                <input type="text" id="date_cheque" name="date_cheque" placeholder="jj/mm/aaaa"
+                       class="task_field form-control "
+                       {% if champs['date_cheque'] is defined %}value="{{ champs['date_cheque'] }}"{% endif %}
+                       autocomplete="off">
+            {% endif %}
+            <br/>
+        {% endif %}
+        {% if type in pa|keys %}
+            <label for="bic"><label for="bic" class="required">BIC</label></label>
+            {% if  app.session.flashbag.has('error_bic') %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError">
+                        {% for flashMessage in app.session.flashbag.get('error_bic') %}
+                            <li>{{ flashMessage }}</li>
+                        {% endfor %}
+                    </label>
+                    <input type="text" id="bic" name="bic" required="required" placeholder="BIC"
+                           class="task_field form-control "
+                           {% if champs['bic'] is defined %}value="{{ champs['bic'] }}"{% endif %} autocomplete="off">
+                </div>
+            {% else %}
+                <input type="text" id="bic" name="bic" required="required" placeholder="BIC"
+                       class="task_field form-control "
+                       {% if champs['bic'] is defined %}value="{{ champs['bic'] }}"{% endif %} autocomplete="off">
+            {% endif %}
+            <br/>
+            <label for="iban"><label for="iban" class="required">IBAN</label></label>
+            {% if  app.session.flashbag.has('error_iban') %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError">
+                        {% for flashMessage in app.session.flashbag.get('error_iban') %}
+                            <li>{{ flashMessage }}</li>
+                        {% endfor %}
+                    </label>
+                    <input type="text" id="iban" name="iban" required="required" placeholder="IBAN"
+                           class="task_field form-control "
+                           {% if champs['iban'] is defined %}value="{{ champs['iban'] }}"{% endif %} autocomplete="off">
+                </div>
+            {% else %}
+                <input type="text" id="iban" name="iban" required="required" placeholder="IBAN"
+                       class="task_field form-control "
+                       {% if champs['iban'] is defined %}value="{{ champs['iban'] }}"{% endif %} autocomplete="off">
+            {% endif %}
+            <br/>
+            <label for="date_first_pa"><label for="date_first_pa" class="required">Date du premier
+                    prélèvement </label></label>
+            {% if  app.session.flashbag.has('error_date_first_pa') %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError">
+                        {% for flashMessage in app.session.flashbag.get('error_date_first_pa') %}
+                            <li>{{ flashMessage }}</li>
+                        {% endfor %}
+                    </label>
+                    <input type="text" id="date_first_pa" name="date_first_pa" required="required"
+                           placeholder="jj/mm/aaaa" class="task_field form-control "
+                           {% if champs['date_first_pa'] is defined %}value="{{ champs['date_first_pa'] }}"{% endif %}
+                           autocomplete="off">
+                </div>
+            {% else %}
+                <input type="text" id="date_first_pa" name="date_first_pa" required="required" placeholder="jj/mm/aaaa"
+                       class="task_field form-control "
+                       {% if champs['date_first_pa'] is defined %}value="{{ champs['date_first_pa'] }}"{% endif %}
+                       autocomplete="off">
+            {% endif %}
+            <br/>
+            <label for="date_fin_pa"><label for="date_fin_pa" class="required">Date du fin de
+                    prélèvement</label></label>
+            {% if  app.session.flashbag.has('error_date_fin_pa') %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError">
+                        {% for flashMessage in app.session.flashbag.get('error_date_fin_pa') %}
+                            <li>{{ flashMessage }}</li>
+                        {% endfor %}
+                    </label>
+                    <input type="text" id="date_fin_pa" name="date_fin_pa" placeholder="jj/mm/aaaa"
+                           class="task_field form-control "
+                           {% if champs['date_fin_pa'] is defined %}value="{{ champs['date_fin_pa'] }}"{% endif %}
+                           autocomplete="off">
+                </div>
+            {% else %}
+                <input type="text" id="date_fin_pa" name="date_fin_pa" placeholder="jj/mm/aaaa"
+                       class="task_field form-control "
+                       {% if champs['date_fin_pa'] is defined %}value="{{ champs['date_fin_pa'] }}"{% endif %}
+                       autocomplete="off">
+            {% endif %}
+            <br/>
+            <label for="periodicite"><label for="periodicite" class="required">Périodicité</label></label>
+            {% if  app.session.flashbag.has('error_periodicite') %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError">
+                        {% for flashMessage in app.session.flashbag.get('error_periodicite') %}
+                            <li>{{ flashMessage }}</li>
+                        {% endfor %}
+                    </label>
+                    <SELECT id="periodicite" name="periodicite" required="required" class="task_field form-control ">
+                        {% for periode in periodes %}
+                            <option value="{{ period.id }}"
+                                    {% if champs['periodicite'] is defined and champs['periodicite']== period.id %}selected="selected"{% endif %}>{{ period.name }}</option>
+                        {% endfor %}
+                    </SELECT>
+                </div>
+            {% else %}
+                <SELECT id="periodicite" name="periodicite" required="required" class="task_field form-control ">
+                    {% for periode in periodes %}
+                        <option value="{{ periode.id }}"
+                                {% if champs['periodicite'] is defined and champs['periodicite']== periode.id %}selected="selected"{% endif %}>{{ periode.name }}</option>
+                    {% endfor %}
+                </SELECT>
+            {% endif %}
+            <br/>
+        {% endif %}
+        {% if type in cheques|keys  or type in pa|keys or type in virement|keys %}
+            <label for="nom_banque"><label for="nom_banque" class="required">Nom de la banque</label></label>
+            {% if  app.session.flashbag.has('error_nom_banque') %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError">
+                        {% for flashMessage in app.session.flashbag.get('error_nom_banque') %}
+                            <li>{{ flashMessage }}</li>
+                        {% endfor %}
+                    </label>
+                    <input type="text" id="nom_banque" name="nom_banque" class="task_field form-control"
+                           {% if champs['nom_banque'] is defined %}value="{{ champs['nom_banque'] }}"{% endif %}
+                           autocomplete="off">
+                </div>
+            {% else %}
+                <input type="text" id="nom_banque" name="nom_banque" class="task_field form-control"
+                       {% if champs['nom_banque'] is defined %}value="{{ champs['nom_banque'] }}"{% endif %}
+                       autocomplete="off">
+            {% endif %}
+        {% endif %}
+        <br/>
+        <h4>Évaluation :</h4>
+        <label class="inline">
+            <input type="checkbox" class="ace" id="isnotes" name="isnotes" onchange="updatenotes()" value="1">
+            <span class="lbl"> Absence de notes</span>
+        </label>
+
+        <div class="form-inline">
+
+            <label class="inline" for="q1">Q1</label>
+            <input type="text" class="input-small" id="q1" name="q1">
+
+            <label class="inline" for="q2">Q2</label>
+            <input type="text" class="input-small" id="q2" name="q2">
+            <label class="inline" for="q3">Q3</label>
+            <input type="text" class="input-small" id="q3" name="q3">
+
+            <label class="inline" for="q4">Q4</label>
+            <input type="text" class="input-small" id="q4" name="q4">
+
+            <label class="inline" for="q4">Q5</label>
+            <input type="text" class="input-small" id="q5" name="q5">
+
+            <label class="inline" for="q4">Q6</label>
+            <input type="text" class="input-small" id="q6" name="q6">
+
+            <label class="inline" for="q4">Q7</label>
+            <input type="text" class="input-small" id="q7" name="q7">
+            <label class="inline" for="q4">Q8</label>
+            <input type="text" class="input-small" id="q8" name="q8">
+            <label class="inline" for="q4">Q9</label>
+            <input type="text" class="input-small" id="q9" name="q9">
+            <label class="inline" for="q4">Q10</label>
+            <input type="text" class="input-small" id="q10" name="q10">
+
+        </div>
+        <br/>
+        <div class="widget-toolbox padding-8 clearfix">
+
+
+            <button class="btn btn-xs btn-success pull-right" type="submit">
+                <span class="bigger-110">Ajouter le don</span>
+
+                <i class="ace-icon fa fa-check icon-on-right"></i>
+            </button>
+        </div>
+        </form>
+
+        </div>
+        </div>
+    {% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+
+        var $inputCause = $('#code_activite');
+
+        //causes
+        $.ajax({
+            url: "/intersa/causes",
+            beforeSend: function (xhr) {
+                ;
+            }
+        })
+                .done(function (data) {
+                    if (data.length != 0) {
+
+                        $inputCause.typeahead({source: data,
+                            autoSelect: true});
+                    }
+
+                });
+
+        $inputCause.change(function () {
+            var current = $inputCause.typeahead("getActive");
+            if (current) {
+                // Some item from your model is active!
+                if (current.name == $inputCause.val()) {
+                    // This means the exact match is found. Use toLwerCase() if you want case insensitive match.
+                } else {
+                    // This means it is only a partial match, you can either add a new item
+                    // or take the active if you don't want new items
+                }
+            } else {
+                // Nothing is active so it is a new value (or maybe empty value)
+            }
+        });
+
+    </script>
+    <script>
+        function updatenotes() {
+
+            if ($('#isnotes').is(':checked')) {
+                $('#q1').prop('disabled', true);
+                $('#q2').prop('disabled', true);
+                $('#q3').prop('disabled', true);
+                $('#q4').prop('disabled', true);
+                $('#q5').prop('disabled', true);
+                $('#q6').prop('disabled', true);
+                $('#q7').prop('disabled', true);
+                $('#q8').prop('disabled', true);
+                $('#q9').prop('disabled', true);
+                $('#q10').prop('disabled', true);
+            } else {
+                $('#q1').prop('disabled', false);
+                $('#q2').prop('disabled', false);
+                $('#q3').prop('disabled', false);
+                $('#q4').prop('disabled', false);
+                $('#q5').prop('disabled', false);
+                $('#q6').prop('disabled', false);
+                $('#q7').prop('disabled', false);
+                $('#q8').prop('disabled', false);
+                $('#q9').prop('disabled', false);
+                $('#q10').prop('disabled', false);
+            }
+
+        }
+    </script>
+{% endblock %}

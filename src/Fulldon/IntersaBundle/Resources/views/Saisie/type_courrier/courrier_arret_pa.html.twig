@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        #footer{
+            position:fixed;
+            bottom:0;
+            left:0;
+            height:100px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body style="height: 2500px;width:100%;margin:0px;margin-top:100px;">
+
+<div style="text-align: left;margin-left:60%;margin-bottom: 50px;">
+    {{ donateur.id }}<br />
+    {{ donateur.civilite }} {{ donateur.prenom }} {{ donateur.nom }}<br />
+    {% if donateur.adresse1 is not null %} {{ donateur.adresse1 }}<br /> {% endif %}
+    {% if donateur.adresse2 is not null %} {{ donateur.adresse2 }}<br /> {% endif %}
+    {% if donateur.adresse3 is not null %} {{ donateur.adresse3 }}<br /> {% endif %}
+    {% if donateur.adresse4 is not null %} {{ donateur.adresse4 }}<br /> {% endif %}
+    {{ donateur.zipcode }} {{ donateur.ville.name }}<br />
+</div>
+<br />
+<div style="text-align: left;margin-left:70%;padding-top: 10px;margin-bottom: 20px;">
+    Pantin, le {{ "now"|date('d/m/Y') }}
+</div>
+
+<i>Votre n° donateur </i>: {{ donateur.refDonateur }}<br />
+<i>Votre référence unique de mandat </i>: {{ don.abonnement.rum }}<br />
+<br />
+<br />
+<br />
+<div style="width: 100%;margin-bottom: 50px;font-size: 18px;">
+    Cher Madame, Monsieur, <br />
+
+    Conformément à votre demande, j’ai interrompu votre don régulier de {{ don.montant }} € chaque mois.<br /><br />
+
+    Je vous informe que la date du dernier prélèvement est le {{ don.abonnement.dateNextPa|date('d/m/Y') }}.<br /><br />
+
+    Je tiens sincèrement à vous remercier du soutien que vous nous avez apporté et espère que vous serez de nouveau à nos côtés à l’avenir. En effet, les dons par prélèvement automatique sont le meilleur moyen de soutenir dans la durée la lutte contre le sida et les hépatites. Ils nous permettent de mieux évaluer à l’avance les budgets dont nous disposons pour mener à bien nos actions et de réduire les coûts de traitement des dons.
+    Jour après jour, nous pouvons compter sur un soutien fidèle pour développer des actions de prévention, de dépistage et de soutien des personnes touchées par le VIH et mettre en place des actions de plaidoyer pour lutter contre les discriminations des personnes séropositives et pour favoriser l’accès aux droits et à la santé pour tous.<br /><br />
+
+    Pour en savoir plus sur nos actions, vous pouvez consulter notre site internet aides.org, où un espace Donateurs vous est toujours réservé (pour accéder à votre espace personnel, vous devrez renseigner votre adresse e-mail).<br /><br />
+    Dans cet espace, vous pouvez nous indiquer vos changements d’adresses, d’e-mail, de téléphone, télécharger un duplicata de votre reçu fiscal et trouver des informations qui vous sont réservées.<br /><br />
+
+    Nous savons votre attachement à notre cause et nous nous permettrons de reprendre contact avec vous dans quelques temps. Vous recevrez également un reçu fiscal au printemps de l’année suivant vos dons.<br /><br />
+
+    Je vous prie d’agréer, Chère Mademoiselle, l’expression de mes cordiales salutations.<br /><br />
+
+</div>
+<div style="text-align: left;margin-left:80%;margin-bottom: 50px;">
+    Pascale Mavinga <br />
+    Service Donateurs, <br />
+    Tel : 01 41 83 46 54 <br />
+    E-mail : dons@aides.org <br />
+</div>
+
+P.S. : Vos dons à AIDES sont déductibles à 66% de l'impôt sur le revenu dans la limite de 20% du revenu imposable.<br /> <br /> <br />
+
+
+<br /><br /><br /><br />
+<div>
+
+<hr /><br /><br />
+    <div style="float:left;width:50%">
+        Votre n° de donateur : {{ donateur.refDonateur }}<br />
+        {{ donateur.civilite }} {{ donateur.prenom }} {{ donateur.nom }}<br />
+        Oui, je veux soutenir AIDES dans son combat
+        contre le sida.<br /><br />
+
+        Je vous adresse pour cela un don de :<br /><br />
+
+        	<input type="checkbox" />  15€         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;             <input type="checkbox" />  30€ <br />
+            <input type="checkbox" />  45€         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;             <input type="checkbox" />  60€ <br /><br />
+        ……………………€ (Autre montant)<br /><br />
+
+
+        Je vous communique mon email pour : <br />
+
+        <input type="checkbox" /> Pouvoir accéder à mon Espace Donateurs sur www.aides.org <br />
+        <input type="checkbox" /> Recevoir mon reçu fiscal par email <br /><br />
+        .........................................@.............................................<br /><br />
+        AIDES est habilitée à recevoir des dons et à bénéficier de donations, assurances-vie et legs.
+
+
+    </div>
+    <div style="float:left;width:40%;padding-left:20px;">
+    <center><b>Association reconnue d’utilité publique</b></center><br /><br />
+        AIDES est la première association française de lutte contre le sida et les hépatites. Les milliers de
+        volontaires de son réseau national sont présents sur tous les fronts de l’épidémie : l’aide et le soutien aux
+        personnes atteintes, l’information et la prévention, l’accès aux droits et aux traitements.<br /><br />
+    <center><b>DEDUCTION FISCALE</b></center><br /><br />
+        66% de votre don à AIDES est déductible de vos impôts dans la limite de 20% de votre revenu imposable.
+        Si vos dons dépassent le plafond vous pourrez reporter sur 5 ans la déduction de l’excédent.
+    </div>
+</div>
+<div id="footer">
+    <center style="font-size:10px;" >
+
+        Association Reconnue d’Utilité Publique – Habilitée à recevoir des dons et à bénéficier de donations, assurances-vie et legs
+
+        AIDES - Tour Essor - 14, rue Scandicci - 93508 PANTIN CEDEX - Tél: 01 41 83 46 46 – Fax : 01 41 83 46 59 - www.aides.org
+
+        Labélisée « don en confiance » par le Comité de la Charte
+
+        Numéro d’ICS : FR 84 ZZZ 392 221
+    </center>
+</div>
+</body>
+</html>

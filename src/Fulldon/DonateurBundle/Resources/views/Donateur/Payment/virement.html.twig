@@ -1,0 +1,112 @@
+{% extends "FulldonDonateurBundle:Donateur:coque_donateur.html.twig" %}
+    {% block coque_donateur %}
+        <div class="row" >
+
+        <div class="col-md-12" >
+
+        <h1  class="couleur-donateur" >{{ "Paiement par virement"|trans({},'messages') }} </h1>
+        <hr />
+            <ol class="progtrckr" data-progtrckr-steps="3">
+                <li class="progtrckr-done">{{ "Configuration"|trans({},'messages') }}</li>
+                <li class="progtrckr-done">{{ "Paiement"|trans({},'messages') }}</li>
+                <li class="progtrckr-todo">{{ "Validation"|trans({},'messages') }}</li>
+            </ol>
+         <br />
+        <div class="alert alert-info">{{ "Vos coordonnées bancaires"|trans({},'messages') }} : <br />
+
+            {{ "Veuillez vous munir d'un relevé d'identité bancaire pour remplir les champs ci-dessous"|trans({},'messages') }}.</div>
+        {% for flashMessage in app.session.flashbag.get('info') %}
+            <div class="alert alert-success">
+                {{ flashMessage|trans({},'messages') }}
+            </div>
+        {% endfor %}
+            <div class="row" >
+
+                <div class="col-md-6" >
+            <form action="{{ path('donateur_don_reglement', {'mode': don.modePaiement.id, 'id':don.id}) }}" method="post" class="form-group" >
+
+                <label for="bic"><label for="bic" class="required">BIC</label></label>
+                {% if  app.session.flashbag.has('error_bic')%}
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputError">
+                            {% for flashMessage in app.session.flashbag.get('error_bic') %}
+                                <li>{{ flashMessage|trans({},'messages') }}</li>
+                            {% endfor %}
+                        </label>
+                        <input type="text" id="bic" name="bic" required="required"  placeholder="BIC" class="task_field form-control " {% if champs['bic'] is defined %}value="{{ champs['bic'] }}"{% endif %} autocomplete="off">
+                    </div>
+                {% else %}
+                    <input type="text" id="bic" name="bic" required="required"  placeholder="BIC" class="task_field form-control " {% if champs['bic'] is defined %}value="{{ champs['bic'] }}"{% endif %} autocomplete="off">
+                {% endif %}
+                <br />
+                <label for="iban"><label for="iban" class="required">IBAN</label></label>
+                {% if  app.session.flashbag.has('error_iban')%}
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputError">
+                            {% for flashMessage in app.session.flashbag.get('error_iban') %}
+                                <li>{{ flashMessage|trans({},'messages') }}</li>
+                            {% endfor %}
+                        </label>
+                        <input type="text" id="iban" name="iban" required="required"  placeholder="IBAN" class="task_field form-control " {% if champs['iban'] is defined %}value="{{ champs['iban'] }}"{% endif %} autocomplete="off">
+                    </div>
+                {% else %}
+                    <input type="text" id="iban" name="iban" required="required"  placeholder="IBAN" class="task_field form-control " {% if champs['iban'] is defined %}value="{{ champs['iban'] }}"{% endif %} autocomplete="off">
+                {% endif %}
+                <br />
+                <label for="periodicite"><label for="periodicite" class="required">{{ "Périodicité"|trans({},'messages') }}</label></label>
+                {% if  app.session.flashbag.has('error_periodicite')%}
+                    {# Affichage des erreurs pour ce champ précis. #}
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputError">
+                            {% for flashMessage in app.session.flashbag.get('error_periodicite') %}
+                                <li>{{ flashMessage|trans({},'messages') }}</li>
+                            {% endfor %}
+                        </label>
+                        <SELECT id="periodicite" name="periodicite" required="required" class="task_field form-control " >
+                            {% for periode in periodes %}
+                                <option value="{{ period.id }}" {% if champs['periodicite'] is defined and champs['periodicite']== period.id %}selected="selected"{% endif %}>{{ period.name }}</option>
+                            {% endfor %}
+                        </SELECT>
+                    </div>
+                {% else %}
+                    <SELECT id="periodicite" name="periodicite" required="required" class="task_field form-control " >
+                        {% for periode in periodes %}
+                            <option value="{{ periode.id }}" {% if champs['periodicite'] is defined and champs['periodicite']== periode.id %}selected="selected"{% endif %}>{{ periode.name }}</option>
+                        {% endfor %}
+                    </SELECT>
+                {% endif %}
+                <br />
+
+                    <label for="nom_banque"><label for="nom_banque" class="required">{{ "Nom de la banque"|trans({},'messages') }}</label></label>
+                    {% if  app.session.flashbag.has('error_nom_banque')%}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError">
+                                {% for flashMessage in app.session.flashbag.get('error_nom_banque') %}
+                                    <li>{{ flashMessage|trans({},'messages') }}</li>
+                                {% endfor %}
+                            </label>
+                            <input type="text" id="nom_banque" name="nom_banque" required="required" class="task_field form-control" {% if champs['nom_banque'] is defined %}value="{{ champs['nom_banque'] }}"{% endif %} autocomplete="off">
+                        </div>
+                    {% else %}
+                        <input type="text" id="nom_banque" name="nom_banque" required="required" class="task_field form-control" {% if champs['nom_banque'] is defined %}value="{{ champs['nom_banque'] }}"{% endif %} autocomplete="off">
+                    {% endif %}
+                    <br />
+                    <center><input type="submit" value="{{ "Soumettre le paiement"|trans({},'messages') }}" class="btn btn-primary" /></center>
+
+            </form>
+                    </div>
+                <div class="col-md-6" >
+                    Les informations que vous nous communiquez sont à l'usage exclusif de la Croix-Rouge française.
+                    Conformément à la loi "informatique et libertés" du 6 janvier 1978, vous disposez d’un droit d’accès, de suppression et de rectification de vos données.
+                    </div>
+                </div>
+        </div>
+            </div>
+    {% endblock %}
+    {% block javascripts %}
+    {{ parent() }}
+
+{% endblock %}

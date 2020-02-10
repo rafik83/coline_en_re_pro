@@ -1,0 +1,125 @@
+  {% for key,value in col_display %}
+                    {% for key2,value2 in value %}
+
+                        {% if key2 == "numdonateur" %}
+                            <th >{{value2}}</th>
+                            {% elseif key2 ==  "nom" %}
+                            <th >{{value2}}</th>
+                            {% elseif key2 ==  "prenom" %}
+                            <th >{{value2}}</th>
+
+
+                        {% elseif key2 ==  "cat" %}
+                            <th >{{value2}}</th>
+
+
+                        {% elseif key2 ==  "nomentreprise" %}
+                            <th >{{value2}}</th>
+                            {% elseif key2 ==  "statut" %}
+                            <th >{{value2}}</th>
+
+                        {% elseif key2 ==  "email" %}
+                            <th >{{value2}}</th>
+
+
+                        {% elseif key2 ==  "telmobile" %}
+                            <th >{{value2}}</th>
+
+                            {#% elseif key2 ==  "birthday" %}
+                                <th >{{value2}#}<!--/th-->
+
+                        {% elseif key2 ==  "adresse" %}
+                            <th >{{value2}}</th>
+
+                            {#% elseif key2 ==  "telmobile" %}
+                                <th >{{value2}}</th>
+    
+                            {% elseif key2 ==  "telfixe" %}
+                                <th >{{value2}#}<!--/th-->
+
+                            {#% elseif key2 ==  "adscriterecherchese" %#}
+                                <!--th >{#{value2}#}</th-->
+                        {% elseif key2 ==  "ville" %}
+                            <th >{{value2}}</th>
+
+                        {% elseif key2 ==  "pays" %}
+                            <th >{{value2}}</th>
+
+                        {% elseif key2 ==  "zipcode" %}
+                            <th >{{value2}}</th>
+
+                            {#% elseif key2 ==  "createdat" %}
+                                <th >{{value2}#}<!--/th-->
+
+                        {% endif %}
+
+
+                    {% endfor %}
+                {% endfor %}
+
+---------------------------------------------
+
+
+  {% for r2 in data2 %}
+                <tr id="id_ligneserach_{{r2['id']}}">
+                    {% for key,value in col_display %}
+                        {% for key2,value2 in value %}
+                            {% if key2 == "numdonateur" %}
+                                <td>{{ r2['ref_donateur'] }}</td>
+                            {% elseif key2 ==  "nom" %}
+                                <td>{{ r2['nom'] }}</td>
+                            {% elseif key2 == "prenom" %}
+                                <td>{{ r2['prenom'] }}</td>
+                            {% elseif key2 == "statut" %}
+                                <td> {% if r2['removed'] %}<span
+                                        class="label label-danger arrowed-in arrowed-in-right">Désactivé</span> {% else %}
+                                    <span class="label label-success arrowed-in arrowed-in-right">Actif</span>{% endif %}
+                                </td>
+                            {% elseif key2 == "cat" %}
+                                <td><ul>
+                                        {% for r in data %}
+                                            {%if r['id'] == r2['id']  %}
+                                                {%if r['id'] is not null  %}
+                                                    <li>{{ r['name'] }}</li>
+                                                    {%endif%}
+                                                {%endif%}
+                                            {% endfor %}
+
+
+                                    </ul></td>
+                                {% elseif key2 == "nomentreprise" %}
+                                <td>{% if r2['nom_entreprise'] is defined and r2['nom_entreprise'] is not null %}{{ r2['nom_entreprise'] }}{% else %} N/A{% endif %}</td>
+                            {% elseif key2 == "email" %}
+                                <td>{{ r2['email'] }}</td>
+
+                            {% elseif key2 == "telmobile" %}
+                                <td>{{ r2['telephone_mobile'] }}</td>
+
+
+                                {#% elseif key2 == "birthday" %}
+                                    <!--td>{#{ r2['datenaissance']|date('d/m/Y') }#}<!--/td-->
+                                <!--td-->{#{ r2['datenaissance'] }}</td>
+                                {#% elseif key2 == "telmobile" %}
+                                    <td>{{ r2['telephone_mobile'] }#}<!--/td-->
+                                {#% elseif key2 == "telfixe" %}
+                                    <td>{{ r2['telephone_fixe'] }#}<!--/td-->
+                            {% elseif key2 == "adresse" %}
+                                <td>{{ r2['adresse3'] }}</td>
+                            {% elseif key2 == "ville" %}
+                                <td>{{ r2['iso_ville'] }}</td>
+                            {% elseif key2 == "pays" %}
+                                <td>{{ r2['iso_pays']|getcountryname }}</td>
+                            {% elseif key2 == "zipcode" %}
+                                <td>{{ r2['zipcode'] }}</td>
+                                {#% elseif key2 == "createdat" %}
+                                    <td>{{ r2['created_at']|date('d/m/Y') }#}<!--/td-->
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </tr>
+
+            {% endfor %}
+
+-------------------------------------
+
+

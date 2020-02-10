@@ -1,0 +1,38 @@
+{% extends "FulldonSecurityBundle::layout.html.twig" %}
+{% block body %}
+
+
+    {# Le formulaire, avec URL de soumission vers la route « login_check » comme on l'a vu #}
+    <div class="container console-auth" style="">
+
+        <form class="form-signin console-form-auth" role="form" action="{{ path('login_intersa_check') }}" method="post">
+            <div class="logo-access">
+                <center>
+                <img src="{{ asset('img/logo.png') }}" class="img-responsive" />
+                </center>
+            </div>
+            {% for flashMessage in app.session.flashbag.get('info') %}
+                <div class="alert alert-success">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+            {# S'il y a une erreur, on l'affiche dans un joli cadre #}
+            {% if error %}
+                <div class="alert alert-danger">{{ error.message|trans({},'messages') }}</div>
+            {% endif %}
+            <div class="input-group">
+                <div class="input-group-addon"><i class="fa fa-user"></i></div>
+            <input type="text" name="_username" class="form-control" placeholder=" " required autofocus>
+                </div>
+            <br />
+            <div class="input-group">
+                <div class="input-group-addon"><i class="fa fa-lock"></i></div>
+            <input type="password" name="_password" class="form-control" placeholder="Mot de passe" required style="margin:0px;">
+            </div>
+            <br />
+            <input type="hidden" name="_target_path" value="{{ path('fulldon_intersa_homepage') }}" />
+            <button class="btn btn-lg btn-primary btn-block" type="submit" style="border-radius: 0px !important;">Connexion</button>
+        </form>
+
+    </div> <!-- /container -->
+{% endblock %}

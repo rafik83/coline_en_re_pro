@@ -1,0 +1,346 @@
+{# empty Twig template #}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $(function () {
+            $("#sortable1, #sortable2").sortable({
+                connectWith: ".connectedSortable",
+                update: function () {
+                    var order = $('#sortable2').sortable('serialize');
+                    var res = order.split("&");
+                    for (var i in res) {
+                        var formatid = res[i];
+                        var myid = formatid.substring(7, formatid.length);
+                        $('#list_' + myid).removeClass('ui-state-default');
+                        $('#list_' + myid).addClass('ui-state-highlight');
+                    }
+                    $('#columns').val(order);
+                    var orderdisable = $('#sortable1').sortable('serialize');
+                    var res = orderdisable.split("&");
+                    for (var i in res) {
+                        var formatid = res[i];
+                        var myid = formatid.substring(7, formatid.length);
+                        $('#list_' + myid).addClass('ui-state-default');
+                        $('#list_' + myid).removeClass('ui-state-highlight');
+                    }
+                }
+
+            }).disableSelection();
+        });
+
+
+
+        var columns = $('#columns').val();
+        $("#columns_de_popup").val(columns);
+        alert($("#columns_de_popup").val());
+        var titre_de = $("#titre_de_popup").val();
+        var description_de = $("#description_de_popup").val();
+        var columns_de = $("#columns_de_popup").val();
+        var url = "{{path('intersa_donateur_dessin_add')}}";
+
+        $('#frm_popup_dessin').submit(function (e) {
+            //e.preventDefault();
+            var columns = $('#columns').val();
+            $("#columns_de_popup").val(columns);
+            alert($("#columns_de_popup").val());
+            var url = "{{ path('intersa_donateur_dessin_add') }}";
+            var formSerialize = $(this).serialize();
+            $.post(url, formSerialize, function (response) {
+                //your callback here
+                //alert('response');
+            }, 'JSON');
+        });
+
+        $("#sortable2").append('<li id="list_numdonateur" class="ui-state-highlight ui-sortable-handle"><i class="fa fa-cube"></i> <b>Numéro du donateur</b></li>');
+        $("#sortable2").append('<li id="list_nom" class="ui-state-highlight ui-sortable-handle"><i class="fa fa-cube"></i> <b>Nom</b></li>');
+        $("#sortable2").append('<li id="list_prenom" class="ui-state-highlight ui-sortable-handle"><i class="fa fa-cube"></i> <b>Prénom</b></li>');
+        $("#sortable2").append('<li id="list_nomentreprise" class="ui-state-highlight ui-sortable-handle"><i class="fa fa-cube"></i> <b>Nom entreprise</b></li>');
+        $("#sortable2").append('<li id="list_statut" class="ui-state-highlight ui-sortable-handle"><i class="fa fa-cube"></i> <b>Statut</b></li>');
+        // end init sortable2
+        // debut init sortable1
+        $("#sortable1").append('<li id="list_ville" class="ui-state-default ui-sortable-handle"><i class="fa fa-cube"></i> <b>Ville</b></li>');
+        $("#sortable1").append('<li id="list_pays" class="ui-state-default ui-sortable-handle"><i class="fa fa-cube"></i> <b>Pays</b></li>');
+        $("#sortable1").append('<li id="list_zipcode" class="ui-state-default ui-sortable-handle"><i class="fa fa-cube"></i> <b>Code postal</b></li>');
+        $("#sortable1").append('<li id="list_birthday" class="ui-state-default ui-sortable-handle"><i class="fa fa-cube"></i> <b>Date de naissance</b></li>');
+        $("#sortable1").append('<li id="list_email" class="ui-state-default ui-sortable-handle"><i class="fa fa-cube"></i> <b>Email</b></li>');
+        $("#sortable1").append('<li id="list_telmobile" class="ui-state-default ui-sortable-handle"><i class="fa fa-cube"></i> <b>Téléphone mobile</b></li>');
+        $("#sortable1").append('<li id="list_telfixe" class="ui-state-default ui-sortable-handle"><i class="fa fa-cube"></i> <b>Téléphone fixe</b></li>');
+        $("#sortable1").append('<li id="list_createdat" class="ui-state-default ui-sortable-handle"><i class="fa fa-cube"></i> <b>Date de creation</b></li>');
+        $("#sortable1").append('<li id="list_cat" class="ui-state-default ui-sortable-handle"><i class="fa fa-cube"></i> <b>Catégories</b></li>');
+        $("#sortable1").append('<li id="list_adresse" class="ui-state-default ui-sortable-handle"><i class="fa fa-cube"></i> <b>Adresse</b></li>');
+        $("#sortable1").append('<li id="list_cumuldon" class="ui-state-default ui-sortable-handle"><i class="fa fa-cube"></i> <b>Cumul des dons</b></li>');
+
+
+    });
+
+                <li class="disabled">
+    <span>&laquo;&nbsp;{{ 'Previous'|trans }}</span>
+    </li>
+
+
+    $('#cause').change(function () {
+        // get the current value of the input field.
+        if ($("#cause").val().length === 0) {
+            $("#btn_fields_generate_exel").css('display', 'none');
+        } else {
+            $("#btn_fields_generate_exel").css('display', 'block');
+        }
+    });
+
+    function Init() {
+        $("#id_don").val('');
+        $("#cause").val('');
+        $("#code_occasion").val('');
+        $("#code_campagne").val('');
+        $("#num_rf").val('');
+        $("#lot_don").val('');
+        $("#iban_elastic_dons").val('');
+        $("#num_cheque").val('');
+        $("#type_don_dropdown").val('');
+        $("#mode_paiement").val('');
+        $("#date_debut").val('');
+        $("#date_fin").val('');
+        $("#date_stop_debut").val('');
+        $("#date_stop_fin").val('');
+        $("#montant_choice_dropdown").val('');
+        $("#montant_don").val('');
+        $("#don_inactif_cb").removeAttr('checked');
+        $('#don_actif_cb').removeAttr('checked');
+        //window.location.reload();
+        $("#don_is_rf_cb").removeAttr('checked');
+        //$("#loading-ajax_elastica").css('display', 'none');
+        $("#msg_don_succes").css('display', 'none');
+        $("#msg_don_warning").css('display', 'none');
+        //alert('windows location reload');
+
+        window.location.href = "{{ path('elastic_don') }}";//'/intersa/dons';
+    }
+    //exportation exel
+    $(function () {
+        $("#btn_fields_generate_exel").click(function (e) { // btn_exporter_donateur_dons
+
+            // e.preventDefault(); // ici pour ne pas modifier url(si on post ver une action d'url different il ignore
+            var typedon = $("#type_don_dropdown :selected").val();
+            var montantchoice = $("#montant_choice_dropdown :selected").val();
+            //var conceptName = $('#type_don').val();
+            //var conceptName = $("#type_don :selected").val() ;
+            // var typedon = $("#type_don").val();
+            //alert($('#type_don option:value').html());
+            var obj = {type_don: typedon, id_don: $("#id_don").val(), lot_don: $("#lot_don").val(), montant_choice: montantchoice,
+                montant_don: $("#montant_don").val(), date_debut: $("#date_debut").val(), date_fin: $("#date_fin").val(), num_cheque: $("#num_cheque").val(),
+                cause: $("#cause").val(), mode_paiement: $("#mode_paiement").val(), num_rf: $("#num_rf").val(), iban: $("#iban_elastic_dons").val(),
+                date_annule_debut: $("#date_stop_debut").val(), date_annule_fin: $("#date_stop_fin").val(), date_stop_debut: $("#date_stop_debut").val(), date_stop_fin: $("#date_stop_fin").val()};
+            // code_occasion: $("#code_occasion").val(),code_campagne: $("#code_campagne").val(),
+            // 
+            //type_don=&id_don=&lot_don=&montant_choice=sup&montant_don=&date_debut=&date_fin=&num_cheque=&cause=dhv&mode_paiement=&num_rf=&iban=&date_annule_debut=&date_annule_fin=&date_stop_debut=&date_stop_fin=
+
+            // alert('obj');
+            $.ajax({
+                url: "{{ path('intersa_gestion_dons_export_exel') }}", //'/intersa/export-dons/exel',
+                type: "GET",
+                //data: data,
+                data: obj, //{mydata: obj}
+                //data: data,
+                //data: JSON.stringify(obj3),
+                //contentType: "application/json; charset=utf-8",
+                //dataType:"json",
+                cache: false,
+                success: function (data)
+                {
+                    console.log(data);
+                    //alert(data);
+                    //console.log(data.responseText);
+                    if (data.responseText === 'success') {
+                        console.log('yess');
+                        //window.location.href = '/intersa/dons' ;
+                    }
+                    if (data.responseText === 'warning') {
+                        console.log('non');
+                    }
+
+                },
+                complete: function (com) {
+                    //console.log(com.responseText);
+                    console.log(com);
+                    //alert(com);
+                    if (com.responseText === 'success') {
+                        $("#msg_don_succes").css('display', 'block');
+                        $("#msg_don_succes").html('Création de l\'extraction avec succès vous allez bientot recevoir un e-mail');
+                        setTimeout(function () {
+                            $('#msg_don_succes').hide("slow");
+                        }, 3000);
+                    }
+                    if (com.responseText === 'encours') {
+                        $("#msg_don_succes").css('display', 'block');
+                        $("#msg_don_succes").html('Veuillez patienter l\'ancienne extraction est en cours vous allez bientot recevoir un e-mail !!');
+                        setTimeout(function () {
+                            $('#msg_don_succes').hide("slow");
+                        }, 3000);
+                    }
+                    if (com.responseText === 'warning') {
+                        $("#msg_don_warning").css('display', 'block');
+                        $("#msg_don_warning").html('vous devez ajouter le Code activité aux Gestion des favoris, Attention !!');
+                        setTimeout(function () {
+                            $('#msg_don_warning').hide("slow");
+                        }, 3000);
+                    }
+
+
+                },
+                error: function (err) {
+                    console.log(err);
+                    //alert('err');
+                }
+            });
+            Init();
+        })
+    });
+
+
+    $("#btn_generate_donateur_exel").click(function () {
+
+        //alert('btn_generate_donateur_exel');
+        //alert(Obj);
+        var Obj = '';
+        $.ajax({
+            url: "{{ path('intersa_gestion_donateur_export_exel') }}", //'/intersa/export-dons/exel',
+            type: "GET",
+            //data: data,
+            data: Obj, //{mydata: obj}
+            //data: data,
+            //data: JSON.stringify(obj3),
+            //contentType: "application/json; charset=utf-8",
+            //dataType:"json",
+            cache: false,
+            success: function (data)
+            {
+                console.log(data);
+                //alert(data);
+
+            },
+            complete: function (com) {
+                //console.log(com.responseText);
+                console.log(com);
+                if (com.responseText === 'encours') {
+                    $("#msg_info").css('display', 'block');
+                    $("#msg_info").html('Veuillez patienter l\'ancienne extraction est en cours vous allez bientot recevoir un e-mail !!');
+                    setTimeout(function () {
+                        $('#msg_info').hide("slow");
+                    }, 3000);
+                }
+                if (com.responseText === 'success') {
+                    var message = 'Création de l\'extraction avec succès vous allez bientot recevoir un e-mail';
+                    $("#msg_success").html(message);
+                    $("#msg_success").css('display', 'block');
+                    setTimeout(function () {
+                        $('#msg_success').hide("slow");
+                    }, 3000);
+                }
+
+                if (com.responseText === 'erreur') {
+                    var message = 'Erreur d\'extraction';
+                    $("#msg_erreur").html(message);
+                    $("#msg_erreur").css('display', 'block');
+                    setTimeout(function () {
+                        $('#msg_erreur').hide("slow");
+                    }, 3000);
+                }
+
+
+            },
+            error: function (err) {
+                console.log(err);
+                //alert('err');
+            }
+        });
+
+
+    });
+
+
+
+//menu dropdawn
+    var columns = $("#columns").val();
+    //list[]=numdonateur&list[]=nom&list[]=prenom&list[]=nomentreprise&list[]=statut
+    var arr = columns.split('&');
+    var arr2 = arr.toString().split(',list[]');
+    var tt = "";
+    var xx = [];
+    var vv = "";
+    var items = [];
+    var j = 0;
+    var Obj = "";
+    for (var i = 0; i < arr2.length; i++) {
+        xx[i] = arr2[i].split('list[]');
+    }
+    for (var i = 0; i < xx.length; i++) {
+        vv += xx[i];
+    }
+    var arr3 = vv.split('=');
+    for (var i = 0; i < arr3.length; i++) {
+        if (arr3[i] !== ',') {
+            items[j] = arr3[i];
+            j++;
+        }
+
+    }
+    for (var i = 0; i < items.length; i++) {
+        //alert(items[i]);
+        //'<li id="list_numdonateur" ><b>Numéro du donateur</b></li>';
+        if (i === 0) {
+            Obj += '{' + items[i] + ':' + ' ' + ' ' + items[i] + ',';
+        }
+
+        //alert(items.length);
+        //alert(items.length - 1);
+        if (i > 0 && i !== items.length - 1) {
+
+            Obj += items[i] + ':' + ' ' + ' ' + items[i] + ',';
+        }
+        if (i === items.length - 1) {
+            Obj += items[i] + ':' + ' ' + ' ' + items[i] + '}' + ';';
+
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    </script>

@@ -1,0 +1,38 @@
+{% extends "FulldonSecurityBundle::layout.html.twig" %}
+{% block title %}Désabonnement Email{% endblock %}
+{% block body %}
+
+    <div class="backstretch" style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px; height: 2000px; width: 1903px; z-index: -999999; position: fixed;">
+        {% if init['perso'].fondPage is defined  and init['perso'].fondPage  is not null %}
+            <img style="position: absolute; margin: 0px; padding: 0px; border: none; width: 1903px; height: 2000px; max-width: none; z-index: -999999; left: 0px; top: 0px;" src="{{ asset('upload/' ~ init['perso'].id ~'/' ~ init['perso'].fondPage)}}" >
+        {% else %}
+            <img style="position: absolute; margin: 0px; padding: 0px; border: none; width: 1903px; height: 2000px; max-width: none; z-index: -999999; left: 0px; top: 0px;" src="{{ asset('img/bg_login.jpg') }}">
+        {% endif %}
+    </div>
+    {# Le formulaire, avec URL de soumission vers la route « login_check » comme on l'a vu #}
+    <div class="container console-auth">
+<div class="form-signin console-form-auth" >
+
+            <div class="logo-access">
+                {% if init['perso'].logo is defined %}
+                    <img src="{{ asset('upload/' ~ init['perso'].id ~'/' ~ init['perso'].logo)}}" alt="logo" height="100" />
+                {% else %}
+                    <img src="{{ asset('img/logo_donateur_big.png') }}"  />
+                {% endif %}
+
+            </div>
+    <div  style="color:#777;font-size:20px;text-align: right;width:100%;background-color: {{ init['perso'].couleur }};color:white;text-align: center;font-family: Myriad Pro, Arial, Helvetica, Tahoma, sans-serif;" >Désabonnement Emailing</div>
+       <hr />
+        {% for flashMessage in app.session.flashbag.get('error') %}
+            <div class="alert alert-danger">
+                <i class="fa fa-minus-circle fa-lg "></i> {{ flashMessage }}
+            </div>
+        {% endfor %}
+            {% for flashMessage in app.session.flashbag.get('success') %}
+                <div class="alert alert-success">
+                    <i class="fa fa-check fa-lg "></i>  {{ flashMessage }}
+                </div>
+            {% endfor %}
+    </div> <!-- /container -->
+    </div>
+{% endblock %}

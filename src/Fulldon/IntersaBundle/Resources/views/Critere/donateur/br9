@@ -1,0 +1,130 @@
+ligne_cumul_don
+ <tbody id="content" >
+
+
+
+            {% for r2 in result_cumul %}{#{r2['id']}#}
+                <!--tr id="id_ligneserach_cumule_">
+                </tr-->
+                <tr id="{{ r2.id }}" {% if r2.transaction.statut.code is defined %}
+                    {% if r2.transaction.statut.code == "paiement_annule" or r2.removed == 1 %}class="danger"
+                    {% endif %}
+                    {% if r2.transaction.statut.code == "attente" %}class="warning"{% endif %}
+                    {% if r2.transaction.statut.code == "traitement_paiement" %}class="alert-info"{% endif %}
+                    {% if r2.transaction.statut.code == "don_valide" %}class="success"{% endif %}
+                {% else %}
+                    class="danger"
+                    {% endif %}>
+                        {% for key,value in col_display %}
+                            {% for key2,value2 in value %}
+                                {% set donateur_ix = r2.user.id|donateur %}
+                                {% if key2 == "numdon" %}
+                                    <td>{{ r2.id }}</td>
+                                {% elseif key2 ==  "nom" %}
+                                    <td>
+                                        {% if donateur_ix is not null %}
+                                            {{ donateur_ix.nom }}
+                                        {% endif %}  
+
+                                    </td>
+                                {% elseif key2 == "prenom" %}
+                                    <td>
+                                        {% if donateur_ix is not null %}
+                                            {{ donateur_ix.prenom }}
+                                        {% endif %} 
+
+                                    </td>
+                                {% elseif key2 == "statut" %}
+                                    <td>
+                                        {% if r2.transaction.statut.libelle is defined %}
+                                            {{ r2.transaction.statut.libelle }}
+                                        {% else %}Abondonné
+                                        {% endif %}
+
+                                    </td>
+                                {% elseif key2 == "amount" %}
+                                    <td>{{ r2.montant|round(2, 'floor')}} €</td>
+
+                                {% elseif key2 == "modepay" %}
+                                    <td>
+
+                                        {% if r2.modePaiement is defined and  r2.modePaiement is not null %}
+                                            {{ r2.modePaiement.libelle }}
+                                        {% endif %}
+
+                                    </td>
+
+                                {% elseif key2 == "createdat" %}
+                                    <td>{{ r2.createdAt|date('d/m/Y') }}</td>
+
+                                {% elseif key2 == "nomentreprise" %}
+                                    <td>
+                                        {% if donateur_ix is not null %}
+                                            {% if donateur_ix.nomEntreprise is not null %}
+                                                {{ donateur_ix.nomEntreprise }}
+                                            {% else %}
+                                                {% set phrase = 'Pas d\'entreprise'%}
+                                                {#{http://alexandre.clain.info/twig-les-filtres-disponibles/}#}
+                                                {{ phrase|raw }} &nbsp {{'pour ce Donateur'}}
+
+                                            {% endif %}
+
+                                        {% endif %}
+
+
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                        {% endfor %}
+
+                    </tbody>
+
+
+-----------------
+
+ <center>
+                    {% if last_page  > 1 %}
+                        {% set state = '' %}
+                        <ul class="pagination pull-center">
+                            {% if result2.hasPreviousPage %}
+                                {% set state = 'paginate_button first' %}
+                                <li class="{{ state }}"><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateCumulDon({{ result2.getCurrentPage() -1 }})">&laquo;&nbsp;{{ 'Previous'|trans }}</a></li>
+
+                            {% else %}
+                                <li class="disabled">
+                                    <span>&laquo;&nbsp;{{ 'Previous'|trans }}</span>
+                                </li>
+                            {% endif %}
+                            {% for givenPage in 1..result2.getNbPages() %}
+                                {% set state = '' %}
+
+                                {% if givenPage >= current_page-4 and givenPage <= current_page+4 %}
+                                    {% if   givenPage == current_page-4 or givenPage == current_page+4 %}
+                                        {% if   givenPage == current_page-4 %}
+                                            {% set state = 'active' %}
+                                            <li class="{{ state }}"><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateCumulDon({{ givenPage }})">1{#{ givenPage }#}</a></li>
+                                            <li class="disabled"><a href="#">...</a></li>
+                                            {% else %}
+                                            <li class="disabled"><a href="#">...</a></li>
+                                            <li class="{{ state }}"><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateCumulDon({{ last_page  }}">{{ last_page }}</a></li>
+                                            {% endif %}
+                                        {% else %}
+                                            {% if givenPage == current_page %}
+                                            <li class="active"><a href="#">{{ givenPage }}</a></li>
+                                            {% else %}
+                                            <li class="{{ state }}"><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateCumulDon({{ givenPage }} )">{{ givenPage }}</a></li>
+
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+
+                            {%  endfor %}
+
+
+
+
+
+                        </ul>
+                    {% endif %}
+                </center>

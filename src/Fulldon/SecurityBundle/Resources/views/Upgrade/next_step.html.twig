@@ -1,0 +1,53 @@
+{% extends "FulldonSecurityBundle::layout.html.twig" %}
+{% block body %}
+    <div class="backstretch" style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px; height: 2000px; width: 1903px; z-index: -999999; position: fixed;">
+        {% if init['perso'].fondPage is defined  and init['perso'].fondPage  is not null %}
+            <img style="position: absolute; margin: 0px; padding: 0px; border: none; width: 1903px; height: 2000px; max-width: none; z-index: -999999; left: 0px; top: 0px;" src="{{ asset('upload/' ~ init['perso'].id ~'/' ~ init['perso'].fondPage)}}" >
+        {% else %}
+            <img style="position: absolute; margin: 0px; padding: 0px; border: none; width: 1903px; height: 2000px; max-width: none; z-index: -999999; left: 0px; top: 0px;" src="{{ asset('img/bg_login.jpg') }}">
+        {% endif %}
+    </div>
+
+    {# Le formulaire, avec URL de soumission vers la route « login_check » comme on l'a vu #}
+    <div class="container console-auth">
+
+        <form class="form-signin console-form-auth " role="form" action="{{ path('intersa_next_step', {'secret':secret}) }}" method="post" style="background:  rgba(255, 255, 255, 1) !important;">
+            <div class="logo-access ">
+                <center>
+                    <img src="{{ asset('img/logo.png') }}"  class="img-responsive" />
+                </center>
+            </div>
+            Création de compte utilisateur :
+            <br /><br />
+            {# S'il y a une erreur, on l'affiche dans un joli cadre #}
+            {% for flashMessage in app.session.flashbag.get('info') %}
+                <div class="alert alert-success">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+            {% for flashMessage in app.session.flashbag.get('erreur') %}
+                <div class="alert alert-danger">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+            <div class="input-group">
+                <div class="input-group-addon"><i class="fa fa-user"></i></div>
+            <input type="text" name="login" class="form-control" placeholder="{{"user"|trans({},'messages')  }}" required autofocus>
+                </div>
+            <br />
+            <div class="input-group">
+                <div class="input-group-addon"><i class="fa fa-lock"></i></div>
+            <input type="password" name="plain_password" class="form-control" placeholder="{{"password"|trans({},'messages')  }}" required style="margin:0px;">
+                </div>
+            <br />
+            <div class="input-group">
+                <div class="input-group-addon"><i class="fa fa-lock"></i></div>
+                <input type="password" name="confirm_password" class="form-control" placeholder="{{"Confirmation du mot de passe"|trans({},'messages')  }}" required style="margin:0px;">
+            </div>
+            <br />
+
+            <button class="btn btn-lg btn-primary btn-block"  style="border-radius: 0px !important;" type="submit">{{"Créer un compte"|trans({},'messages')  }}</button>
+        </form>
+
+    </div> <!-- /container -->
+{% endblock %}

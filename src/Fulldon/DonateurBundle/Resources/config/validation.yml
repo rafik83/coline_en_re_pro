@@ -1,0 +1,77 @@
+Fulldon\SecurityBundle\Entity\User:
+    properties:
+        username:
+            - Length:
+                min: 4
+                max: 50
+                minMessage: "Le login doit être au minimum sur 4 caractères"
+                maxMessage: "Le login doit être au maximum sur 50 caractères"
+Fulldon\DonateurBundle\Entity\Donateur:
+    properties:
+        nom:
+            - Length:
+                min: 2
+                max: 50
+                minMessage: "Le nom doit être au minimum sur 4 caractères"
+                maxMessage: "Le nom doit être au maximum sur 50 caractères"
+        prenom:
+            - Length:
+                min: 2
+                max: 50
+                minMessage: "Le prenom doit être au minimum sur 4 caractères"
+                maxMessage: "Le prenom doit être au maximum sur 50 caractères"
+        dateNaissance:
+            - Date:
+                message: "La date indiquée n\'est pas valide, veuillez svp respecter le format indiqué"
+        zipcode:
+            - Length:
+                min: 4
+                max: 9
+                minMessage: "un code postal doit avoir au mois 4 caractères"
+                maxMessage: "un code postal ne doit pas dépasser 9 caractères"
+        email:
+            - Email:
+                message: l'email "{{ value }}" est non valide.
+                checkMX: true
+        adresse1:
+            - Length:
+                min: 1
+                max: 100
+                minMessage: "Le nom doit être au minimum sur 4 caractères"
+                maxMessage: "Le nom doit être au maximum sur 50 caractères"
+        adresse2:
+            - Length:
+                min: 1
+                max: 100
+                minMessage: "Le nom doit être au minimum sur 4 caractères"
+                maxMessage: "Le nom doit être au maximum sur 50 caractères"
+        adresse3:
+            - Length:
+                min: 1
+                max: 100
+                minMessage: "Le nom doit être au minimum sur 4 caractères"
+                maxMessage: "Le nom doit être au maximum sur 50 caractères"
+        adresse4:
+            - Length:
+                min: 1
+                max: 100
+                minMessage: "Le nom doit être au minimum sur 4 caractères"
+                maxMessage: "Le nom doit être au maximum sur 50 caractères"
+        adresse5:
+            - Length:
+                min: 1
+                max: 100
+                minMessage: "Le nom doit être au minimum sur 4 caractères"
+                maxMessage: "Le nom doit être au maximum sur 50 caractères"
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: email
+Fulldon\DonateurBundle\Entity\Virement:
+    properties:
+        iban:
+            - Length:
+                min: 21
+                max: 23
+        bic:
+            - Length:
+                min: 8
+                max: 11

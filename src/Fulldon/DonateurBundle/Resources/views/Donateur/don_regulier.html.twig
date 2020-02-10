@@ -1,0 +1,143 @@
+{% extends "FulldonDonateurBundle:Donateur:coque_donateur.html.twig" %}
+    {% block coque_donateur %}
+        <div class="row" >
+
+        <div class="col-md-12" >
+        <h2  class="couleur-donateur" > {{ "Faire un don régulier"|trans({},'messages') }}</h2>
+        <hr />
+        {% for flashMessage in app.session.flashbag.get('info') %}
+            <div class="alert alert-success">
+                {{ flashMessage|trans({},'messages') }}
+            </div>
+        {% endfor %}
+        <div class='errors'>
+            {{ form_errors(form) }}
+        </div>
+            <ol class="progtrckr" data-progtrckr-steps="3">
+                <li class="progtrckr-done">{{ "Configuration"|trans({},'messages') }}</li>
+                <li class="progtrckr-todo">{{ "Paiement"|trans({},'messages') }}</li>
+                <li class="progtrckr-todo">{{ "Validation"|trans({},'messages') }}</li>
+            </ol>
+
+            <div class="bs-callout bs-callout-info">
+                {%  set params = app.request.attributes.get('_route_params') %}
+                {% if init['perso'] is defined %}
+
+                    {% if params['_locale'] == 'fr' %}
+                        {{ init['perso'].introDr | raw }}
+                    {% elseif params['_locale'] == 'en' %}
+                        {{ init['perso'].introDrEn | raw }}
+                    {% endif %}
+
+                {% endif %}
+
+
+            </div>
+        <form action="{{ path('donateur_don_regulier') }}" method="post" class="form-group" {{ form_enctype(form) }}>
+        <div class="row">
+            <div class="form-group col-md-12">
+
+                        {% for flashMessage in app.session.flashbag.get('error_montant') %}
+                        <div class="alert alert-danger">
+                            {{ flashMessage|trans({},'messages') }}
+                        </div>
+                        {% endfor %}
+
+           </div>
+            <div class="form-group col-md-12">
+                <label for="inputEmail3" class="col-sm-5 control-label">{{ form_label(form.montant,  "Votre montant"|trans({},'messages')) }}</label>
+                <div class="col-sm-8">
+                    {% if form.montant.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError">{{ form_errors(form.montant) }}</label>
+                            {{ form_widget(form.montant, {'attr': {'class': 'task_field form-control', 'id':'inputError', 'id':'nom', 'placeholder':'montant' } }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                            <label for="fullMontant_1">
+                                <input id="fullMontant_2" class="align-checkbox" type="radio" class="radio" value="10" name="full_montant" onchange="fulldon_montant_onChange(this)" >
+                                <small class="don-text"><strong>10 euros</strong> {{ "par mois"|trans({},'messages') }}</small>
+                            </label><br />
+                            <label for="fullMontant_2">
+                                <input id="fullMontant_2" class="align-checkbox" type="radio" class="radio" value="15" name="full_montant" onchange="fulldon_montant_onChange(this)" >
+                                <small class="don-text" ><strong>15 euros</strong> {{ "par mois"|trans({},'messages') }}</small>
+                            </label><br />
+                            <label for="fullMontant_3 ">
+                                <input id="fullMontant_3" class="align-checkbox" type="radio" class="radio" value="20" name="full_montant" onchange="fulldon_montant_onChange(this)" >
+                                <small class="don-text"><strong>20 euros</strong> {{ "par mois"|trans({},'messages') }}</small>
+                            </label><br />
+                            <label for="full_autremontant">
+                                <input type="radio" value="other" name="full_montant" class="radio align-checkbox" id="fieldRadioAutreMontant">
+                                <small class="align-checkbox" > {{ "Autre montant"|trans({},'messages') }} : </small>
+                                {{ form_widget(form.montant, {'attr': {'class': 'task_field ', 'id':'autre_montant', 'onkeyup':'fulldon_autremontant_onkeyup(this)'  } }) }} {{ "par mois"|trans({},'messages') }}
+                            </label>
+                        </p>
+                        {{ form_widget(form.montant) }}
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+            <div class="row">
+
+                <div class="form-group col-md-6">
+                    <label for="inputEmail3" class="col-sm-5 control-label">{{ form_label(form.cause, "Pour quelle cause") }}</label>
+                    <div class="col-sm-7">
+                        {% if form.cause.vars.errors|length %}
+                            {# Affichage des erreurs pour ce champ précis. #}
+                            <div class="form-group has-error">
+                                <label class="control-label" for="inputError">{{ form_errors(form.cause) }}</label>
+                                {{ form_widget(form.cause, {'attr': {'class': 'task_field form-control', 'id':'inputError', 'id':'nom' } }) }}
+                            </div>
+                        {% else %}
+                            <td>{{ form_widget(form.cause, {'attr': {'class': 'task_field form-control', 'id':'nom' } }) }}</td>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputEmail3" class="col-sm-5 control-label">{{ form_label(form.modePaiement, "Mode de paiement") }}</label>
+                    <div class="col-sm-7">
+                        {% if form.modePaiement.vars.errors|length %}
+                            {# Affichage des erreurs pour ce champ précis. #}
+                            <div class="form-group has-error">
+                                <label class="control-label" for="inputError">{{ form_errors(form.modePaiement) }}</label>
+                                {{ form_widget(form.modePaiement, {'attr': {'class': 'task_field form-control', 'id':'inputError', 'id':'nom', 'placeholder':'montant' } }) }}
+                            </div>
+                        {% else %}
+                            {# Génération de l'input. #}
+                            <td>{{ form_widget(form.modePaiement, {'attr': {'class': 'task_field form-control', 'id':'nom' } }) }}</td>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+
+        <hr />
+        <div class="form-group">
+            <div class="col-sm-12 " style="margin-bottom:20px;">
+                <input type="submit" class="btn btn-primary pull-right" value="{{ "Etape suivante"|trans({},'messages') }}" />
+            </div>
+        </div>
+
+        {{ form_rest(form) }}
+        </form>
+        </div>
+        </div> <!-- /container -->
+        </div>
+        <br />
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+<script>
+    function fulldon_autremontant_onkeyup(object){
+        //alert(object);
+        $('#fieldRadioAutreMontant').attr('checked', true);
+
+    }
+    function fulldon_montant_onChange(object) {
+        //alert(object);
+        $('#fulldon_donateurbundle_dontype_montant').val('');
+    }
+</script>
+    {% endblock %}

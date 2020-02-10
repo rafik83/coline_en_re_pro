@@ -1,0 +1,26 @@
+custom_fulldon_ext_intersa:
+    resource: "@CustomFulldonExtIntersaBundle/Resources/config/ext_routing.yml"
+    prefix:   /
+
+custom_fulldon_ext_donateur:
+    resource: "@CustomFulldonExtDonateurBundle/Resources/config/ext_routing.yml"
+    prefix:   /
+
+
+# Fulldon project
+fulldon_security:
+    resource: "@FulldonSecurityBundle/Resources/config/routing.yml"
+    prefix:   /
+
+fulldon_admin:
+    resource: "@FulldonAdminBundle/Resources/config/routing.yml"
+    prefix:   /
+
+fulldon_intersa:
+    resource: "@FulldonIntersaBundle/Resources/config/routing.yml"
+    prefix:   /
+
+fulldon_donateur:
+    resource: "@FulldonDonateurBundle/Resources/config/routing.yml"
+    prefix:   /
+

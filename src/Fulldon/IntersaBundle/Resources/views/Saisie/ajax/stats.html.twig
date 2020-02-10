@@ -1,0 +1,7 @@
+{% if type == 'COURRIER' %}
+<td>Lot : {{ name }}</td><td><a target="_blank" href="{{ path('intersa_saisie_serie_courrier_lot',{'nom':name}) }}" class="btn btn-primary btn-xs "><span class="glyphicon glyphicon-cog"></span> {% if etat %}Forcer le traitement{% else %}Traiter le lot{% endif %}</a>
+<td>Etat :{% if etat %} <span class="label label-danger"> Déjà reservé </span>{% else %}{% if mylot %}<span class="label label-primary">En cours</span>{% else %}<span class="label label-success"> En attente de traitement </span>{% endif %}{% endif %}</td><td><b>{{  avancement }}</b></td>
+{% else %}
+    <td>Lot : {{ name }}</td><td><a target="_blank" href="{{ path('intersa_saisie_serie_lot',{'nom':name,'type':type}) }}" class="btn btn-primary btn-xs "><span class="glyphicon glyphicon-cog"></span> {% if etat %}Forcer le traitement{% else %}Traiter le lot{% endif %}</a>
+    <td>Etat :{% if etat %} <span class="label label-danger"> Déjà reservé </span>{% else %}{% if mylot %}<span class="label label-primary">En cours</span>{% else %}<span class="label label-success"> En attente de traitement </span>{% endif %}{% endif %}</td><td><b>{{  avancement }}</b></td>
+{% endif %}

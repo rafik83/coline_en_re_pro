@@ -1,0 +1,73 @@
+{% if donateurs|length !=0  or  pros|length !=0 %}
+    <br />
+<div class="row">
+<div class="col-md-6">
+    {% if donateurs|length !=0  %}
+    <h4> Donateurs existants :</h4>
+    <hr />
+<table class="table table-striped ">
+    <thead>
+    <th>Nom</th>
+    <th>Prenom</th>
+    <th>Adresse</th>
+    <th>Etat</th>
+    <th></th>
+    </thead>
+    <tbody>
+    {% for donateur in donateurs %}
+    <tr>
+    <td>{{ donateur.nom }}</td>
+    <td>{{ donateur.prenom }}</td>
+    <td>{{ donateur.adresse3 }} <br />
+        {{ donateur.zipcode }}  <br />
+        {% if donateur.isoville is defined and donateur.isoville is not null %}
+            {{ donateur.isoville }}
+        {% endif %} <br />
+        {% if donateur.isopays is defined and donateur.isopays is not null %}
+            {{ donateur.isopays }}
+        {% endif %}<br />
+    </td>
+    <td>{% if donateur.removed %}Innactif{% else %}Actif{% endif %}</td>
+    <td><a href="#" class="btn btn-xs btn-primary"onclick="select_donateur({{ donateur.refDonateur }})"><span class="glyphicon glyphicon-transfer"></span> Sélectionner</a> </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+    </div>
+    <div class="col-md-6">
+{% if pros|length !=0  %}
+<h4> Prospections :</h4>
+    <hr />
+    <table class="table table-striped col-md-6">
+        <thead>
+        <th>Nom</th>
+        <th>Prenom</th>
+        <th>Adresse</th>
+        <th></th>
+        </thead>
+        <tbody>
+        {% for p in pros %}
+            <tr>
+                <td>{{ p.nom }}</td>
+                <td>{{ p.prenom }}</td>
+                <td>
+
+                    {% if p.adresse1 is not empty %}{{ p.adresse1 }} <br />{% endif %}
+                    {% if p.adresse2 is not empty %}{{ p.adresse2 }} <br />{% endif %}
+                    {% if p.adresse3 is not empty %}{{ p.adresse3 }} <br />{% endif %}
+                    {% if p.adresse4 is not empty %}{{ p.adresse4 }} <br />{% endif %}
+                    {% if p.zipcode is not empty %}{{ p.zipcode }}  <br />{% endif %}
+                    {% if p.isoville is not empty %}{{ p.isoville }} <br />{% endif %}
+                    {% if p.isopays is not empty %}{{ p.isopays }} <br />{% endif %}
+
+                </td>
+                <td><a href="#" class="btn btn-xs btn-warning"onclick="select_pros_donateur({{ p.id }})"><span class="glyphicon glyphicon-transfer"></span> Sélectionner</a> </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+</div>
+</div>
+{% endif %}

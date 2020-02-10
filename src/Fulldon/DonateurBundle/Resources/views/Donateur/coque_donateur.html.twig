@@ -1,0 +1,29 @@
+{% extends "FulldonDonateurBundle::layout.html.twig" %}
+{% block title %}Espace donateur{% endblock %}
+{% block body %}
+<div class="container">
+<div class="row">
+    {% if is_granted('ROLE_DONATEUR') %}
+    <div class="col-md-3 hidden-print">
+        <div class="list-group">
+            <a href="{{ path('donateur_account') }}" class="list-group-item {% if app.request.get('_route') == 'donateur_account' %}active{% endif %}">
+                <span class="glyphicon glyphicon-th-large "></span> {{"Tableau de bord"|trans({},'messages')  }}
+            </a>
+            <a href="{{ path('donateur_account_edit') }}" class="list-group-item  {% if app.request.get('_route') == 'donateur_account_edit' %}active{% endif %}"><span class="glyphicon glyphicon-user"></span> {{"Modifier mon compte"|trans({},'messages')  }}</a>
+            {#<a href="{{ path('donateur_don_regulier') }}" class="list-group-item  {% if app.request.get('_route') == 'donateur_don_regulier'  %}active{% endif %}"><span class="glyphicon glyphicon-heart"></span> {{"Je fais un don régulier"|trans({},'messages')  }} </a>#}
+            {#<a href="{{ path('donateur_don_ponctuel') }}" class="list-group-item  {% if app.request.get('_route') == 'donateur_don_ponctuel'  %}active{% endif %}"><span class="glyphicon glyphicon-heart-empty"></span> {{"Je fais un don ponctuel"|trans({},'messages')  }} </a>#}
+            <a href="{{ path('donateur_don') }}" class="list-group-item  {% if app.request.get('_route') == 'donateur_don'  %}active{% endif %}"><span class="glyphicon glyphicon-heart"></span> {{"Je fais un don"|trans({},'messages')  }} </a>
+            <a href="{{ path('donateur_adherent') }}" class="list-group-item  {% if app.request.get('_route') == 'donateur_adherent'  %}active{% endif %}"><span class="glyphicon glyphicon-heart"></span> {{"Je veux adhérer"|trans({},'messages')  }} </a>
+            <a href="{{ path('donateur_history',{'page':1}) }}" class="list-group-item  {% if app.request.get('_route') == 'donateur_history' %}active{% endif %}"><span class="glyphicon glyphicon-time"></span> {{"Historique"|trans({},'messages')  }}</a>
+            <a href="{{ path('donateur_rf',{'page':1}) }}" class="list-group-item {% if app.request.get('_route') == 'donateur_rf' %}active{% endif %} "><span class="glyphicon glyphicon-file"></span> {{"Gestion des reçus fiscaux"|trans({},'messages')  }}</a>
+        </div>
+    </div>
+    <div class="col-md-9">
+        {% else %}
+        <div class="col-md-12">
+    {% endif %}
+    {% block coque_donateur %}{% endblock %}
+    </div>
+</div> <!-- /container -->
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+parameters:
+    fulldon_intersa.log.listener.class: Fulldon\IntersaBundle\Listener\CreateLogListener
+    fulldon_intersa.stat.listener.class: Fulldon\IntersaBundle\Listener\CreateStatListener
+    log.helper.class: Fulldon\IntersaBundle\Helper\LogHelper
+services:
+    fulldon.intersa.Log.listener:
+        class: %fulldon_intersa.log.listener.class%
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: 'kernel.event_listener', event: 'createLog', method: 'addLog' }
+    fulldon.intersa.Stat.listener:
+        class: %fulldon_intersa.stat.listener.class%
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: 'kernel.event_listener', event: 'createStat', method: 'addStat' }
+    fulldon.intersa.global:
+        class: Fulldon\IntersaBundle\Service\GlobalHelper
+        arguments: [ @doctrine.orm.entity_manager, %seuil_rf% ]
+        calls:
+            - [ setContainer,[ @service_container ] ]
+    fulldon.intersa.rf_service:
+        class: Fulldon\IntersaBundle\Service\RfServices
+        arguments: [ @doctrine.orm.entity_manager ]
+        calls:
+            - [ setContainer,[ @service_container ] ]
+    fulldon.intersa.form_transformer:
+        class: Fulldon\IntersaBundle\Service\AttachmentsTransformer
+        calls:
+            - [ setContainer,[ @service_container ] ]
+    fulldon.intersa.pdfmerger:
+        class: Fulldon\IntersaBundle\Service\PDFMerger
+        arguments: [ @doctrine.orm.entity_manager]
+
+    fulldon.twig.fulldon_extension:
+        class: Fulldon\IntersaBundle\Twig\DonateurExtension
+        arguments: [ @doctrine.orm.entity_manager]
+        tags:
+            - { name: twig.extension }
+    fulldon.twig.fulldon_extension_activite:
+        class: Fulldon\IntersaBundle\Twig\ActiviteExtension
+        arguments: [ @doctrine.orm.entity_manager]
+        tags:
+            - { name: twig.extension }
+
+    fulldon.twig.fulldon_extension_pays:
+        class: Fulldon\IntersaBundle\Twig\PaysExtension
+        arguments: [ @doctrine.orm.entity_manager]
+        tags:
+            - { name: twig.extension }
+    fulldon.intersa.email_servies:
+        class: Fulldon\IntersaBundle\Service\EmailServices
+        arguments: [ @doctrine.orm.entity_manager ]
+        calls:
+            - [ setContainer,[ @service_container ] ]
+    fulldon.custom_params:
+        class: Fulldon\IntersaBundle\Service\GlobalVars
+        arguments: [ @doctrine.orm.entity_manager ]
+        calls:
+            - [ setContainer,[ @service_container ] ]
+
+    log.helper:
+        class: %log.helper.class%
+        arguments: ["@doctrine.orm.entity_manager"]
+
+    fulldon.notes_servies:
+        class: Fulldon\IntersaBundle\Service\StatNote
+        arguments: [ @doctrine.orm.entity_manager ]
+        calls:
+            - [ setContainer,[ @service_container ] ]
+    fulldon.twig.notes:
+        class: Fulldon\IntersaBundle\Twig\StatNoteExtension
+        arguments: [ @doctrine.orm.entity_manager, @service_container ]
+        tags:
+            - { name: twig.extension }

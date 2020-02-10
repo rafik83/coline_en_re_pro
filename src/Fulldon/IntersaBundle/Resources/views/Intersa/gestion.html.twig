@@ -1,0 +1,115 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+        <div class="breadcrumbs" id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li class="active">Statistiques</li>
+            </ol>
+        </div>
+        <div class="page-content">
+
+            <div class="col-md-12 pull-left">
+                <div class="page-header">
+                    <h1>
+                        Statistiques de production
+                        <small>
+                            <i class="ace-icon fa fa-angle-double-right"></i>
+                            Statistiques globales
+                        </small>
+                    </h1>
+                </div><!-- /.page-header -->
+                {% for flashMessage in app.session.flashbag.get('info') %}
+                    <div class="alert alert-success">
+                        {{ flashMessage }}
+                    </div>
+                {% endfor %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-4">{% if data['values_lg'] ==0 and data['values_lv'] ==0 %}Pas de données{% endif %}
+                                <canvas id="canvas_lot" height="150" width="150"></canvas>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="miftah">
+                                    <div class="element" style="background-color: #FDB45C;"></div>
+                                    &nbsp;<b>{{ data['values_lg'] }} </b> Lot(s) généré(s)
+                                    <b>{% if data['values_lg'] !=0 or data['values_lv'] !=0 %}({{ ((data['values_lg']/(data['values_lg']+data['values_lv']))*100)|round(1, 'floor') }})%{% endif %}</b><br/><br/>
+
+                                    <div class="element" style="background-color: #4D5360;"></div>
+                                    &nbsp;<b>{{ data['values_lv'] }} </b> Lot(s) vérifié(s)
+                                    <b>{% if data['values_lg'] !=0 or data['values_lv'] !=0 %}({{ ((data['values_lv']/(data['values_lv']+data['values_lg']))*100)|round(1, 'floor') }})%{% endif %}</b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 style="margin-top:5px;" class="couleur-intersa">Console de gestion: </h4>
+                        <hr/>
+                        <div class="list-group">
+                            <a href="{{ path('intersa_stats_prod') }}" class="list-group-item "><span
+                                        class="glyphicon glyphicon-user"></span> Productivité par personne </a>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4>Statistiques de productivité</h4>
+                        <hr/>
+                        <div id="canvas_time" style="width: 800px; height: 500px;"></div>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+        </div>
+    {% endblock %}
+ {% block javascripts %}
+     {{ parent() }}
+     <script>
+
+
+         google.load("visualization", "1", {packages: ["corechart"]});
+         google.setOnLoadCallback(drawChart);
+         function drawChart() {
+             var data = google.visualization.arrayToDataTable([
+                 ['Jours', 'Temps de saisie'],
+                 {%  for key, date in dates %}
+
+                 [new Date({{ date }}), {{data['values_time'][key]  }}],
+                 {% endfor %}
+
+
+             ]);
+
+             var options = {
+                 title: 'Productivité personnelle',
+                 colors: ['#97BBCD'],
+                 crosshair: { selected: { color: '#3bc', opacity: 0.8 } }
+
+             };
+
+             var chart = new google.visualization.LineChart(document.getElementById('canvas_time'));
+             chart.draw(data, options);
+         }
+
+
+         var doughnutData2 = [
+             {
+                 value: {{ data['values_lg'] }},
+                 color: "#FDB45C"
+             },
+             {
+                 value: {{ data['values_lv'] }},
+                 color: "#4D5360"
+             },
+         ];
+         var myDoughnut2 = new Chart(document.getElementById("canvas_lot").getContext("2d")).Doughnut(doughnutData2);
+
+
+     </script>
+ {% endblock %}

@@ -1,0 +1,380 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+        <div class="breadcrumbs" id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li><a href="{{ path('intersa_table_cause',{'page':1}) }}">Gestion des codes activités : </a></li>
+                <li class="active">Nouveau code activité :</li>
+            </ol>
+        </div>
+        <div class="page-content">
+
+        <div class="col-md-12 pull-left">
+        <div class="page-header">
+            <h1>
+                Gestion des codes activités
+                <small>
+                    <i class="ace-icon fa fa-angle-double-right"></i>
+                    Nouveau code activité
+                </small>
+            </h1>
+        </div>
+
+
+        {% for flashMessage in app.session.flashbag.get('info') %}
+            <div class="alert alert-success">
+                <span class="glyphicon glyphicon-ok-sign"></span>{{ flashMessage }}
+            </div>
+        {% endfor %}
+        <form action="{{ path('intersa_table_cause_new') }}" method="post" class="form-group" {{ form_enctype(form) }}>
+
+        <div class="row">
+        <div class="form-group col-md-6">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="inputEmail3" class=" control-label">{{ form_label(form.libelle, "Libellé") }}</label>
+
+                    <div>
+                        {% if form.libelle.vars.errors|length %}
+                            {# Affichage des erreurs pour ce champ précis. #}
+                            <div class="form-group has-error">
+                                <label class="control-label" for="inputError"> {{ form_errors(form.libelle) }}</label>
+                                {{ form_widget(form.libelle, {'attr': { 'class': 'task_field form-control', 'id':'libelle'} }) }}
+                            </div>
+                        {% else %}
+                            {# Génération de l'input. #}
+                            {{ form_widget(form.libelle, {'attr': { 'class': 'task_field form-control', 'id':'libelle'} }) }}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputEmail3"
+                           class=" control-label">{{ form_label(form.libelleEn, "Libellé ( Anglais )") }}</label>
+
+                    <div>
+                        {% if form.libelleEn.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <div class="form-group has-error">
+                                <label class="control-label" for="inputError"> {{ form_errors(form.libelleEn) }}</label>
+                                {{ form_widget(form.libelleEn, {'attr': { 'class': 'task_field form-control', 'id':'libelle'} }) }}
+                            </div>
+                            {% else %}
+                                {# Génération de l'input. #}
+                                {{ form_widget(form.libelleEn, {'attr': { 'class': 'task_field form-control', 'id':'libelle'} }) }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="inputEmail3" class=" control-label">{{ form_label(form.code, "Code") }}</label>
+
+                <div>
+                    {% if form.code.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError"> {{ form_errors(form.code) }}</label>
+                            {{ form_widget(form.code, {'attr': { 'class': 'task_field form-control', 'id':'code'} }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.code, {'attr': { 'class': 'task_field form-control', 'id':'code'} }) }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="codeAnalytique"
+                       class=" control-label">{{ form_label(form.codeAnalytique, "Code analytique") }}</label>
+
+                <div>
+                    {% if form.codeAnalytique.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label"
+                                   for="inputError"> {{ form_errors(form.codeAnalytique) }}</label>
+                            {{ form_widget(form.codeAnalytique, {'attr': { 'class': 'task_field form-control', 'id':'codeAnalytique'} }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.codeAnalytique, {'attr': { 'class': 'task_field form-control', 'id':'codeAnalytique'} }) }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="codeOccasion"
+                       class=" control-label">{{ form_label(form.codeOccasion, "Code Occasion") }}</label>
+
+                <div>
+                    {% if form.codeOccasion.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError"> {{ form_errors(form.codeOccasion) }}</label>
+                            {{ form_widget(form.codeOccasion, {'attr': { 'class': 'task_field form-control', 'id':'codeOccasion'} }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.codeOccasion, {'attr': { 'class': 'task_field form-control', 'id':'codeOccasion'} }) }}
+                    {% endif %}
+                </div>
+            </div>
+
+
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="codeOccasion"
+                       class=" control-label">{{ form_label(form.entity, "Entité de l'association") }}</label>
+
+                <div>
+                    {% if form.entity.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError"> {{ form_errors(form.entity) }}</label>
+                            {{ form_widget(form.entity, {'attr': { 'class': 'task_field form-control', 'id':'entity'} }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.entity, {'attr': { 'class': 'task_field form-control', 'id':'entity'} }) }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label class=" control-label">{{ form_label(form.cible, "Cible") }}</label>
+
+                <div>
+                    {% if form.cible.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError"> {{ form_errors(form.cible) }}</label>
+                            {{ form_widget(form.cible, {'attr': { 'class': 'task_field form-control', 'id':'cible'} }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.cible, {'attr': { 'class': 'task_field form-control', 'id':'cible'} }) }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="codeOccasion"
+                       class=" control-label">{{ form_label(form.budgetPrevisionnel, "Budget prévisionnel") }}</label>
+
+                <div>
+                    {% if form.budgetPrevisionnel.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label"
+                                   for="inputError"> {{ form_errors(form.budgetPrevisionnel) }}</label>
+                            {{ form_widget(form.budgetPrevisionnel, {'attr': { 'class': 'task_field form-control', 'id':'budgetPrevisionnel'} }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.budgetPrevisionnel, {'attr': { 'class': 'task_field form-control', 'id':'budgetPrevisionnel'} }) }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label class=" control-label">{{ form_label(form.detailProjet, "Détails du projet") }}</label>
+
+                <div>
+                    {% if form.detailProjet.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError"> {{ form_errors(form.detailProjet) }}</label>
+                            {{ form_widget(form.detailProjet, {'attr': { 'class': 'task_field form-control', 'id':'detailProjet'} }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.detailProjet, {'attr': { 'class': 'task_field form-control', 'id':'detailProjet'} }) }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="codeOccasion"
+                       class=" control-label">{{ form_label(form.dateDebutProjet, "Date de début du projet") }}</label>
+
+                <div>
+                    {% if form.dateDebutProjet.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label"
+                                   for="inputError"> {{ form_errors(form.dateDebutProjet) }}</label>
+                            {{ form_widget(form.dateDebutProjet, {'attr': { 'class': 'task_field form-control', 'id':'dateDebutProjet'} }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.dateDebutProjet, {'attr': { 'class': 'task_field form-control datepicker', 'id':'dateDebutProjet'} }) }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label class=" control-label">{{ form_label(form.dateFinProjet, "Date de fin de projet") }}</label>
+
+                <div>
+                    {% if form.dateFinProjet.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError"> {{ form_errors(form.detailProjet) }}</label>
+                            {{ form_widget(form.dateFinProjet, {'attr': { 'class': 'task_field form-control', 'id':'dateFinProjet'} }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.dateFinProjet, {'attr': { 'class': 'task_field form-control datepicker', 'id':'dateFinProjet'} }) }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="codeOccasion"
+                       class=" control-label">{{ form_label(form.lieuConcert, "Lieu du concert") }}</label>
+                <div>
+                    {% if form.lieuConcert.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError"> {{ form_errors(form.lieuConcert) }}</label>
+                            {{ form_widget(form.lieuConcert, {'attr': { 'class': 'task_field form-control'} }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.lieuConcert, {'attr': { 'class': 'task_field form-control'} }) }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label class=" control-label">{{ form_label(form.dateConcert, "Date du concert") }}</label>
+                <div>
+                    {% if form.dateConcert.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError"> {{ form_errors(form.dateConcert) }}</label>
+                            {{ form_widget(form.dateConcert) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.dateConcert) }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="codeOccasion"
+                       class=" control-label">{{ form_label(form.artiste, "Artiste") }}</label>
+
+                <div>
+                    {% if form.entity.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError"> {{ form_errors(form.artiste) }}</label>
+                            {{ form_widget(form.artiste, {'attr': { 'class': 'task_field form-control', 'id':'entity'} }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.artiste, {'attr': { 'class': 'task_field form-control', 'id':'entity'} }) }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label class=" control-label">{{ form_label(form.hote, "Hôte") }}</label>
+
+                <div>
+                    {% if form.hote.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError"> {{ form_errors(form.hote) }}</label>
+                            {{ form_widget(form.hote, {'attr': { 'class': 'task_field form-control', 'id':'hote'} }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.hote, {'attr': { 'class': 'task_field form-control', 'id':'hote'} }) }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="form-group col-md-6">
+                <label class=" control-label">Visible sur l'espace donateur ?</label>
+
+                <div>
+                    <div class="radio-inline">
+                        <label>
+                            <input type="radio" name="visible_do" id="visible_do" value="true" checked>
+                            Oui
+                        </label>
+                    </div>
+                    <div class="radio-inline">
+                        <label>
+                            <input type="radio" name="visible_do" id="visible_do" value="false">
+                            Non
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+            <div class="form-group col-md-6">
+                <label class=" control-label">Vous voulez que le code activité soit actif ?</label>
+
+                <div>
+                    <div class="radio-inline">
+                        <label>
+                            <input type="radio" name="actif" id="actif1" value="true" checked>
+                            Oui
+                        </label>
+                    </div>
+                    <div class="radio-inline">
+                        <label>
+                            <input type="radio" name="actif" id="actif2" value="false">
+                            Non
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label class=" control-label">Vous voulez que ce code activité donne droit aux RFs ?</label>
+
+                <div>
+                    <div class="radio-inline">
+                        <label>
+                            <input type="radio" name="rf" id="rf1" value="true" checked>
+                            Oui
+                        </label>
+                    </div>
+                    <div class="radio-inline">
+                        <label>
+                            <input type="radio" name="rf" id="rf2" value="false">
+                            Non
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="widget-toolbox padding-8 clearfix">
+
+            <button class="btn btn-xs btn-success pull-right"  type="submit">
+                <span class="bigger-110">Enregistrer le code activité</span>
+
+                <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+            </button>
+        </div>
+        {{ form_rest(form) }}
+        </form>
+        </div>
+        </div>
+
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+    {% endblock %}

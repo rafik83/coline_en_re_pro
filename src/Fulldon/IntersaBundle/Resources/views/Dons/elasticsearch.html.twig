@@ -1,0 +1,1332 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+    {% stylesheets '../app/Resources/Public/css/global/jquery-ui/*' %}
+    <link rel="stylesheet" type="text/css" charset="UTF-8" media="all" href="{{ asset_url }}"/>
+    {% endstylesheets %}
+    <style>
+        label {
+            font-size: 12px !important;
+            font-weight: bold !important;
+            padding: 2px !important;
+            margin: 0 !important;
+        }
+    </style>
+{% endblock %}
+{% block coque_intersa %}
+    <div class="breadcrumbs" id="breadcrumbs">
+
+        <ol class="breadcrumb">
+            <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+            <li class="active">Gestion des dons</li>
+        </ol>
+    </div>
+    <div class="page-content">
+
+        <div class="col-md-12">
+            <div class="page-header">
+
+                <h1>
+                    Gestion des dons
+                    <small>
+                        <i class="ace-icon fa fa-angle-double-right"></i>
+                        Recherche avancée
+                    </small>
+                </h1>
+            </div>
+            <!-- /.page-header -->
+
+
+
+            {% for flashMessage in app.session.flashbag.get('info') %}
+                <div id="flashbag_success"   class="alert alert-success">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+            {% for flashMessage in app.session.flashbag.get('warning') %}
+                <div id="flashbag_warning"  class="alert alert-warning">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+            <div id="msg_don_succes" class="alert alert-success" style="display: none">
+            </div>
+            <div id="msg_don_warning" class="alert alert-warning" style="display: none">
+            </div>
+            <div class="pull-right">
+                {% if last_page >= 1 %}
+                    <div class="pagination_desc"><strong>{{ total_dons }}</strong> Don(s)
+
+                    </div>
+                {% endif %}
+            </div>
+
+            <ul class="nav nav-tabs">
+                <li {% if total_dons == 0  %}class="active"{% endif %} ><a href="#recherche" data-toggle="tab">Recherche</a>
+                </li>
+                <li {% if total_dons > 0  %}class="active"{% endif %}><a href="#result" data-toggle="tab">Resultat de
+                        recherche</a></li>
+            </ul>
+            <!--form id="form_gestion_dons" action="{#{ path('elastic_don') }#}" method="GET" class="form-group"-->
+            <form id="form_gestion_dons" action="{{ path('elastic_don') }}" method="GET" class="form-group">
+
+     <!--form id="form_gestion_dons" action="{#{ path('intersa_donateur_export_fromdon') }#}"  class="form-group" method="POST"  method="GET"  onsubmit="show_result()"-->
+                <div class="widget-toolbox padding-8 clearfix">
+                    <div class="pull-left">
+                        {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') or is_granted('ROLE_TRIAL') %}
+
+                            <!--div class="btn-group " style="margin-right: 20px;">
+                                <button type="button" class="btn btn-warning dropdown-toggle btn-sm" data-toggle="dropdown"
+                                        aria-expanded="false">
+                                    <i class="fa fa-star"></i> Gestion des favoris <i
+                                        class="ace-icon fa fa-angle-down icon-on-right"></i>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                            {#% if result is not empty %}
+                                <li><a data-toggle="modal" data-target="#addRecherche" href="#"><i class="fa fa-plus"></i>
+                                        Ajouter cette recherche aux favoris</a></li>
+                                    {% endif %#}
+                            <li><a data-toggle="modal" data-target="#listRecherche" href="#"><i class="fa fa-list"></i> Afficher
+                                    les recherches favorites</a></li>
+
+                            {#<li><a href="#"><i class="fa fa-file-excel-o"></i> Export excel</a></li>#}
+                            {#<li><a href="#"><i class="fa fa-file-pdf-o"></i> Export pdf</a></li>#}
+
+                        </ul>
+                    </div-->
+                            {% if result is not empty %}
+                                <div class="btn-group">
+                                    <button type="button" id="btn_gestion_favori_don" class="btn btn-warning dropdown-toggle btn-sm" data-toggle="dropdown"
+                                            aria-expanded="false">
+                                        <i class="fa fa-star"></i> Gestion des favoris <i
+                                            class="ace-icon fa fa-angle-down icon-on-right"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a data-toggle="modal" data-target="#addRecherche" href="#"><i class="fa fa-plus"></i>
+                                                Ajouter cette recherche aux favoris</a></li>
+
+
+                                        <!--li><a data-toggle="modal" data-target="#addCritereDon" href="#"><i class="fa fa-plus"></i>
+                                                Ajouter cette selection</a></li-->
+
+                                        <li><a data-toggle="modal" data-target="#listRecherche" href="#"><i class="fa fa-list"></i> Afficher
+                                                les recherches favorites</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="btn-group">
+                                    <button type="button" id="btn_exporter_donateur_dons" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false">
+                                        <i class="fa fa-download"></i> Exporter le résultat <i
+                                            class="ace-icon fa fa-angle-down icon-on-right"></i>
+                                    </button>
+                                    <ul class="dropdown-menu  dropdown-menu-right" role="menu">
+                                        <li><a href="#" id="btn_fields_generate_pdf" {#{ path('intersa_donateur_export_fromdon') }#}{#{ params }#}>
+                                                <i class="fa fa-file-archive-o"></i> Exporter les donateurs et les dons en PDF</a></li>
+                                        <li><a href="#" id="btn_fields_generate_exel" style="display: block" {#{ path('intersa_donateur_export_fromdon') }#}{#{ params }#}>
+                                                <i class="fa fa-file-archive-o"></i> Exporter les donateurs et les dons en Excel</a></li>
+                                    </ul>
+                                </div>
+                            {% endif %}
+
+                        {% endif %}
+                    </div>
+                    <div class="miftah-form">
+                        <div class="element"
+                             style="background-color: #F78D1E;float:left;margin-right:5px;border: 1px solid #000;"></div>
+                        <div style="float:left;margin-right:10px;">Champs inclus dans le résultat</div><br />
+                        <div class="element"
+                             style="background-color: #393939;float:left;margin-right:5px;border: 1px solid #000;"></div>
+                        <div style="float:left;margin-right:10px;">Champs non inclus dans le résultat</div><br />
+                        <!-- Result indicators -->
+                        <div >
+                            <div class="element"
+                                 style="background-color: #dff0d8;float:left;margin-right:5px;border: 1px solid #000;"></div>
+                            <div style="float:left;margin-right:10px;">Dons validés</div>
+                            <div class="element"
+                                 style="background-color: #fcf8e3;float:left;margin-right:5px;border: 1px solid #000;"></div>
+                            <div style="float:left;margin-right:10px;">Dons en attente</div>
+                            <div class="element"
+                                 style="background-color: #f2dede;float:left;margin-right:5px;border: 1px solid #000;"></div>
+                            <div style="float:left;margin-right:10px;">Dons annulés</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-xs btn-success pull-right" type="submit">
+                        <span class="bigger-110">Rechercher</span>
+
+                        <i class="ace-icon fa fa-search icon-on-right"></i>
+                    </button>
+                </div>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane {% if total_dons == 0  %}active{% endif %}" id="recherche">
+                        <br/>
+
+
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-5">
+                                <div class="widget-box">
+                                    <div class="widget-header">
+                                        <h4 class="widget-title title-plus">Références</h4>
+
+                                    </div>
+
+                                    <div class="widget-body">
+                                        <div class="widget-main">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label for="iban"><label for="iban" class="required">N° de transaction</label></label>
+                                                    {% if  app.session.flashbag.has('error_id_don') %}
+                                                        {# Affichage des erreurs pour ce champ précis. #}
+                                                        <div class="form-group has-error">
+                                                            <label class="control-label" for="inputError">
+                                                                {% for flashMessage in app.session.flashbag.get('error_id_don') %}
+                                                                    <li>{{ flashMessage }}</li>
+                                                                    {% endfor %}
+                                                            </label>
+                                                            <input type="text" id="id_don"
+                                                                   name="id_don" {% if memo_search['id_don'] is defined and memo_search['id_don'] is not null %} value="{{ memo_search['id_don'] }}" {% endif %}
+                                                                   placeholder="Identifiant du don" class="task_field form-control ">
+                                                        </div>
+                                                    {% else %}
+                                                        <input type="text" id="id_don"
+                                                               name="id_don" {% if memo_search['id_don'] is defined and memo_search['id_don'] is not null %} value="{{ memo_search['id_don'] }}" {% endif %}
+                                                               placeholder="Identifiant du don" class="task_field form-control ">
+                                                    {% endif %}
+                                                    <br/>
+                                                </div>
+                                                <div class="col-md-6" >
+
+                                                    <label for="iban"><label for="iban" class="required">Code activité</label></label>
+                                                    {% if  app.session.flashbag.has('error_code_activite') %}
+                                                        {# Affichage des erreurs pour ce champ précis. #}
+                                                        <div class="form-group has-error">
+                                                            <label class="control-label" for="inputError">
+                                                                {% for flashMessage in app.session.flashbag.get('error_code_activite') %}
+                                                                    <li>{{ flashMessage }}</li>
+                                                                    {% endfor %}
+                                                            </label>
+                                                            <input type="text" id="cause"  autocomplete="off"
+                                                                   name="cause" {% if memo_search['cause'] is defined and memo_search['cause'] is not null %} value="{{ memo_search['cause'] }}" {% endif %}
+                                                                   placeholder="Code activité" class="task_field form-control ">
+                                                        </div>
+                                                    {% else %}
+                                                        <input type="text" id="cause"  autocomplete="off"
+                                                               name="cause" {% if memo_search['cause'] is defined and memo_search['cause'] is not null %} value="{{ memo_search['cause'] }}" {% endif %}
+                                                               placeholder="Code activité" class="task_field form-control ">
+                                                    {% endif %}
+                                                    <br/>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6" >
+                                                    <label for="iban"><label for="iban" class="required">Code occasion</label></label>
+                                                    {% if  app.session.flashbag.has('error_code_activite') %}
+                                                        {# Affichage des erreurs pour ce champ précis. #}
+                                                        <div class="form-group has-error">
+                                                            <label class="control-label" for="inputError">
+                                                                {% for flashMessage in app.session.flashbag.get('error_code_occasion') %}
+                                                                    <li>{{ flashMessage }}</li>
+                                                                    {% endfor %}
+                                                            </label>
+                                                            <input type="text" id="code_occasion" autocomplete="off"
+                                                                   name="code_occasion" {% if memo_search['code_occasion'] is defined and memo_search['code_occasion'] is not null %} value="{{ memo_search['code_occasion'] }}" {% endif %}
+                                                                   placeholder="Code Occasion" class="task_field form-control ">
+                                                        </div>
+                                                    {% else %}
+                                                        <input type="text" id="code_occasion" autocomplete="off"
+                                                               name="code_occasion" {% if memo_search['code_occasion'] is defined and memo_search['code_occasion'] is not null %} value="{{ memo_search['code_occasion'] }}" {% endif %}
+                                                               placeholder="Code Occasion" class="task_field form-control ">
+                                                    {% endif %}
+                                                    <br/>
+                                                </div>
+
+                                                <div class="col-md-6">
+
+                                                    <label for="code_campagne"><label for="code_campagne" class="required">Code campagne</label></label>
+                                                    {% if  app.session.flashbag.has('error_code_activite') %}
+                                                        {# Affichage des erreurs pour ce champ précis. #}
+                                                        <div class="form-group has-error">
+                                                            <label class="control-label" for="inputError">
+                                                                {% for flashMessage in app.session.flashbag.get('error_code_campagne') %}
+                                                                    <li>{{ flashMessage }}</li>
+                                                                    {% endfor %}
+                                                            </label>
+                                                            <input type="text" id="code_campagne" autocomplete="off"
+                                                                   name="code_campagne" {% if memo_search['code_campagne'] is defined and memo_search['code_campagne'] is not null %} value="{{ memo_search['code_campagne'] }}" {% endif %}
+                                                                   placeholder="Code campagne" class="task_field form-control ">
+                                                        </div>
+                                                    {% else %}
+                                                        <input type="text" id="code_campagne" autocomplete="off"
+                                                               name="code_campagne" {% if memo_search['code_campagne'] is defined and memo_search['code_campagne'] is not null %} value="{{ memo_search['code_campagne'] }}" {% endif %}
+                                                               placeholder="Code campagne" class="task_field form-control ">
+                                                    {% endif %}
+                                                    <br/>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label for="iban"><label for="iban" class="required">N° de reçu fiscal</label></label>
+                                                    <input type="text" id="num_rf" name="num_rf" placeholder="Numéro de reçu fiscal"
+                                                           class="task_field form-control "  {% if memo_search['num_rf'] is defined and memo_search['num_rf'] is not null %} value="{{ memo_search['num_rf'] }}" {% endif %} >
+                                                    <br/>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="iban"><label for="iban" class="required">N° de Lot </label></label>
+                                                    {% if  app.session.flashbag.has('error_lot_don') %}
+                                                        {# Affichage des erreurs pour ce champ précis. #}
+                                                        <div class="form-group has-error">
+                                                            <label class="control-label" for="inputError">
+                                                                {% for flashMessage in app.session.flashbag.get('error_lot_don') %}
+                                                                    <li>{{ flashMessage }}</li>
+                                                                    {% endfor %}
+                                                            </label>
+                                                            <input type="text" id="lot_don"
+                                                                   name="lot_don" {% if memo_search['lot_don'] is defined and memo_search['lot_don'] is not null %} value="{{ memo_search['lot_don'] }}" {% endif %}
+                                                                   placeholder="Lot " class="task_field form-control ">
+                                                        </div>
+                                                    {% else %}
+                                                        <input type="text" id="lot_don"
+                                                               name="lot_don"   {% if memo_search['lot_don'] is defined and memo_search['lot_don'] is not null %} value="{{ memo_search['lot_don'] }}" {% endif %}
+                                                               placeholder="Lot" class="task_field form-control ">
+                                                    {% endif %}
+                                                    <br/>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class=" col-md-12">
+                                                    <label for="iban"><label for="iban" class="required">IBAN</label></label>
+                                                    <input type="text" id="iban_elastic_dons" name="iban"
+                                                           placeholder="Iban" {% if memo_search['iban'] is defined and memo_search['iban'] is not null %} value="{{ memo_search['iban'] }}" {% endif %}
+                                                           class="task_field form-control "/>
+                                                    <br/>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label for="iban"><label for="iban" class="required">Numéro de chèque</label></label>
+                                                    {% if  app.session.flashbag.has('error_num_cheque') %}
+                                                        {# Affichage des erreurs pour ce champ précis. #}
+                                                        <div class="form-group has-error">
+                                                            <label class="control-label" for="inputError">
+                                                                {% for flashMessage in app.session.flashbag.get('error_num_cheque') %}
+                                                                    <li>{{ flashMessage }}</li>
+                                                                    {% endfor %}
+                                                            </label>
+                                                            <input type="text" id="num_cheque"
+                                                                   name="num_cheque" {% if memo_search['num_cheque'] is defined and memo_search['num_cheque'] is not null %} value="{{ memo_search['num_cheque'] }}" {% endif %}
+                                                                   placeholder="Numéro de chèque" class="task_field form-control ">
+                                                        </div>
+                                                    {% else %}
+                                                        <input type="text" id="num_cheque"
+                                                               name="num_cheque"  {% if memo_search['num_cheque'] is defined and memo_search['num_cheque'] is not null %} value="{{ memo_search['num_cheque'] }}" {% endif %}
+                                                               placeholder="Numéro de chèque" class="task_field form-control ">
+                                                    {% endif %}
+                                                    <br/>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.span -->
+
+                            <div class="col-xs-12 col-sm-5">
+                                <div class="widget-box">
+                                    <div class="widget-header">
+                                        <h4 class="widget-title title-plus ">Don</h4>
+
+
+                                    </div>
+
+                                    <div class="widget-body">
+                                        <div class="widget-main">
+                                            <div>
+                                                <label for="iban"><label for="iban" class="required">Type de don</label></label>
+                                                <select id="type_don_dropdown" name="type_don" class="task_field form-control ">
+                                                    <option value=""></option>
+                                                    <option value="ponctuel" {% if memo_search['type_don'] is defined and memo_search['type_don'] is not null and memo_search['type_don'] == 'ponctuel' %} selected="selected" {% endif %} >
+                                                        Don ponctuel
+                                                    </option>
+                                                    <option value="regulier" {% if memo_search['type_don'] is defined and memo_search['type_don'] is not null and memo_search['type_don'] == 'regulier' %} selected="selected" {% endif %}>
+                                                        Don réguilier
+                                                    </option>
+                                                </select>
+                                                <br/>
+                                            </div>
+                                            <div>
+                                                <label for="mode_paiement"><label for="mode_paiement" class="required">Mode de paiement</label></label>
+                                                <select name="mode_paiement" id="mode_paiement" class="task_field form-control ">
+                                                    <option value=""></option>
+                                                    {% for mode in modes %}
+                                                        <option value="{{ mode.codeSolution }}"  {% if memo_search['mode_paiement'] is defined and memo_search['mode_paiement'] == mode.codeSolution %} selected {% endif %} >{{ mode.libelle }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <br/>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label for="iban"><label for="iban" class="required">Intervalle de date</label></label>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    {% if  app.session.flashbag.has('error_date_debut') %}
+                                                        {# Affichage des erreurs pour ce champ précis. #}
+                                                        <div class="form-group has-error">
+                                                            <label class="control-label" for="inputError">
+                                                                {% for flashMessage in app.session.flashbag.get('error_date_fin') %}
+                                                                    <li>{{ flashMessage }}</li>
+                                                                    {% endfor %}
+                                                            </label>
+                                                            <input type="text" id="date_debut"
+                                                                   name="date_debut" {% if memo_search['date_debut'] is defined and memo_search['date_debut'] is not null %} value="{{ memo_search['date_debut'] }}" {% endif %}
+                                                                   placeholder="Date début jj/mm/aaaa"
+                                                                   class=" datepicker task_field form-control ">
+                                                        </div>
+                                                    {% else %}
+                                                        <input type="text" id="date_debut"
+                                                               name="date_debut"   {% if memo_search['date_debut'] is defined and memo_search['date_debut'] is not null %} value="{{ memo_search['date_debut'] }}" {% endif %}
+                                                               placeholder="Date début jj/mm/aaaa"
+                                                               class=" datepicker task_field form-control ">
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-md-6">
+                                                    {% if  app.session.flashbag.has('error_date_fin') %}
+                                                        {# Affichage des erreurs pour ce champ précis. #}
+                                                        <div class="form-group has-error">
+                                                            <label class="control-label" for="inputError">
+                                                                {% for flashMessage in app.session.flashbag.get('error_date_fin') %}
+                                                                    <li>{{ flashMessage }}</li>
+                                                                    {% endfor %}
+                                                            </label>
+                                                            <input type="text" id="date_fin"
+                                                                   name="date_fin"  {% if memo_search['date_fin'] is defined and memo_search['date_fin'] is not null %} value="{{ memo_search['date_fin'] }}" {% endif %}
+                                                                   placeholder="Date fin jj/mm/aaaa"
+                                                                   class="datepicker task_field form-control ">
+                                                        </div>
+                                                    {% else %}
+                                                        <input type="text" id="date_fin"
+                                                               name="date_fin"  {% if memo_search['date_fin'] is defined and memo_search['date_fin'] is not null %} value="{{ memo_search['date_fin'] }}" {% endif %}
+                                                               placeholder="Date fin jj/mm/aaaa"
+                                                               class="datepicker task_field form-control ">
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <br/>
+
+                                            <div class="row">
+                                                <div class=" col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <label for="iban"><label for="iban" class="required">Intervalle de date d'arrêt
+                                                                    d'engagement </label></label>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            {% if  app.session.flashbag.has('error_stop_date_debut') %}
+                                                                {# Affichage des erreurs pour ce champ précis. #}
+                                                                <div class="form-group has-error">
+                                                                    <label class="control-label" for="inputError">
+                                                                        {% for flashMessage in app.session.flashbag.get('error_stop_date_debut') %}
+                                                                            <li>{{ flashMessage }}</li>
+                                                                            {% endfor %}
+                                                                    </label>
+                                                                    <input type="text" id="date_stop_debut"
+                                                                           name="date_stop_debut"  {% if memo_search['date_stop_debut'] is defined and memo_search['date_stop_debut'] is not null %} value="{{ memo_search['date_stop_debut'] }}" {% endif %}
+                                                                           placeholder="Date début jj/mm/aaaa"
+                                                                           class=" datepicker task_field form-control ">
+                                                                </div>
+                                                            {% else %}
+                                                                <input type="text" id="date_stop_debut"
+                                                                       name="date_stop_debut"  {% if memo_search['date_stop_debut'] is defined and memo_search['date_stop_debut'] is not null %} value="{{ memo_search['date_stop_debut'] }}" {% endif %}
+                                                                       placeholder="Date début jj/mm/aaaa"
+                                                                       class=" datepicker task_field form-control ">
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            {% if  app.session.flashbag.has('error_stop_fin') %}
+                                                                {# Affichage des erreurs pour ce champ précis. #}
+                                                                <div class="form-group has-error">
+                                                                    <label class="control-label" for="inputError">
+                                                                        {% for flashMessage in app.session.flashbag.get('error_stop_date_fin') %}
+                                                                            <li>{{ flashMessage }}</li>
+                                                                            {% endfor %}
+                                                                    </label>
+                                                                    <input type="text" id="date_stop_fin"
+                                                                           name="date_stop_fin"   {% if memo_search['date_stop_fin'] is defined and memo_search['date_stop_fin'] is not null %} value="{{ memo_search['date_stop_fin'] }}" {% endif %}
+                                                                           placeholder="Date fin jj/mm/aaaa"
+                                                                           class="datepicker task_field form-control ">
+                                                                </div>
+                                                            {% else %}
+                                                                <input type="text" id="date_stop_fin"
+                                                                       name="date_stop_fin"   {% if memo_search['date_stop_fin'] is defined and memo_search['date_stop_fin'] is not null %} value="{{ memo_search['date_stop_fin'] }}" {% endif %}
+                                                                       placeholder="Date fin jj/mm/aaaa"
+                                                                       class="datepicker task_field form-control ">
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+
+                                                    </div>
+                                                    <br/>
+
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label for="iban"><label>Montant des dons</label></label>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <select id="montant_choice_dropdown" name="montant_choice" class="task_field form-control ">
+                                                        <option value="sup" {% if memo_search['montant_choice'] is defined and memo_search['montant_choice'] == "sup" %} selected {% endif %}>
+                                                            Supérieur ou égal à
+                                                        </option>
+                                                        <option value="inf" {% if memo_search['montant_choice'] is defined and memo_search['montant_choice'] == "inf" %} selected {% endif %}>
+                                                            Inférieur ou égal à
+                                                        </option>
+                                                        <option value="eq" {% if memo_search['montant_choice'] is defined and memo_search['montant_choice'] == "eq" %} selected {% endif %} >
+                                                            Egal à
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    {% if  app.session.flashbag.has('error_montant_don') %}
+                                                        {# Affichage des erreurs pour ce champ précis. #}
+                                                        <div class="form-group has-error">
+                                                            <label class="control-label" for="inputError">
+                                                                {% for flashMessage in app.session.flashbag.get('error_montant_don') %}
+                                                                    <li>{{ flashMessage }}</li>
+                                                                    {% endfor %}
+                                                            </label>
+                                                            <input type="text" id="montant_don"
+                                                                   name="montant_don"  {% if memo_search['montant_don'] is defined and memo_search['montant_don'] is not null %} value="{{ memo_search['montant_don'] }}" {% endif %}
+                                                                   placeholder="Montant du don" class="task_field form-control ">
+                                                        </div>
+                                                    {% else %}
+                                                        <input type="text" id="montant_don"
+                                                               name="montant_don"  {% if memo_search['montant_don'] is defined and memo_search['montant_don'] is not null %} value="{{ memo_search['montant_don'] }}" {% endif %}
+                                                               placeholder="Montant du don" class="task_field form-control ">
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="row" style="  margin-left: 10px;">
+                                                <div class="form-group col-md-12">
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input id="don_inactif_cb" type="checkbox"
+                                                                   name="d_inactif" {% if memo_search['d_inactif'] is defined and memo_search['d_inactif'] is not null %} checked="checked" {% endif %} ><b>Dons
+                                                                inactifs</b>
+                                                        </label>
+                                                    </div>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input id="don_actif_cb" type="checkbox"
+                                                                   name="d_actif" {% if memo_search['d_actif'] is defined and memo_search['d_actif'] is not null %} checked="checked" {% endif %} ><b>Dons
+                                                                actifs</b>
+                                                        </label>
+                                                    </div>
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input id="don_is_rf_cb" type="checkbox"
+                                                                   name="is_rf" {% if memo_search['is_rf'] is defined and memo_search['is_rf'] is not null %} checked="checked" {% endif %} ><b>Rfs générés</b>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.span -->
+
+                            <div class="col-xs-12 col-sm-2" >
+                                <div class="widget-box">
+                                    <div class="widget-header">
+                                        <h4 class="widget-title title-plus">Champs</h4>
+                                    </div>
+
+                                    <div class="widget-body no-overflow">
+                                        <div class="widget-main">
+
+                                            <input type="hidden" name="columns" id="columns"
+                                                   value="{% if columns is not null  %}{{ columns }}{% endif %}"/>
+                                            <div style="height:250px;" class="row">
+                                                <div class="col-md-12">
+                                                    <ul id="sortable2" class="connectedSortable maincol" >
+
+                                                        {% for col in col_display %}
+
+                                                            {% if col == "numdon" %}
+                                                                <li id="list_numdon" class="ui-state-highlight"><i class="fa fa-cube"></i> <b>Numéro du don</b>
+                                                                </li>
+                                                            {% elseif col ==  "nom" %}
+                                                                <li id="list_nom" class="ui-state-highlight"><i class="fa fa-cube"></i> <b>Nom </b>
+                                                                </li>
+                                                            {% elseif col == "prenom" %}
+                                                                <li id="list_prenom" class="ui-state-highlight"><i class="fa fa-cube"></i> <b> Prénom </b>
+                                                                </li>
+                                                            {% elseif col == "statut" %}
+                                                                <li id="list_statut" class="ui-state-highlight"><i
+                                                                        class="fa fa-cube"></i> <b>Statut</b>
+                                                                </li>
+                                                            {% elseif col == "nomentreprise" %}
+                                                                <li id="list_nomentreprise" class="ui-state-highlight"><i class="fa fa-cube"></i> <b>Nom d'entreprise</b>
+                                                                </li>
+                                                            {% elseif col == "amount" %}
+                                                                <li id="list_amount" class="ui-state-highlight"><i class="fa fa-cube"></i> <b>Montant</b>
+                                                                </li>
+                                                            {% elseif col == "codeactivite" %}
+                                                                <li id="list_codeactivite" class="ui-state-highlight"><i class="fa fa-cube"></i>
+                                                                    <b> Code d'activité </b>
+                                                                </li>
+                                                            {% elseif col == "modepay" %}
+                                                                <li id="list_modepay" class="ui-state-highlight"><i
+                                                                        class="fa fa-cube"></i> <b>Mode de paiement</b>
+                                                                </li>
+                                                            {% elseif col == "typedon" %}
+                                                                <li id="list_typedon" class="ui-state-highlight"><i class="fa fa-cube"></i>
+                                                                    <b>Type de don</b>
+                                                                </li>
+                                                            {% elseif col == "createdat" %}
+                                                                <li id="list_createdat" class="ui-state-highlight"><i
+                                                                        class="fa fa-cube"></i> <b>Date de création</b>
+                                                                </li>
+                                                            {% elseif col == "rfs" %}
+                                                                <li id="list_rfs" class="ui-state-highlight"><i
+                                                                        class="fa fa-cube"></i> <b>Reçus fiscaux</b>
+                                                                </li>
+                                                            {% elseif col == "lot" %}
+                                                                <li id="list_lot" class="ui-state-highlight"><i class="fa fa-cube"></i>
+                                                                    <b>Lot</b>
+                                                                </li>
+                                                            {% elseif col == "codeoccasion" %}
+
+                                                                <li id="list_codeoccasion" class="ui-state-highlight"><i class="fa fa-cube"></i>
+                                                                    <b>Code Occasion</b>
+                                                                </li>
+                                                            {% elseif col == "codecampagne" %}
+                                                                <li id="list_codecampagne" class="ui-state-highlight"><i class="fa fa-cube"></i>
+                                                                    <b>Code campagne</b>
+                                                                </li>
+                                                            {% elseif col == "datefiscale" %}
+                                                                <li id="list_datefiscale" class="ui-state-highlight"><i class="fa fa-cube"></i>
+                                                                    <b>Date fiscale</b>
+                                                                </li>
+                                                            {% endif %}
+
+                                                        {% endfor %}
+
+                                                    </ul>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <ul id="sortable1" class="connectedSortable">
+
+                                                        {% for col in rest_cols %}
+                                                            {% if col == "numdon" %}
+                                                                <li id="list_numdon" class="ui-state-default"><i class="fa fa-cube"></i> <b>Numéro du don</b>
+                                                                </li>
+                                                            {% elseif col ==  "nom" %}
+                                                                <li id="list_nom" class="ui-state-default"><i class="fa fa-cube"></i> <b>Nom </b>
+                                                                </li>
+                                                            {% elseif col == "prenom" %}
+                                                                <li id="list_prenom" class="ui-state-default"><i class="fa fa-cube"></i> <b> Prénom </b>
+                                                                </li>
+                                                            {% elseif col == "statut" %}
+                                                                <li id="list_statut" class="ui-state-default"><i
+                                                                        class="fa fa-cube"></i> <b>Statut</b>
+                                                                </li>
+                                                            {% elseif col == "nomentreprise" %}
+                                                                <li id="list_nomentreprise" class="ui-state-default"><i class="fa fa-cube"></i> <b>Nom d'entreprise</b>
+                                                                </li>
+                                                            {% elseif col == "amount" %}
+                                                                <li id="list_amount" class="ui-state-default"><i class="fa fa-cube"></i> <b>Montant</b>
+                                                                </li>
+                                                            {% elseif col == "codeactivite" %}
+                                                                <li id="list_codeactivite" class="ui-state-default"><i class="fa fa-cube"></i>
+                                                                    <b> Code d'activité </b>
+                                                                </li>
+                                                            {% elseif col == "modepay" %}
+                                                                <li id="list_modepay" class="ui-state-default"><i
+                                                                        class="fa fa-cube"></i> <b>Mode de paiement</b>
+                                                                </li>
+                                                            {% elseif col == "typedon" %}
+                                                                <li id="list_typedon" class="ui-state-default"><i class="fa fa-cube"></i>
+                                                                    <b>Type de don</b>
+                                                                </li>
+                                                            {% elseif col == "createdat" %}
+                                                                <li id="list_createdat" class="ui-state-default"><i
+                                                                        class="fa fa-cube"></i> <b>Date de création</b>
+                                                                </li>
+                                                            {% elseif col == "rfs" %}
+                                                                <li id="list_rfs" class="ui-state-default"><i
+                                                                        class="fa fa-cube"></i> <b>Reçus fiscaux</b>
+                                                                </li>
+                                                            {% elseif col == "lot" %}
+                                                                <li id="list_lot" class="ui-state-default"><i class="fa fa-cube"></i>
+                                                                    <b>Lot</b>
+                                                                </li>
+                                                            {% elseif col == "codeoccasion" %}
+
+                                                                <li id="list_codeoccasion" class="ui-state-default"><i class="fa fa-cube"></i>
+                                                                    <b>Code Occasion</b>
+                                                                </li>
+                                                            {% elseif col == "codecampagne" %}
+                                                                <li id="list_codecampagne" class="ui-state-default"><i class="fa fa-cube"></i>
+                                                                    <b>Code campagne</b>
+                                                                </li>
+                                                            {% elseif col == "datefiscale" %}
+                                                                <li id="list_datefiscale" class="ui-state-default"><i class="fa fa-cube"></i>
+                                                                    <b>Date fiscale</b>
+                                                                </li>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.span -->
+                        </div>
+
+                        </form>
+                    </div>
+                    <div class="tab-pane {% if total_dons > 0  %}active{% endif %} " id="result">
+                        <br/>
+                        <table class="table table-condensed" id="liste_donateur_don">
+                            <thead>
+                                <tr>
+                                    {% for col in col_display %}
+                                        {% set sortcols = { 'numdon':'#REF','statut':'Statut','modepay':'Mode de paiement','typedon':'Type de don','rfs':'Reçus fiscaux',
+                             'lot':'Lot','createdat':'Date de création','datefiscale':'Date fiscale',
+                             'codeactivite':'Code d\'activité','codeoccasion':'Code occasion','amount':'Montant','codecampagne':'Code campagne'} %}
+                                        {% set cols = { 'numdon':'#REF','nom':'Nom','prenom':'Prénom','statut':'Statut',
+                            'nomentreprise':'Nom d\'entreprise','modepay':'Mode de paiement','typedon':'Type de don',
+                             'lot':'Lot','rfs':'Reçus fiscaux','createdat':'Date de création','datefiscale':'Date fiscale',
+                             'codeactivite':'Code d\'activité','codeoccasion':'Code occasion','amount':'Montant','codecampagne':'Code campagne'} %}
+                                        {% if col in cols|keys %}
+                                            <th>{{ cols[col] }} {% if col in sortcols|keys %}
+                                                <!--a href="#" onclick="flipsort('{#{ col }#}')" class="pull-right sort" >
+                                                    <!--i id="sort_{#{ col }#}" class="{#% if col == sortelement %}{% if sortdirection == 'desc' %}fa fa-lg fa-sort-desc{% else %}fa fa-lg fa-sort-asc{% endif %#}{#% else %}fa fa-lg fa-sort{% endif %#}"></i-->
+                                                </a-->
+                                            {% endif %}
+                                            </th>
+                                                {% endif %}
+                                            {% endfor %}
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="content">
+
+                                {% for r in result %}
+                                    <tr id="{{ r.id }}" {% if r.transaction.statut.code is defined %}
+                                        {% if r.transaction.statut.code == "paiement_annule" or r.removed == 1 %}class="danger"{% endif %}
+                                        {% if r.transaction.statut.code == "attente" %}class="warning"{% endif %}
+                                        {% if r.transaction.statut.code == "traitement_paiement" %}class="alert-info"{% endif %}
+                                        {% if r.transaction.statut.code == "don_valide" %}class="success"{% endif %}
+
+                                    {% else %}
+                                        class="danger"
+                                        {% endif %}>
+                                            {% set donateur_ix = r.user.id|donateur %}
+                                            {% for col in col_display %}
+                                                {% if col == "numdon" %}
+
+                                                    <td id="numero_don_{{ r.id }}">{{ r.id }}</td>
+                                                {% elseif col ==  "nom" %}
+                                                    <td id="nom_donateur_{{ r.id }}">
+                                                        {% if donateur_ix is not null %}
+                                                            {{ donateur_ix.nom }}
+                                                        {% endif %}
+                                                    </td>
+                                                {% elseif col == "prenom" %}
+                                                    <td id="prenom_donateur_{{ r.id }}">
+                                                        {% if donateur_ix is not null %}
+                                                            {{ donateur_ix.prenom }}
+                                                        {% endif %}
+                                                    </td>
+                                                {% elseif col == "statut" %}
+                                                    <td id="statut_donateur_{{ r.id }}">
+                                                        {% if r.transaction.statut.libelle is defined %}{{ r.transaction.statut.libelle }}{% else %}Abondonné{% endif %}
+                                                    </td>
+                                                {% elseif col == "nomentreprise" %}
+                                                    <td id="nom_entreprise_{{ r.id }}">
+                                                        {% if donateur_ix is not null %}
+                                                            {{ donateur_ix.nomEntreprise }}
+                                                        {% endif %}
+                                                    </td>
+                                                {% elseif col == "modepay" %}
+                                                    <td id="modepaiement_{{ r.id }}">{% if r.modePaiement is defined and  r.modePaiement is not null %}{{ r.modePaiement.libelle }}{% endif %}</td>
+                                                {% elseif col == "createdat" %}
+                                                    <td id="date_creation_{{ r.id }}">{{ r.createdAt|date('d/m/Y') }}</td>
+                                                {% elseif col == "amount" %}
+
+
+                                                    {% if r.modePaiement is defined and  r.modePaiement is not null %}
+                                                        {% if r.modePaiement.libelle =='Prélèvement automatique'%}
+
+                                                            {% for prelevement in sumprelevement %}
+                                                                {% if r.abonnement.id == prelevement.abo_id%}
+                                                                    <td id="montant_{{ r.id }}">{{ prelevement.somme|round(2, 'floor') }} €</td>
+                                                                {% endif %}
+
+                                                            {% endfor %}
+
+                                                        {% else %}
+                                                            <td id="montant_{{ r.id }}">{{ r.montant|round(2, 'floor') }} €</td>
+
+                                                        {% endif %}
+
+
+                                                    {% endif %}
+
+
+
+
+                                                {% elseif col == "typedon" %}
+                                                    <td id="typedon_{{ r.id }}">
+                                                        {% if r.ispa %}
+                                                            régulier
+                                                        {% else %}
+                                                            ponctuel
+                                                        {% endif %}
+                                                    </td>
+                                                {% elseif col == "rfs" %}
+                                                    <td id="reference_{{ r.id }}"><ul>
+                                                            {% for rf in r.rfs %}
+                                                                <li>{{ rf.id }}</li>
+                                                                {% endfor %}
+                                                        </ul></td>
+                                                    {% elseif col == "codeactivite" %}
+                                                    <td id="code_activiter_{{ r.id }}"> {% if r.cause is not null %}{{ r.cause.code }}{% endif %}</td>
+                                                {% elseif col == "codeoccasion" %}
+                                                    <td id="code_ocassion_{{ r.id }}">{% if r.cause is not null %}{{ r.cause.codeOccasion.code }}{% endif %}</td>
+                                                {% elseif col == "codecampagne" %}
+                                                    <td id="code_compagne_{{ r.id }}">{% if r.cause.codeOccasion is not null%}{{ r.cause.codeOccasion.codeCompagne.code }}{% endif %}</td>
+                                                {% elseif col == "lot" %}
+                                                    <td id="lot_{{ r.id }}">{{ r.lot }}</td>
+                                                {% elseif col == "createdat" %}
+                                                    <td>{{ r.createdAt|date('d/m/Y') }}</td>
+                                                {% elseif col == "datefiscale" %}
+                                                    <td id="date_fiscale_{{ r.id }}">{{ r.dateFiscale|date('d/m/Y') }}</td>
+                                                {% endif %}
+                                            {% endfor %}
+
+                                            <td><a href="{{ path('intersa_dons_view',{'id':r.id}) }}" class="btn btn-default btn-xs"><span
+                                                        class="glyphicon glyphicon-wrench"></span>&nbsp; Gestion</a></td>
+
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <center>
+                                        <div class="row">
+                                            <div class="col-md-6">
+
+                                                {% if last_page > 1 %}
+                                                    {% set state = '' %}
+                                                    <ul class="pagination pull-center">
+
+                                                        {% if result2.hasPreviousPage %}
+                                                            {% set state = 'paginate_button first' %}
+                                                            <li class="{{ state }}">
+                                                                <a href="{{ path('elastic_don') }}?{{ params }}&page={{ result2.getCurrentPage() -1 }}" style="cursor: pointer">&laquo;&nbsp;{{ 'Précédent'|trans }}</a>
+
+                                                            </li>
+                                                        {% else %}
+                                                            <li class="disabled">
+                                                                <span>&laquo;&nbsp;{{ 'Précédent'|trans }}</span>
+                                                            </li>
+                                                        {% endif %}
+
+
+                                                            <!--li> <a href="{#{ path('elastic_don') }}?{{ params }}&page={{ previous_page }#}">&laquo;</a></li-->
+                                                        {% for page in 1..last_page %}
+                                                            {% if page >= current_page-4 and page <= current_page+4 %}
+                                                                {% if   page == current_page-4 or page == current_page+4 %}
+                                                                    {% if   page == current_page-4 %}
+                                                                        <li><a href="{{ path('elastic_don') }}?{{ params }}&page=1">1</a></li>
+                                                                        <li class="disabled"><a href="#">...</a></li>
+                                                                        {% else %}
+                                                                        <li class="disabled"><a href="#">...</a></li>
+                                                                        <li>
+                                                                            <a href="{{ path('elastic_don') }}?{{ params }}&page={{ last_page }}">{{ last_page }}</a>
+                                                                        </li>
+                                                                    {% endif %}
+                                                                {% else %}
+                                                                    {% if page == current_page %}
+                                                                        <li class="active"><a href="#">{{ page }}</a></li>
+                                                                        {% else %}
+                                                                        <li>
+                                                                            <a href="{{ path('elastic_don') }}?{{ params }}&page={{ page }}">{{ page }}</a>
+                                                                        </li>
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        {% set state = '' %}
+                                                        {% if result2.hasNextPage %}
+                                                            <li class="{{ state }}" ><a href="{{ path('elastic_don') }}?{{ params }}&page={{ result2.getCurrentPage() +1}}" style="cursor: pointer">{{ 'Suivant'|trans }}&nbsp;&raquo;</a></li>
+                                                            {% else %}
+                                                            <li class="disabled">
+                                                                <span>&laquo;&nbsp;{{ 'Suivant'|trans }}</span>
+                                                            </li>
+                                                        {% endif %}
+                                                        <!--li><a href="{#{ path('elastic_don') }}?{{ params }}&page={{ next_page }#}">&raquo;</a></li-->
+                                                    </ul>
+                                                {% endif %}
+                                                </center>
+                                            </div>
+                                        </div>
+                                </div>
+
+
+                                <!-------------------------------Start POPUP Search Critere DON------------------------------------------------>
+
+                                <!--div class="modal fade" id="addCritereDon" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                                     aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                        aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalLabel">Ajouter cette selection</h4>
+                                            </div>
+                                            <form action="{#{ path('intersa_critere_don_add', {'section': 'dons'}) }#}" method="POST">
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <label class=" control-label">Titre </label>
+                                                            <input class="form-control" name="title" required="required"/>
+                                                            <br/>
+                                                            <label class=" control-label">Description</label>
+                                                            <textarea name="description" class="form-control"></textarea>
+
+                                                            <input id="url" class="form-control" name="url" required="required" type="hidden"
+                                                                   value="{#{ params }#}" readonly="readonly"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                                                    <button type="submit" class="btn btn-primary">Sauvegarder</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div-->
+
+
+                                <!----------------------------------------------End POPUP Search Critere DON-------------------------------------------->
+                                <div class="modal fade" id="addRecherche" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                                     aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                        aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalLabel">Ajouter cette recherche aux favoris</h4>
+                                            </div>
+                                            <form action="{{ path('intersa_donateur_favoris_add', {'section': 'dons'}) }}" method="POST">
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <label class=" control-label">Titre de la recherche</label>
+                                                            <input class="form-control" name="title" required="required"/>
+                                                            <br/>
+                                                            <label class=" control-label">Description de la recherche</label>
+                                                            <textarea name="description" class="form-control"></textarea>
+
+                                                            <input id="url" class="form-control" name="url" required="required" type="hidden"
+                                                                   value="{{ params }}" readonly="readonly"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                                                    <button type="submit" class="btn btn-primary">Sauvegarder la recherche</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal fade" id="listRecherche" tabindex="-1" role="dialog" aria-labelledby="listRecherche"
+                                     aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                        aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="listRechercheLabel">Liste des favoris</h4>
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <table class="table table-hover">
+                                                            <thead>
+                                                            <th>Informations sur la recherche</th>
+                                                            <th>Actions</th>
+                                                            </thead>
+                                                            <tbody>
+                                                                {% for f in favoris %}
+                                                                    <tr>
+                                                                        <td>{{ f.title }}<br/><span
+                                                                                style="font-size: 10px;">{{ f.description }}</span></td>
+                                                                        <td>
+                                                                            <div class="btn-group">
+                                                                                <button type="button" class="btn btn-xs btn-default dropdown-toggle"
+                                                                                        data-toggle="dropdown" aria-expanded="false">
+                                                                                    Actions <span class="caret"></span>
+                                                                                </button>
+                                                                                <ul class="dropdown-menu" role="menu">
+                                                                                    <li><a href="{{ path('elastic_don') }}?{{ f.url }}"
+                                                                                           target="_blank"><i class="fa fa-search"></i> Lancer la
+                                                                                            recherche</a></li>
+                                                                                    <li>
+                                                                                        <a href="{{ path('intersa_donateur_favoris_delete', {'id': f.id}) }}"><i
+                                                                                                class="fa fa-trash-o"></i> Supprimer la
+                                                                                            recherche</a></li>
+                                                                                </ul>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--div class="modal fade in" id="loading-ajax_elastica" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" style="margin-top: 129px;margin-left: 669px; display: none;"-->
+                                     <!--img src="{#{ asset('img/image-loding128x128.gif') }#}"/-->
+                                <!--/div-->
+                            </div>
+                            {% endblock %}
+
+                                {% block javascripts %}
+                                    {{ parent() }}
+                                    {% javascripts '../app/Resources/Public/js/jquery-ui/jquery-ui.js' %}
+                                    <script type="text/javascript" src="{{ asset_url }}"></script>
+                                    {% endjavascripts %}
+                                    <script>
+                                        // Sort management
+                                        $(document).ready(function () {
+                                            setTimeout(function () {
+                                                $('#flashbag_success').hide("slow");
+                                            }, 3000);
+                                            setTimeout(function () {
+                                                $('#flashbag_warning').hide("slow");
+                                            }, 3000);
+
+                                            if ($("#cause").val().length === 0) {
+                                                $("#btn_fields_generate_exel").css('display', 'none');
+                                            } else {
+                                                $("#btn_fields_generate_exel").css('display', 'block');
+                                            }
+
+                                            $(function () {
+                                                $("#sortable1, #sortable2").sortable({
+                                                    connectWith: ".connectedSortable",
+                                                    update: function () {
+                                                        var order = $('#sortable2').sortable('serialize');
+                                                        var res = order.split("&");
+                                                        for (var i in res) {
+                                                            var formatid = res[i];
+                                                            var myid = formatid.substring(7, formatid.length);
+                                                            $('#list_' + myid).removeClass('ui-state-default');
+                                                            $('#list_' + myid).addClass('ui-state-highlight');
+                                                        }
+                                                        $('#columns').val(order);
+                                                        var orderdisable = $('#sortable1').sortable('serialize');
+                                                        var res = orderdisable.split("&");
+                                                        for (var i in res) {
+                                                            var formatid = res[i];
+                                                            var myid = formatid.substring(7, formatid.length);
+                                                            $('#list_' + myid).addClass('ui-state-default');
+                                                            $('#list_' + myid).removeClass('ui-state-highlight');
+                                                        }
+                                                    }
+
+                                                }).disableSelection();
+                                            });
+                                            // verfie si la cause existe ou nn //Init
+                                            //http://jsfiddle.net/pxfunc/5kpeJ/
+                                            $('#cause').change(function () {
+                                                // get the current value of the input field.
+                                                if ($("#cause").val().length === 0) {
+                                                    $("#btn_fields_generate_exel").css('display', 'none');
+                                                } else {
+                                                    $("#btn_fields_generate_exel").css('display', 'block');
+                                                }
+                                            });
+
+
+
+
+                                            $('#type_don_dropdown').on('change', function (e) {
+
+                                            });
+                                            function Init() {
+                                                $("#id_don").val('');
+                                                $("#cause").val('');
+                                                $("#code_occasion").val('');
+                                                $("#code_campagne").val('');
+                                                $("#num_rf").val('');
+                                                $("#lot_don").val('');
+                                                $("#iban_elastic_dons").val('');
+                                                $("#num_cheque").val('');
+                                                $("#type_don_dropdown").val('');
+                                                $("#mode_paiement").val('');
+                                                $("#date_debut").val('');
+                                                $("#date_fin").val('');
+                                                $("#date_stop_debut").val('');
+                                                $("#date_stop_fin").val('');
+                                                $("#montant_choice_dropdown").val('');
+                                                $("#montant_don").val('');
+                                                $("#don_inactif_cb").removeAttr('checked');
+                                                $('#don_actif_cb').removeAttr('checked');
+                                                //window.location.reload();
+                                                $("#don_is_rf_cb").removeAttr('checked');
+                                                //$("#loading-ajax_elastica").css('display', 'none');
+                                                $("#msg_don_succes").css('display', 'none');
+                                                $("#msg_don_warning").css('display', 'none');
+                                                //alert('windows location reload');
+
+                                                window.location.href = "{{ path('elastic_don') }}";//'/intersa/dons';
+                                            }
+
+                                            $(function () {
+                                                $("#btn_fields_generate_pdf").click(function (e) { // btn_exporter_donateur_dons
+                                                    // e.preventDefault(); // ici pour ne pas modifier url(si on post ver une action d'url different il ignore
+                                                    var typedon = $("#type_don_dropdown :selected").val();
+                                                    var montantchoice = $("#montant_choice_dropdown :selected").val();
+                                                    //var conceptName = $('#type_don').val();
+                                                    //var conceptName = $("#type_don :selected").val() ;
+                                                    // var typedon = $("#type_don").val();
+                                                    //alert($('#type_don option:value').html());
+                                                    var obj = {type_don: typedon, id_don: $("#id_don").val(), lot_don: $("#lot_don").val(), montant_choice: montantchoice,
+                                                        montant_don: $("#montant_don").val(), date_debut: $("#date_debut").val(), date_fin: $("#date_fin").val(), num_cheque: $("#num_cheque").val(),
+                                                        cause: $("#cause").val(), mode_paiement: $("#mode_paiement").val(), num_rf: $("#num_rf").val(), iban: $("#iban_elastic_dons").val(),
+                                                        date_annule_debut: $("#date_stop_debut").val(), date_annule_fin: $("#date_stop_fin").val(), date_stop_debut: $("#date_stop_debut").val(), date_stop_fin: $("#date_stop_fin").val()};
+                                                    // code_occasion: $("#code_occasion").val(),code_campagne: $("#code_campagne").val(),
+                                                    // 
+                                                    //type_don=&id_don=&lot_don=&montant_choice=sup&montant_don=&date_debut=&date_fin=&num_cheque=&cause=dhv&mode_paiement=&num_rf=&iban=&date_annule_debut=&date_annule_fin=&date_stop_debut=&date_stop_fin=
+
+                                                    // alert('obj');
+                                                    //alert(obj);
+                                                    $.ajax({
+                                                        url: "{{ path('intersa_gestion_dons_export_pdf') }}", //'/intersa/export-dons/pdf',
+                                                        type: "GET",
+                                                        //data: data,
+                                                        data: obj, //{mydata: obj}
+                                                        //data: data,
+                                                        //data: JSON.stringify(obj3),
+                                                        //contentType: "application/json; charset=utf-8",
+                                                        //dataType:"json",
+                                                        cache: false,
+                                                        success: function (data)
+                                                        {
+                                                            console.log(data);
+                                                            //console.log(data.responseText);
+                                                            if (data.responseText === 'success') {
+                                                                console.log('yess');
+                                                                //window.location.href = '/intersa/dons' ;
+                                                            }
+                                                            if (data.responseText === 'warning') {
+                                                                console.log('non');
+                                                            }
+
+                                                        },
+                                                        complete: function (com) {
+                                                            //console.log(com.responseText);
+                                                            console.log(com);
+                                                            if (com.responseText === 'success') {
+                                                                $("#msg_don_succes").css('display', 'block');
+                                                                $("#msg_don_succes").html('Création de l\'extraction avec succès vous allez bientot recevoir un e-mail');
+                                                                setTimeout(function () {
+                                                                    $('#msg_don_succes').hide("slow");
+                                                                }, 3000);
+                                                            }
+                                                            if (com.responseText === 'encours') {
+                                                                $("#msg_don_succes").css('display', 'block');
+                                                                $("#msg_don_succes").html('Veuillez patienter l\'ancienne extraction est en cours vous allez bientot recevoir un e-mail !!');
+                                                                setTimeout(function () {
+                                                                    $('#msg_don_succes').hide("slow");
+                                                                }, 3000);
+                                                            }
+                                                            if (com.responseText === 'warning') {
+                                                                $("#msg_don_warning").css('display', 'block');
+                                                                $("#msg_don_warning").html('vous devez ajouter le Code activité aux Gestion des favoris, Attention !!');
+                                                                setTimeout(function () {
+                                                                    $('#msg_don_warning').hide("slow");
+                                                                }, 3000);
+                                                            }
+
+
+                                                        },
+                                                        error: function (err) {
+                                                            console.log(err);
+                                                            //alert('err');
+                                                        }
+                                                    });
+                                                    Init();
+                                                })
+                                            });
+                                            //exportation exel
+                                            $(function () {
+                                                $("#btn_fields_generate_exel").click(function (e) { // btn_exporter_donateur_dons
+
+                                                    // e.preventDefault(); // ici pour ne pas modifier url(si on post ver une action d'url different il ignore
+                                                    var typedon = $("#type_don_dropdown :selected").val();
+                                                    var montantchoice = $("#montant_choice_dropdown :selected").val();
+                                                    //var conceptName = $('#type_don').val();
+                                                    //var conceptName = $("#type_don :selected").val() ;
+                                                    // var typedon = $("#type_don").val();
+                                                    //alert($('#type_don option:value').html());
+                                                    var obj = {type_don: typedon, id_don: $("#id_don").val(), lot_don: $("#lot_don").val(), montant_choice: montantchoice,
+                                                        montant_don: $("#montant_don").val(), date_debut: $("#date_debut").val(), date_fin: $("#date_fin").val(), num_cheque: $("#num_cheque").val(),
+                                                        cause: $("#cause").val(), mode_paiement: $("#mode_paiement").val(), num_rf: $("#num_rf").val(), iban: $("#iban_elastic_dons").val(),
+                                                        date_annule_debut: $("#date_stop_debut").val(), date_annule_fin: $("#date_stop_fin").val(), date_stop_debut: $("#date_stop_debut").val(), date_stop_fin: $("#date_stop_fin").val()};
+                                                    // code_occasion: $("#code_occasion").val(),code_campagne: $("#code_campagne").val(),
+                                                    // 
+                                                    //type_don=&id_don=&lot_don=&montant_choice=sup&montant_don=&date_debut=&date_fin=&num_cheque=&cause=dhv&mode_paiement=&num_rf=&iban=&date_annule_debut=&date_annule_fin=&date_stop_debut=&date_stop_fin=
+
+                                                    // alert('obj');
+                                                    $.ajax({
+                                                        url: "{{ path('intersa_gestion_dons_export_exel') }}", //'/intersa/export-dons/exel',
+                                                        type: "GET",
+                                                        //data: data,
+                                                        data: obj, //{mydata: obj}
+                                                        //data: data,
+                                                        //data: JSON.stringify(obj3),
+                                                        //contentType: "application/json; charset=utf-8",
+                                                        //dataType:"json",
+                                                        cache: false,
+                                                        success: function (data)
+                                                        {
+                                                            console.log(data);
+                                                            //alert(data);
+                                                            //console.log(data.responseText);
+                                                            if (data.responseText === 'success') {
+                                                                console.log('yess');
+                                                                //window.location.href = '/intersa/dons' ;
+                                                            }
+                                                            if (data.responseText === 'warning') {
+                                                                console.log('non');
+                                                            }
+
+                                                        },
+                                                        complete: function (com) {
+                                                            //console.log(com.responseText);
+                                                            console.log(com);
+                                                            //alert(com);
+                                                            if (com.responseText === 'success') {
+                                                                $("#msg_don_succes").css('display', 'block');
+                                                                $("#msg_don_succes").html('Création de l\'extraction avec succès vous allez bientot recevoir un e-mail');
+                                                                setTimeout(function () {
+                                                                    $('#msg_don_succes').hide("slow");
+                                                                }, 3000);
+                                                            }
+                                                            if (com.responseText === 'encours') {
+                                                                $("#msg_don_succes").css('display', 'block');
+                                                                $("#msg_don_succes").html('Veuillez patienter l\'ancienne extraction est en cours vous allez bientot recevoir un e-mail !!');
+                                                                setTimeout(function () {
+                                                                    $('#msg_don_succes').hide("slow");
+                                                                }, 3000);
+                                                            }
+                                                            if (com.responseText === 'warning') {
+                                                                $("#msg_don_warning").css('display', 'block');
+                                                                $("#msg_don_warning").html('vous devez ajouter le Code activité aux Gestion des favoris, Attention !!');
+                                                                setTimeout(function () {
+                                                                    $('#msg_don_warning').hide("slow");
+                                                                }, 3000);
+                                                            }
+
+
+                                                        },
+                                                        error: function (err) {
+                                                            console.log(err);
+                                                            //alert('err');
+                                                        }
+                                                    });
+                                                    Init();
+                                                })
+                                            });
+                                            //$("#btn_exporter_donateur_dons").click({action: "intersa/donateurs"}, exportdonateursAction);
+                                        }
+                                        );
+                                        // End of sort management
+                                        var $inputCause = $('#cause');
+                                        var $inputOccasion = $('#code_occasion');
+                                        var $inputCampagne = $('#code_campagne');
+                                        //causes
+                                        $.ajax({
+                                            url: "/intersa/causes",
+                                            beforeSend: function (xhr) {
+                                                ;
+                                            }
+                                        })
+                                                .done(function (data) {
+                                                    if (data.length != 0) {
+                                                        //alert('data'); 
+                                                        //console.log(data);
+                                                        $inputCause.typeahead({source: data,
+                                                            autoSelect: true});
+                                                    }
+
+                                                });
+                                        //occasions
+                                        $.ajax({
+                                            url: "/intersa/occasions",
+                                            beforeSend: function (xhr) {
+                                                ;
+                                            }
+                                        })
+                                                .done(function (data) {
+                                                    if (data.length != 0) {
+
+                                                        $inputOccasion.typeahead({source: data,
+                                                            autoSelect: true});
+                                                    }
+
+                                                });
+                                        //campagne
+                                        $.ajax({
+                                            url: "/intersa/campagnes",
+                                            beforeSend: function (xhr) {
+                                                ;
+                                            }
+                                        })
+                                                .done(function (data) {
+                                                    if (data.length != 0) {
+
+                                                        $inputCampagne.typeahead({source: data,
+                                                            autoSelect: true});
+                                                    }
+
+                                                });
+
+                                        $('#fulldon_donateurbundle_dontype_abonnement_actif').on('click', function () {
+                                            if ($('#fulldon_donateurbundle_dontype_abonnement_actif').is(':checked')) {
+                                                $('#abo_date').show();
+                                            } else {
+                                                $('#abo_date').hide();
+                                            }
+                                        });
+                                        $(document).ready(function () {
+                                            // alert('heerrreeee');
+                                            $("div.holder").jPages({
+                                                containerID: "content",
+                                                perPage: 10
+                                            });
+                                        });
+
+
+                                    </script>
+                                {% endblock %}

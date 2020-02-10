@@ -1,0 +1,295 @@
+ {% for r in data %}
+                <tr>
+                    {% for key,value in col_display %}
+                        {% for key2,value2 in value %}
+                            {% if key2 == "numdonateur" %}
+                                <td>{{ r['ref_donateur'] }}</td>
+                            {% elseif key2 ==  "nom" %}
+                                <td>{{ r['nom'] }}</td>
+                            {% elseif key2 == "prenom" %}
+                                <td>{{ r['prenom'] }}</td>
+                            {% elseif key2 == "statut" %}
+                                <td> {% if r['removed'] %}<span
+                                        class="label label-danger arrowed-in arrowed-in-right">Désactivé</span> {% else %}
+                                    <span class="label label-success arrowed-in arrowed-in-right">Actif</span>{% endif %}
+                                </td>
+                                
+                                
+                                {% elseif key2 == "cat" %}
+                                <td>{% if r['name'] is defined  is not null %}{{ r['name'] }}{% else %} {{' '}} {% endif %}</td>
+                                
+                                
+                                
+                                
+                            {% elseif key2 == "nomentreprise" %}
+                                <td>{% if r['nom_entreprise'] is defined and r['nom_entreprise'] is not null %}{{ r['nom_entreprise'] }}{% else %} N/A{% endif %}</td>
+                            {% elseif key2 == "email" %}
+                                <td>{{ r['email'] }}</td>
+                            {% elseif key2 == "birthday" %}
+                                <!--td>{#{ r['datenaissance']|date('d/m/Y') }#}</td-->
+                                <td>{{ r['datenaissance'] }}</td>
+                                {#% elseif key2 == "telmobile" %}
+                                    <td>{{ r['telephone_mobile'] }#}<!--/td-->
+                                {#% elseif key2 == "telfixe" %}
+                                    <td>{{ r['telephone_fixe'] }#}<!--/td-->
+                            {% elseif key2 == "adresse" %}
+                                <td>{{ r['adresse3'] }}</td>
+                            {% elseif key2 == "ville" %}
+                                <td>{{ r['iso_ville'] }}</td>
+                            {% elseif key2 == "pays" %}
+                                <td>{{ r['iso_pays']|getcountryname }}</td>
+                            {% elseif key2 == "zipcode" %}
+                                <td>{{ r['zipcode'] }}</td>
+                            {% elseif key2 == "createdat" %}
+                                <td>{{ r['created_at']|date('d/m/Y') }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </tr>
+
+            {% endfor %}
+
+-----------------------------------------
+
+
+
+
+
+
+
+
+
+----------------------verif email
+
+public function mailCheck($Email) {
+        // L'adresse email doit être correctement formattée
+        if (!eregi("^[[:alpha:]]{1}[[:alnum:]]*((\.|_|-)[[:alnum:]]+)*@[[:alpha:]]{1}[[:alnum:]]*((\.|-)[[:alnum:]]+)*(\.[[:alpha:]]{2,})$", $Email))
+            exit('L\'adresse ' . $Email . ' est mal formatée');
+        // On récupère le domaine
+        list(, $domain ) = split('@', $Email);
+        // On cherche des enregistrements MX dans les DNS
+        if (getmxrr($domain, $MXHost))
+            $ConnectAddress = $MXHost[0];
+        else
+            $ConnectAddress = $domain;
+        // On créé la connexion sur le port smtp (25)
+        $Connect = @fsockopen($ConnectAddress, 25, &$errno, &$errstr);
+        if ($Connect) {
+            if (ereg("^220", $Out = fgets($Connect, 1024))) {
+                fputs($Connect, "HELO {$_SERVER['HTTP_HOST']}\r\n");
+                $Out = fgets($Connect, 1024);
+                fputs($Connect, "MAIL FROM: <{$Email}>\r\n");
+                $From = fgets($Connect, 1024);
+                fputs($Connect, "RCPT TO: <{$Email}>\r\n");
+                $To = fgets($Connect, 1024);
+                fputs($Connect, "QUIT\r\n");
+                fclose($Connect);
+                // Si le code renvoyé par la commande RCPT TO est 250 ou 251 (cf: RFC)
+                // Alors l'adresse existe
+                if (!ereg("^250", $To) && !ereg("^251", $To))
+                // Adresse rejetée par le serveur
+                    return false;
+                else
+                // Adresse acceptée par le serveur
+                    return true;
+            }else {
+                // Le serveur n'a pas répondu
+                return false;
+            }
+        } else {
+            // Connexion au serveur de messagerie impossible
+            // vous pouvez afficher le message d'erreur en décommentant la ligne suivante:
+            // echo $errno."-".$errstr;
+            return false;
+        }
+    }
+
+/verif domain + email 
+        // On déclare d'abord les fonctions:
+// Si la fonction getmxrr n'existe pas (serveur windows),
+// On la créé à l'aide de la commande DOS <nslookup>
+        if (!function_exists('getmxrr')) {
+
+            function getmxrr($hostname, &$mxhosts) {
+                if (!is_array($mxhosts))
+                    $mxhosts = array();
+                if (!empty($hostname)) {
+                    @exec("nslookup -type=MX $hostname", $output, $ret);
+                    while (list( $k, $line ) = each($output)) {
+                        // On recherche la présence de d'entrées MX:
+                        if (ereg("^{$hostname}\tMX preference = ([0-9]+), mail exchanger = (.*)$", $line, $parts)) {
+                            $mxhosts[$parts[1]] = $parts[2];
+                        }
+                    }
+                    if (count($mxhosts)) {
+                        // S'il y a plusieurs enregistrements MX, on les classe par ordre de priorité
+                        reset($mxhosts);
+                        ksort($mxhosts);
+                        $i = 0;
+                        while (list( $pref, $host ) = each($mxhosts)) {
+                            $mxhosts2[$i] = $host;
+                            $i++;
+                        }
+                        $mxhosts = $mxhosts2;
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+
+        }
+
+         //ici chech email function
+        // Définissez ici l'adresse à vérifier
+        $mail = "turki@intersa.fr";
+        if ($this->mailCheck($mail))
+            echo 'L\'adresse existe';
+        else
+            echo 'L\'adresse n\'existe pas ou une erreur est survenue';
+
+        
+        
+        die('here');
+
+-------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <tr>
+                            {% for key,value in col_display %}
+                                {% for key2,value2 in value %}
+                                    {% if key2 == "numdonateur" %}
+                                        <td>{{ r['ref_donateur'] }}</td>
+                                    {% elseif key2 ==  "nom" %}
+                                        <td>{{ r['nom'] }}</td>
+                                    {% elseif key2 == "prenom" %}
+                                        <td>{{ r['prenom'] }}</td>
+                                    {% elseif key2 == "statut" %}
+                                        <td> {% if r['removed'] %}<span
+                                                class="label label-danger arrowed-in arrowed-in-right">Désactivé</span> {% else %}
+                                            <span class="label label-success arrowed-in arrowed-in-right">Actif</span>{% endif %}
+                                        </td>
+
+
+                                    {% elseif key2 == "cat" %}
+                                        <td>{% if r['name'] is defined  is not null %}{{ r['name'] }}{% else %} {{' '}} {% endif %}</td>
+
+
+
+
+                                    {% elseif key2 == "nomentreprise" %}
+                                        <td>{% if r['nom_entreprise'] is defined and r['nom_entreprise'] is not null %}{{ r['nom_entreprise'] }}{% else %} N/A{% endif %}</td>
+                                    {% elseif key2 == "email" %}
+                                        <td>{{ r['email'] }}</td>
+                                    {% elseif key2 == "birthday" %}
+                                        <!--td>{#{ r['datenaissance']|date('d/m/Y') }#}</td-->
+                                        <td>{{ r['datenaissance'] }}</td>
+                                        {#% elseif key2 == "telmobile" %}
+                                            <td>{{ r['telephone_mobile'] }#}<!--/td-->
+                                        {#% elseif key2 == "telfixe" %}
+                                            <td>{{ r['telephone_fixe'] }#}<!--/td-->
+                                    {% elseif key2 == "adresse" %}
+                                        <td>{{ r['adresse3'] }}</td>
+                                    {% elseif key2 == "ville" %}
+                                        <td>{{ r['iso_ville'] }}</td>
+                                    {% elseif key2 == "pays" %}
+                                        <td>{{ r['iso_pays']|getcountryname }}</td>
+                                    {% elseif key2 == "zipcode" %}
+                                        <td>{{ r['zipcode'] }}</td>
+                                    {% elseif key2 == "createdat" %}
+                                        <td>{{ r['created_at']|date('d/m/Y') }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </tr>
+
+
+
+
+
+
+
+--------------------------------------
+
+ {% for r in data %}
+
+                    <tr>
+                        {% for key,value in col_display %}
+                            {% for key2,value2 in value %}
+                                {% if key2 == "numdonateur" %}
+                                    <td>{{ r['ref_donateur'] }}</td>
+                                {% elseif key2 ==  "nom" %}
+                                    <td>{{ r['nom'] }}</td>
+                                {% elseif key2 == "prenom" %}
+                                    <td>{{ r['prenom'] }}</td>
+                                {% elseif key2 == "statut" %}
+                                    <td> {% if r['removed'] %}<span
+                                            class="label label-danger arrowed-in arrowed-in-right">Désactivé</span> {% else %}
+                                        <span class="label label-success arrowed-in arrowed-in-right">Actif</span>{% endif %}
+                                    </td>
+
+
+                                {% elseif key2 == "cat" %}
+                                    <td>{% if r['name'] is defined  is not null %}{{ r['name'] }}{% else %} {{' '}} {% endif %}</td>
+
+                                {% elseif key2 == "nomentreprise" %}
+                                    <td>{% if r['nom_entreprise'] is defined and r['nom_entreprise'] is not null %}{{ r['nom_entreprise'] }}{% else %} N/A{% endif %}</td>
+                                {% elseif key2 == "email" %}
+                                    <td>{{ r['email'] }}</td>
+                                {% elseif key2 == "birthday" %}
+                                    <!--td>{#{ r['datenaissance']|date('d/m/Y') }#}</td-->
+                                    <td>{{ r['datenaissance'] }}</td>
+                                    {#% elseif key2 == "telmobile" %}
+                                        <td>{{ r['telephone_mobile'] }#}<!--/td-->
+                                    {#% elseif key2 == "telfixe" %}
+                                        <td>{{ r['telephone_fixe'] }#}<!--/td-->
+                                {% elseif key2 == "adresse" %}
+                                    <td>{{ r['adresse3'] }}</td>
+                                {% elseif key2 == "ville" %}
+                                    <td>{{ r['iso_ville'] }}</td>
+                                {% elseif key2 == "pays" %}
+                                    <td>{{ r['iso_pays']|getcountryname }}</td>
+                                {% elseif key2 == "zipcode" %}
+                                    <td>{{ r['zipcode'] }}</td>
+                                    {#% elseif key2 == "createdat" %}
+                                        <td>{{ r['created_at']|date('d/m/Y') }#}<!--/td-->
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </tr>
+
+                {% endfor %}
+
+
+-------------------------------------------------
+
+{% if  pager2.getCurrentPage()  == givenPage %}
+{% set state = 'active' %}
+{% endif %}
+<li class="{{ state }}"><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateCritere({{ givenPage }},{{id_entity}})">{{ givenPage }}</a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+

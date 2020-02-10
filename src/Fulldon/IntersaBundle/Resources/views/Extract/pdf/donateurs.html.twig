@@ -1,0 +1,126 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        body {
+            font-size: 12px;
+        }
+        .couleur-titre {
+            color:#d58512;
+        }
+        th {
+            text-align: left;
+        }
+        .row_td {
+            background-color: #B3BCF8;
+        }
+        .sub_total {
+            background-color: #1AC5EC;
+        }
+        .aligne_row {
+            text-align: right;
+            width:150px;
+        }
+        .page {
+            overflow: hidden;
+            page-break-after: always;
+        }
+        td {
+            padding: 3px;
+        }
+    </style>
+
+</head>
+<body>
+<center>
+<h2>Export des donateurs</h2>
+Extraction {{ "now"|date('d/m/Y H:i:s') }}
+
+</center>
+<hr />
+
+<div class="row">
+    <div class="page">
+        <div class="form-group col-md-12">
+    <table class="table table-condensed" style="width:100%;float:left;">
+        <thead>
+        <tr>
+            {% for col in col_display %}
+                {% set sortcols = { 'numdonateur':'#REF','nom':'Nom','prenom':'Prénom','statut':'Statut',
+                'nomentreprise':'Nom d\'entreprise','email':'Email','birthday':'Date de naissance',
+                'telmobile':'Téléphone mobile','telfixe':'Téléphone fixe',
+                'adresse':'Adresse','ville':'Ville','pays':'Pays','zipcode':'Code postal','createdat':'Date de création'} %}
+                {% set cols = { 'numdonateur':'#REF','nom':'Nom','prenom':'Prénom','statut':'Statut',
+                'nomentreprise':'Nom d\'entreprise','email':'Email','birthday':'Date de naissance',
+                'telmobile':'Téléphone mobile','telfixe':'Téléphone fixe','cat':'Catégories',
+                'adresse':'Adresse','ville':'Ville','pays':'Pays','zipcode':'Code postal','createdat':'Date de création'} %}
+                {% if col in cols|keys %}
+                    <th>{{ cols[col] }} {% if col in sortcols|keys %} <a href="#" onclick="flipsort('{{ col }}')" class="pull-right sort" ><i id="sort_{{ col }}" ></i></a>{% endif %}</th>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody id="content" >
+                {% for donateurs in data %}
+                    {% for r in donateurs %}
+                            <tr>
+                                {% for col in col_display %}
+                                    {% if col == "numdonateur" %}
+                                        <td>{{ r.refDonateur }}</td>
+                                    {% elseif col ==  "nom" %}
+                                        <td>{{ r.nom }}</td>
+                                    {% elseif col == "prenom" %}
+                                        <td>{{ r.prenom }}</td>
+                                    {% elseif col == "statut" %}
+                                        <td> {% if r.removed %}<span
+                                                    class="label label-danger arrowed-in arrowed-in-right">Désactivé</span> {% else %}
+                                                <span class="label label-success arrowed-in arrowed-in-right">Actif</span>{% endif %}
+                                        </td>
+                                    {% elseif col == "nomentreprise" %}
+                                        <td>{% if r.nomEntreprise is defined and r.nomEntreprise is not null %}{{ r.nomEntreprise }}{% else %} N/A{% endif %}</td>
+                                    {% elseif col == "email" %}
+                                        <td>{{ r.email }}</td>
+                                    {% elseif col == "birthday" %}
+                                        <td>{{ r.dateNaissance|date('d/m/Y') }}</td>
+                                    {% elseif col == "telmobile" %}
+                                        <td>{{ r.telephoneMobile }}</td>
+                                    {% elseif col == "telfixe" %}
+                                        <td>{{ r.telephoneFixe }}</td>
+                                    {% elseif col == "cat" %}
+                                        <td><ul>
+                                                {% for cat in r.categories %}
+                                                    <li>{{ cat.name }}</li>
+                                                {% endfor %}
+                                            </ul></td>
+                                    {% elseif col == "adresse" %}
+                                        <td>{{ r.adresse3 }}</td>
+                                    {% elseif col == "ville" %}
+                                        <td>{{ r.isoville }}</td>
+                                    {% elseif col == "pays" %}
+                                        <td>{{ r.isopays|getcountryname }}</td>
+                                    {% elseif col == "zipcode" %}
+                                        <td>{{ r.zipcode }}</td>
+                                    {% elseif col == "createdat" %}
+                                        <td>{{ r.createdAt|date('d/m/Y') }}</td>
+                                    {% endif %}
+                                {% endfor %}
+
+
+                            </tr>
+
+                    {% endfor %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+
+</div>
+</div>
+</body>
+</html>

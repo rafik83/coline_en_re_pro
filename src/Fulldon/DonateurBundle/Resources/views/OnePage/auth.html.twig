@@ -1,0 +1,551 @@
+{% extends "FulldonDonateurBundle:Donateur:coque_donateur.html.twig" %}
+{% if init['perso'].couleur is defined  and init['perso'].couleur  is not null %}{%  set mycolor = init['perso'].couleur %} {% else %}{%  set mycolor = '#7a6cc0' %}{% endif %}
+{% set vmp = init['perso'].montantP|split(':') %}
+{% set vmr = init['perso'].montantR|split(':') %}
+{% block stylesheets %}
+    {{ parent() }}
+<style type="text/css">
+    .radio-inline-anon li {
+        float: left;
+        text-align: center;
+        margin: 0 10px;
+        padding-bottom: 10px;
+    }
+
+    .radio-inline-anon li {
+        display: list-item;
+        list-style: none;
+    }
+    ul {
+        padding:0px;
+    }
+    .radio-inline-anon span {
+        display: block;
+    }
+
+    .well {
+        min-height: 20px;
+        margin-bottom: 20px;
+        background-color: #f5f5f5;
+        border: 1px solid rgba(196, 196, 196, 0.67);
+        border-radius: 0px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+        background-image: linear-gradient(to bottom, #f0f0f0 0%, #fff 100%);
+    }
+    .footer-block {
+        background: url({{ asset('img/footer-block.png') }}) no-repeat bottom center;
+        color: #6a6a6a;
+        padding:10px;
+        padding-bottom: 30px;
+    }
+    .footer-block hr {
+        background-color: {{ init['perso'].couleur }};
+        height: 2px ;
+    }
+</style>
+{% endblock %}
+    {% block coque_donateur %}
+
+<div class="row" >
+
+<div class="col-md-12" >
+<h2  class="couleur-donateur" >{{  "Je fais un don"|trans({},'messages') }}</h2>
+<hr />
+{% for flashMessage in app.session.flashbag.get('info') %}
+    <div class="alert alert-success">
+        {{ flashMessage|trans({},'messages') }}
+    </div>
+{% endfor %}
+{% if display_error %}
+    <div class="alert alert-danger alert-dismissable" style="border-radius: 0px;">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <span class="glyphicon glyphicon-remove-circle" ></span> Une erreur est survenue lors de la validation de votre demande. <br />
+        <ul>
+            {% for flashMessage in app.session.flashbag.get('error') %}
+                <li>{{ flashMessage|trans({},'messages') }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+<br />
+<form action="{{ path('donateur_don') }}" method="POST" >
+    <div class="row">
+
+        <div class="col-md-6">
+            <h4  class="big-title"><i
+                        class="fa fa-euro icoh4"></i>
+                {% if init['perso'].persod is defined and  init['perso'].persod is not null %}
+                    {% if params['_locale'] == 'fr' %}
+                        {{ init['perso'].persod.dc2title1  }}
+                    {% elseif params['_locale'] == 'en' %}
+                        {{ init['perso'].persod.dc2title1En  }}
+                    {% endif %}
+                {% else %}
+                    {{ "Mon don sécurisé"|trans({},'messages') }}
+                {% endif %}
+            </h4>
+
+            <div class="panel panel-primary" style="border-color: {{ mycolor }};">
+                <div class="panel-heading" style="background-color: {{ mycolor }};border-color: {{ mycolor }}">
+                    {{ "Je donne une fois"|trans({},'messages') }}
+                </div>
+                <div class="panel-body">
+                    <fieldset class="choice">
+
+                        <ul class="radio-inline-anon">
+                            {% for key, mp in vmp %}
+                                <li><label><span>{{ mp }} €</span> <input id="fullMontant_p_{{ key+1 }}"
+                                                                          class="align-checkbox" type="radio"
+                                                                          class="radio" value="{{ mp }}"
+                                                                          name="full_montant_p" {% if data['full_montant_p'] is defined and data['full_montant_p']== mp %} checked="checked" {% endif %}
+                                                                          onchange="fulldon_montant_p_onChange(this)"></label>
+                                </li>
+                            {% endfor %}
+
+                        </ul>
+                    </fieldset>
+                    <label for="full_autremontant_p don-text" class="full_autremonatnat">
+                        <input type="radio" value="other" name="full_montant_p" class="radio align-checkbox"
+                               id="fieldRadioAutreMontant_p"  {% if data['montant_ponctuel'] is defined and data['montant_ponctuel'] is not empty %} checked="checked" {% endif %} >
+                        <small class="align-checkbox ">{{ "Autre montant"|trans({},'messages') }} :</small>
+                        <input type="text" name="montant_ponctuel" id="montant_ponctuel"
+                               class=" input-sm form-control" {% if data['montant_ponctuel'] is defined and data['montant_ponctuel'] is not null %} value="{{ data['montant_ponctuel'] }}" {% endif %}
+                               onkeyup="fulldon_autremontant_p_onkeyup(this)"/>
+                    </label>
+
+                    <div id="dedu_fiscal_p" style="font-size: 12px;">
+
+                    </div>
+                </div>
+            </div>
+            <div style="font-weight: bold;text-align: center;margin: auto;margin-bottom: 15px;">{{ "OU"|trans({},'messages') }}</div>
+            <div class="panel panel-primary" style="border-color: {{ mycolor }};">
+                <div class="panel-heading" style="background-color: {{ mycolor }};border-color: {{ mycolor }}">
+                    {{ "Je préfère donner tous les mois"|trans({},'messages') }}
+                </div>
+                <div class="panel-body">
+                    <fieldset class="choice">
+                        <ul class="radio-inline-anon">
+                            {% for key, mr in vmr %}
+                                <li><label><span>{{ mr }} €</span> <input id="fullMontant_r_{{ key+1 }}"
+                                                                          class="align-checkbox" type="radio"
+                                                                          class="radio" value="{{ mr }}"
+                                                                          name="full_montant_r" {% if data['full_montant_r'] is defined and data['full_montant_r']== mr %} checked="checked" {% endif %}
+                                                                          onchange="fulldon_montant_r_onChange(this)"></label>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </fieldset>
+
+                    <label for="full_autremontant" class="full_autremonatnat">
+                        <input type="radio" value="other" name="full_montant_r" class="radio align-checkbox"
+                               id="fieldRadioAutreMontant_r" {% if data['montant_regulier'] is defined and data['montant_regulier'] is not empty %} checked="checked" {% endif %} >
+                        <small class="align-checkbox"> {{ "Autre montant"|trans({},'messages') }} :</small>
+                        <input type="text" name="montant_reguilier" id="montant_reguilier"
+                               class="form-control input-sm" {% if data['montant_regulier'] is defined and data['montant_reguilier'] is not null %} value="{{ data['montant_regulier'] }}" {% endif %}
+                               onkeyup="fulldon_autremontant_r_onkeyup(this)"/>
+                    </label>
+
+                    <div id="dedu_fiscal_r" style="font-size: 12px;">
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-6">
+            <h4 class="big-title"><i
+                        class="fa fa-lock icoh4"></i>  {{ "Paiement"|trans({},'messages') }}
+                <b>100%</b> {{ "sécurisé"|trans({},'messages') }} </h4>
+
+            <div class="panel panel-default" id="cb_payment">
+                <div class="panel-body">
+                    <h5 class="couleur-donateur">{{ "Choisissez votre méthode de paiement"|trans({},'messages') }} </h5>
+                    <hr class="hr-without-marge"/>
+                    <div class="icopay">
+                        <label>
+                            <input type="radio" name="payment_method" id="payment_method_1"
+                                   value="VISA" {% if data['cb_payment_method'] is defined and data['cb_payment_method']=='VISA' %} checked="checked" {% endif %}
+                                   onChange="cb_mp_onChange(this)"> <img alt="visa" src="{{ asset('img/visa.png') }}"/>
+                        </label>
+                    </div>
+                    <div class="icopay">
+                        <label>
+                            <input type="radio" name="payment_method" value="MasterCard"
+                                   id="payment_method_2" {% if data['cb_payment_method'] is defined and data['cb_payment_method']=='MasterCard' %} checked="checked" {% endif %}
+                                   onChange="cb_mp_onChange(this)"> <img alt="mastercard"
+                                                                         src="{{ asset('img/mastercard.png') }}"/>
+                        </label>
+                    </div>
+                    <div class="icopay">
+                        <label>
+                            <input type="radio" name="payment_method" value="PAYPAL"
+                                   id="payment_method_3" {% if data['cb_payment_method'] is defined and data['cb_payment_method']=='PAYPAL' %} checked="checked" {% endif %}
+                                   onChange="cb_mp_onChange(this)"> <img alt="paypal"
+                                                                         src="{{ asset('img/paypal.png') }}"/>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div id="ou_barre"
+                 style="font-weight: bold;text-align: center;margin: auto;margin-bottom: 15px;">{{ "OU"|trans({},'messages') }}</div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h5 class="couleur-donateur">{{ "Paiement par courrier"|trans({},'messages') }} </h5>
+                    <hr class="hr-with-bottom-marge"/>
+                    <div class="checkbox" id="pa_container"
+                         {% if data['full_montant_p'] is defined and data['full_montant_p'] is not empty %}style="display: none" {% endif %}>
+                        <label>
+                            <input type="checkbox" id="pa" name="pa"
+                                   value="pa"  {% if data['pa_payment_method'] is defined and data['pa_payment_method']=='pa' %} checked="checked" {% endif %}
+                                   onChange="other_mp_onChange(this);{% if subscription_online == 1 %}show_pop_relev();{% endif %}"> {{ "Prélèvement automatique"|trans({},'messages') }}
+                        </label>
+                    </div>
+                    <div class="checkbox" id="cheque_container"
+                         {% if data['full_montant_r'] is defined and data['full_montant_r'] is not empty %}style="display: none" {% endif %}>
+                        <label>
+                            <input type="checkbox" id="cheque"
+                                   value="cheque" {% if data['cheque_payment_method'] is defined and data['cheque_payment_method']=='cheque' %} checked="checked" {% endif %}
+                                   name="cheque" onChange="other_mp_onChange(this)"> {{ "Chèque"|trans({},'messages') }}
+                        </label>
+                    </div>
+                    <div id="info_bank_block"></div>
+                </div>
+            </div>
+            <input type="submit" class="btn btn-default btn-lg btn-block" style="width:100%;"
+                   value="{{ "Je valide mon don"|trans({},'messages') }}"/>
+
+            <div class="mini-block">
+                {% if init['perso'].persod is defined and  init['perso'].persod is not null %}
+                    {% if params['_locale'] == 'fr' %}
+                        {{ init['perso'].persod.dc3block1 | raw }}
+                    {% elseif params['_locale'] == 'en' %}
+                        {{ init['perso'].persod.dc3block1En | raw }}
+                    {% endif %}
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="bic" id="bic"/>
+    <input type="hidden" name="iban" id="iban" />
+    <input type="hidden" name="telephone" id="telephone"/>
+    <input type="hidden" name="indicatif" id="indicatif"/>
+</form>
+<hr />
+</form>
+</div>
+</div> <!-- /container -->
+</div>
+        {% if subscription_online == 1 %}
+            <div class="modal fade hidden-print" id="prelevementbox" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+                <div class="modal-dialog" style="width: 800px;">
+                    <div class="modal-content" >
+
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4 style="color: {{ mycolor }};"> Vos coordonnées bancaires pour le prélèvement. </h4>
+                                    <hr />
+                                    <div id="prev_error_block"></div>
+                                </div>
+                                <div class="col-md-8">
+
+                                    Avant de saisir les coordonnés de votre compte veuillez vous assurer que vous avez saisi votre nom et prénom correctement.<br />
+                                    <label for="iban" class="control-label ">{{ "IBAN"|trans({},'messages') }} <span class="required-input" > * </span></label>
+                                    <div >
+                                        <input type="text" name="iban_pop" id="iban_pop" class="form-control input-sm" required="required" {% if data['iban'] is defined  %} value="{{ data['iban'] }}" {% endif %} style="border-radius:0px !important;" />
+                                    </div>
+                                    <label for="bic" class="control-label">{{ "BIC"|trans({},'messages') }} <span class="required-input" > * </span></label>
+                                    <div >
+                                        <input type="text" name="bic_pop" id="bic_pop" class="form-control input-sm" required="required" {% if data['bic'] is defined  %} value="{{ data['bic'] }}" {% endif %} style="border-radius:0px !important;"/>
+                                    </div>
+                                    <span style="font-size: 12px;">Vous devez être le titulaire de ce compte, ou disposer des pouvoirs nécessaires pour agir au nom du titulaire. </span><br />
+                                    Pour recevoir le code SMS nécessaire à la signature du mandat, merci de confirmer le numéro de téléphone mobile .<br />
+                                    <label for="telephone" class="control-label" >{{ "Téléphone mobile"|trans({},'messages') }} <span class="required-input" > * </span></label>
+                                    <div class="form-inline" >
+                                        <div class="form-group">
+                                            + <input type="text" name="indicatif_pop" id="indicatif_pop" value="33" style="width:50px;" class="form-control input-sm" />
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="text" name="telephone_pop" id="telephone_pop" placeholder="ex : 687654320" class="form-control input-sm" required="required" {% if data['telephone'] is defined  %} value="{{ data['telephone'] }}" {% endif %} style="border-radius:0px !important;"/>
+                                        </div>
+                                    </div>
+                                    <span style="font-size: 12px;" class="pull-right">Les champs marqué d'un * sont obligatoires.</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <h5 style="font-weight:bold;">Paiement Sécurisé par : </h5>
+                                    <hr />
+                                    <img  alt="paiement certeurope" class="img-responsive" src="{{ asset('img/certeurope.png') }}" />
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal" onClick="uncheckoption();">Annuler</button>
+                                <button type="button" class="btn btn-default" onClick="info_bank()" >Valider les informations bancaires.</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    {% javascripts '../app/Resources/Public/js/bootstrap.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/bootstrap-colorpicker.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/bootstrap-datepicker.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/jquery.form.min.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/locales/*' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/jquery-ui/jquery-ui.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {% javascripts '../app/Resources/Public/js/iban.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script>
+
+        $('.datepicker').datepicker({
+            language: "fr-FR",
+            format: "dd/mm/yyyy"
+        });
+        function fulldon_autremontant_p_onkeyup(object){
+
+            $('#fieldRadioAutreMontant_p').prop('checked', true);
+            //Reset regular donation options
+            for (var i = 1; i < 5; i++) {
+                $('#fullMontant_r_'+i).prop('checked', false);
+            }
+            $('#montant_reguilier').val('');
+            $('#fieldRadioAutreMontant_r').prop('checked', false);
+            //payment mode
+            $('#pa').prop('checked', false);
+            $('#pa_container').hide();
+            $('#cheque_container').show();
+            var mychoice = object.value;
+            var deduf = 0;
+            if(mychoice > 526)
+                deduf = mychoice * 0.34;
+            else
+                deduf = mychoice * 0.25;
+            {% if is_company ==1 %}
+            deduf = mychoice * 0.4;
+            $('#dedu_fiscal_p').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center>{{ "Mon don après réduction fiscale"|trans({},'messages') }} : <b style="font-size:15px;">'+deduf+'€</b> </center><br /><div style="background-color: white;color:#5d5d5d;padding:5px;">{{ " après déduction fiscale de 60 % du montant du don dans la limite de 5 ‰ du chiffre d’affaires HT, excédant reportable 5 ans."|trans({},'messages') }}</div></div>');
+            {% else %}
+            $('#dedu_fiscal_p').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center>{{ "Mon don après réduction fiscale"|trans({},'messages') }} : <b style="font-size:15px;">'+deduf+'€</b> </center><br /><div style="background-color: white;color:#5d5d5d;padding:5px;">{{ "après déduction fiscale (75 % dans la limite de 526 € (plafond 2014)). Au-delà, la réduction d’impôt est de 66 % dans la limite de 20 % de votre revenu imposable."|trans({},'messages') }}</div></div>');
+            {% endif %}
+            $('#dedu_fiscal_r').html('');
+
+        }
+        function fulldon_montant_p_onChange(object) {
+            //alert(object);
+            $('#montant_ponctuel').val('');
+
+            //Reset regular donation options
+            for (var i = 0; i < 5; i++) {
+                $('#fullMontant_r_'+i).prop('checked', false);
+            }
+            $('#montant_reguilier').val('');
+            $('#fieldRadioAutreMontant_r').prop('checked', false);
+            //payment mode
+            $('#pa').prop('checked', false);
+            $('#pa_container').hide();
+            $('#cheque_container').show();
+            var mychoice = object.value;
+            var deduf = 0;
+            if(mychoice > 526)
+                deduf = mychoice * 0.34;
+            else
+                deduf = mychoice * 0.25;
+            {% if is_company ==1 %}
+                deduf = mychoice * 0.4;
+            $('#dedu_fiscal_p').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center>{{ "Mon don après réduction fiscale"|trans({},'messages') }} : <b style="font-size:15px;">'+deduf+'€</b> </center><br /><div style="background-color: white;color:#5d5d5d;padding:5px;">{{ " après déduction fiscale de 60 % du montant du don dans la limite de 5 ‰ du chiffre d’affaires HT, excédant reportable 5 ans."|trans({},'messages') }}</div></div>');
+            {% else %}
+            $('#dedu_fiscal_p').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center>{{ "Mon don après réduction fiscale"|trans({},'messages') }} : <b style="font-size:15px;">'+deduf+'€</b> </center><br /><div style="background-color: white;color:#5d5d5d;padding:5px;">{{ "après déduction fiscale (75 % dans la limite de 526 € (plafond 2014)). Au-delà, la réduction d’impôt est de 66 % dans la limite de 20 % de votre revenu imposable."|trans({},'messages') }}</div></div>');
+            {% endif %}
+            $('#dedu_fiscal_r').html('');
+
+
+        }
+
+        function fulldon_autremontant_r_onkeyup(object){
+            //alert(object);
+            $('#fieldRadioAutreMontant_r').prop('checked', true);
+            // reset all the ponctual options
+            for (var i = 1; i < 6; i++) {
+                $('#fullMontant_p_'+i).prop('checked', false);
+            }
+            $('#montant_ponctuel').val('');
+            $('#fieldRadioAutreMontant_p').prop('checked', false);
+            $('#cheque').prop('checked', false);
+            $('#cheque_container').hide();
+            $('#pa_container').show();
+            var mychoice = object.value;
+            var deduf = 0;
+            if(mychoice > 526)
+                deduf = mychoice * 0.34;
+            else
+                deduf = mychoice * 0.25;
+            {% if is_company ==1 %}
+            deduf = mychoice * 0.4;
+            $('#dedu_fiscal_r').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center>{{ "Mon don après réduction fiscale"|trans({},'messages') }} : <b style="font-size:15px;">'+deduf+'€</b> </center><br /><div style="background-color: white;color:#5d5d5d;padding:5px;">{{ " après déduction fiscale de 60 % du montant du don dans la limite de 5 ‰ du chiffre d’affaires HT, excédant reportable 5 ans."|trans({},'messages') }}</div></div>');
+            {% else %}
+            $('#dedu_fiscal_r').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center>{{ "Mon don après réduction fiscale"|trans({},'messages') }} : <b style="font-size:15px;">'+deduf+'€</b> </center><br /><div style="background-color: white;color:#5d5d5d;padding:5px;">{{ "après déduction fiscale (75 % dans la limite de 526 € (plafond 2014)). Au-delà, la réduction d’impôt est de 66 % dans la limite de 20 % de votre revenu imposable."|trans({},'messages') }}</div></div>');
+            {% endif %}
+            $('#dedu_fiscal_p').html('');
+        }
+        function fulldon_montant_r_onChange(object) {
+            //alert(object);
+            $('#montant_reguelier').val('');
+            // reset all the ponctual options
+            for (var i = 0; i < 6; i++) {
+                $('#fullMontant_p_'+i).prop('checked', false);
+            }
+            $('#montant_ponctuel').val('');
+            $('#fieldRadioAutreMontant_p').prop('checked', false);
+            $('#cheque').prop('checked', false);
+            $('#cheque_container').hide();
+            $('#pa_container').show();
+            var mychoice = object.value;
+            var deduf = 0;
+            if(mychoice > 526)
+                deduf = mychoice * 0.34;
+            else
+                deduf = mychoice * 0.25;
+            {% if is_company ==1 %}
+            deduf = mychoice * 0.4;
+            $('#dedu_fiscal_r').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center>{{ "Mon don après réduction fiscale"|trans({},'messages') }} : <b style="font-size:15px;">'+deduf+'€</b> </center><br /><div style="background-color: white;color:#5d5d5d;padding:5px;">{{ " après déduction fiscale de 60 % du montant du don dans la limite de 5 ‰ du chiffre d’affaires HT, excédant reportable 5 ans."|trans({},'messages') }}</div></div>');
+            {% else %}
+            $('#dedu_fiscal_r').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center>{{ "Mon don après réduction fiscale"|trans({},'messages') }} : <b style="font-size:15px;">'+deduf+'€</b> </center><br /><div style="background-color: white;color:#5d5d5d;padding:5px;">{{ "après déduction fiscale (75 % dans la limite de 526 € (plafond 2014)). Au-delà, la réduction d’impôt est de 66 % dans la limite de 20 % de votre revenu imposable."|trans({},'messages') }}</div></div>');
+            {% endif %}
+            $('#dedu_fiscal_p').html('');
+
+        }
+
+        function cb_mp_onChange(object) {
+
+            $('#pa').prop('checked', false);
+            $('#cheque').prop('checked', false);
+
+        }
+
+        function other_mp_onChange(object) {
+
+            for (var i = 0; i < 4; i++) {
+                $('#payment_method_'+i).prop('checked', false);
+            }
+
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var elements = document.getElementsByTagName("INPUT");
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].oninvalid = function(e) {
+                    e.target.setCustomValidity("");
+                    if (!e.target.validity.valid) {
+                        e.target.setCustomValidity('{{ "Veuillez renseigner ce champ."|trans({},'messages') }}');
+                    }
+                };
+                elements[i].oninput = function(e) {
+                    e.target.setCustomValidity("");
+                };
+            }
+        })
+        {% if subscription_online == 1 %}
+        function show_pop_relev() {
+            if($('#pa').is(':checked')){
+                $('#prelevementbox').modal('show');
+            } else {
+                $('#prelevementbox').modal('hide');
+                $('#info_bank_block').html('');
+            }
+
+        }
+        function uncheckoption() {
+            $('#pa').prop('checked', false);
+        }
+        function info_bank()
+        {
+            var bic = $('#bic_pop').val();
+            var iban =  $('#iban_pop').val();
+            var telephone = $('#telephone_pop').val();
+            var indicatif = $('#indicatif_pop').val();
+
+            if(IBAN.isValid(iban) && validate_bic(bic) && valider_numero(telephone)) {
+                $('#prev_error_block').html('');
+                //Contrôle des champs
+                $('#info_bank_block').html('<hr /><div style="background-color: {{ mycolor }};color:white;padding:5px;"><center><span style="font-weight:bold">{{ "Vos informations bancaires"|trans({},'messages') }}</span><br /> <span style="font-size:10px;padding-bottom:2px;">{{ "Vérifiez les informations ci-dessous"|trans({},'messages') }} <a href="#" onClick="show_pop_relev()">(Modifier)</a></span> </center><div style="background-color: white;color:#5d5d5d;padding:5px;"><b>Iban: </b><span style="font-size:12px;">'+iban+'</span><br /><b>Bic: </b><span style="font-size:12px;">'+ bic+'</span><br /><b>Téléphone : </b><span style="font-size:12px;">+'+ indicatif+telephone +'</span></div></div>');
+                $('#prelevementbox').modal('hide');
+                //alimenter les champs
+                $('#bic').val(bic);
+                $('#iban').val(iban);
+                $('#telephone').val(telephone);
+                $('#indicatif').val(indicatif);
+            } else {
+                //Initialisation des variables
+                $('#bic').val('');
+                $('#iban').val('');
+                $('#telephone').val('');
+                $('#indicatif').val('');
+                $('#prev_error_block').html('');
+                //Traitement
+                var error = '';
+                error +='<div class="alert alert-danger" role="alert" ><ul style="margin-left:10px;" >';
+                if(IBAN.isValid(iban) == false) {
+                    error +='<li>L\'iban saisi n\'est pas valide </li>';
+                }
+                if(validate_bic(bic) == false) {
+                    error +='<li>Le bic saisi n\'est pas valide </li>';
+                }
+                if(valider_numero(telephone) == false) {
+                    error +='<li>Le numéro de téléphone n\'est pas valide </li>';
+                }
+                error +='</ul></div>';
+                $('#prev_error_block').append(error);
+            }
+
+        }
+        function validate_bic(swift)
+        {
+
+            var regSWIFT = /^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})?$/;
+            if(regSWIFT.test(swift) == false) {
+                return false;
+            } else {
+                return true;
+            }
+
+        }
+        function valider_numero(num) {
+
+            var chiffres = new String(num);
+
+            chiffres = chiffres.replace(/[^0-9]/g, '');
+            if ( num == "" )
+            {
+                return false;
+            }
+            compteur = chiffres.length;
+
+            if (compteur < 9)
+            {
+                return false;
+            } else {
+                return true;
+            }
+
+        }
+        {% endif %}
+    </script>
+{% endblock %}
+    {% endblock %}

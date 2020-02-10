@@ -1,0 +1,144 @@
+{% extends "FulldonDonateurBundle:Donateur:coque_donateur.html.twig" %}
+    {% block coque_donateur %}
+        <div class="row" >
+
+        <div class="col-md-12" >
+        <h2  class="couleur-donateur" >Faire un don</h2>
+        <hr />
+        {% for flashMessage in app.session.flashbag.get('info') %}
+            <div class="alert alert-success">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        <div class='errors'>
+
+            {{ form_errors(form) }}
+
+        </div>
+
+        <form action="{{ path('donateur_don') }}" method="post" class="form-group" {{ form_enctype(form) }}>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="inputEmail3" class="col-sm-5 control-label">{{ form_label(form.montant, "montant") }}</label>
+                <div class="col-sm-7">
+                    {% if form.montant.vars.errors|length %}
+                        {# Affichage des erreurs pour ce champ précis. #}
+                        <div class="form-group has-error">
+                            <label class="control-label" for="inputError">{{ form_errors(form.montant) }}</label>
+                            {{ form_widget(form.montant, {'attr': {'class': 'task_field form-control', 'id':'inputError', 'id':'nom', 'placeholder':'montant' } }) }}
+                        </div>
+                    {% else %}
+                        {# Génération de l'input. #}
+                        {{ form_widget(form.montant) }}
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+            <div class="row">
+
+                <div class="form-group col-md-6">
+                    <label for="inputEmail3" class="col-sm-5 control-label">{{ form_label(form.cause, "Pour quelle cause") }}</label>
+                    <div class="col-sm-7">
+                        {% if form.cause.vars.errors|length %}
+                            {# Affichage des erreurs pour ce champ précis. #}
+                            <div class="form-group has-error">
+                                <label class="control-label" for="inputError">{{ form_errors(form.cause) }}</label>
+                                {{ form_widget(form.cause, {'attr': {'class': 'task_field form-control', 'id':'inputError', 'id':'nom' } }) }}
+                            </div>
+                        {% else %}
+                            <td>{{ form_widget(form.cause, {'attr': {'class': 'task_field form-control', 'id':'nom' } }) }}</td>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputEmail3" class="col-sm-5 control-label">{{ form_label(form.modePaiement, "Mode de paiement") }}</label>
+                    <div class="col-sm-7">
+                        {% if form.modePaiement.vars.errors|length %}
+                            {# Affichage des erreurs pour ce champ précis. #}
+                            <div class="form-group has-error">
+                                <label class="control-label" for="inputError">{{ form_errors(form.modePaiement) }}</label>
+                                {{ form_widget(form.modePaiement, {'attr': {'class': 'task_field form-control', 'id':'inputError', 'id':'nom', 'placeholder':'montant' } }) }}
+                            </div>
+                        {% else %}
+                            {# Génération de l'input. #}
+                            <td>{{ form_widget(form.modePaiement, {'attr': {'class': 'task_field form-control', 'id':'nom' } }) }}</td>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <h4  class="couleur-donateur" >{{ form_label(form.abonnement, "Option d'abonnement") }}</h4>
+            <hr />
+            <div class="row">
+            <div class="form-group col-md-6">
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <div class="col-sm-12">
+                            {{ form_errors(form.abonnement.actif) }}
+
+                            {# Génération de l'input. #}
+                            {{ form_widget(form.abonnement.actif, {'attr': {'class': ' checkbox-inline', 'id':'check_abo'} }) }}{{ form_label(form.abonnement.actif, "Active un paiement récurrent") }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="row" id="abo_date" style="display:none;">
+                <div class="form-group col-md-6">
+                    <label for="inputEmail3" class="col-sm-5 control-label">{{ form_label(form.abonnement.dateDebut, "Date de début d'abonnement") }}</label>
+                    <div class="col-sm-7">
+                        {% if form.abonnement.dateDebut.vars.errors|length %}
+                            {# Affichage des erreurs pour ce champ précis. #}
+                            <div class="form-group has-error">
+                                <label class="control-label" for="inputError">{{ form_errors(form.abonnement.dateDebut) }}</label>
+                                {{ form_widget(form.abonnement.dateDebut, {'attr': { 'id':'inputError', 'id':'nom' } }) }}
+                            </div>
+                        {% else %}
+                            <td>{{ form_widget(form.abonnement.dateDebut, {'attr': {'id':'date_debut', 'placeholder':'jj/mm/aaaa' } }) }}</td>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputEmail3" class="col-sm-5 control-label">{{ form_label(form.abonnement.dateFin, "Date de fin d'abonnement") }}</label>
+                    <div class="col-sm-7">
+                        {% if form.abonnement.dateFin.vars.errors|length %}
+                            {# Affichage des erreurs pour ce champ précis. #}
+                            <div class="form-group has-error">
+                                <label class="control-label" for="inputError">{{ form_errors(form.abonnnement.dateFin) }}</label>
+                                {{ form_widget(form.abonnement.dateFin, {'attr': { 'id':'inputError', 'id':'nom', 'placeholder':'jj/mm/aaaa' } }) }}
+                            </div>
+                        {% else %}
+                            {# Génération de l'input. #}
+                            <td>{{ form_widget(form.abonnement.dateFin, {'attr': { 'id':'date_fin', 'placeholder':'jj/mm/aaaa' } }) }}</td>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        <hr />
+        <div class="form-group">
+            <div class="col-sm-12 bouton-center">
+                <center> {{ form_widget(form.Continuer) }}</center>
+                <br />
+            </div>
+        </div>
+        {{ form_rest(form) }}
+        </form>
+        </div>
+        </div> <!-- /container -->
+        </div>
+
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+
+            $('#fulldon_donateurbundle_dontype_abonnement_actif').on('click', function(){
+                if($('#fulldon_donateurbundle_dontype_abonnement_actif').is(':checked')) {
+                    $('#abo_date').show();
+                } else {
+                    $('#abo_date').hide();
+                }
+            });
+        </script>
+    {% endblock %}

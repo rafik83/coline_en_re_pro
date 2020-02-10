@@ -1,0 +1,36 @@
+ {% for r2 in data %}
+                <tr id="id_ligneserach_{{r2['id']}}">
+                    {% for key,value in coldisplay_ligne_cumule_don  %}
+                        {% for key2,value2 in value %}
+                            {% if key2 == "numdon" %}
+                                <td>{{ r2['don_id'] }}</td>
+                            {% elseif key2 ==  "nom" %}
+                                <td>{{ r2['nom'] }}</td>
+                            {% elseif key2 == "prenom" %}
+                                <td>{{ r2['prenom'] }}</td>
+                                
+                                 {% elseif key2 == "cumul_don" %}
+                                <td>{{ r2['cumul'] }}</td>
+                                
+                                
+                            {% elseif key2 == "statut" %}
+                                <td> {% if r2['statut_donateur'] %}<span
+                                        class="label label-danger arrowed-in arrowed-in-right">Désactivé</span> {% else %}
+                                    <span class="label label-success arrowed-in arrowed-in-right">Actif</span>{% endif %}
+                                </td>
+                       
+                                
+                                {% elseif key2 == "modepay" %}
+                                <td>{{ r2['mode_paiement'] }}</td>
+                                
+                                 {% elseif key2 == "createdat" %}
+                                <td>{{ r2['dernier_don']|date('d/m/Y') }}</td>
+                                
+                                {% elseif key2 == "nomentreprise" %}
+                                <td>{% if r2['entreprise'] is defined and r2['entreprise'] is not null %}{{ r2['entreprise'] }}{% else %} N/A{% endif %}</td>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </tr>
+
+            {% endfor %}

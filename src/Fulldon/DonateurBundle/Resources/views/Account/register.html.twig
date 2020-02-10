@@ -1,0 +1,353 @@
+{% extends "FulldonDonateurBundle::layout.html.twig" %}
+{% block title %}Inscription{% endblock %}
+{% block body %}
+    <div class="container">
+        <div class="row" style="width:80%;margin: 0 auto;">
+
+            <div class="col-md-12" >
+                <h2 style="margin-top:5px;text-align: center;" class="couleur-donateur" >{{ "Inscription à l'espace donateur"|trans({},'messages') }}</h2>
+                <hr />
+                <div class='errors'>
+
+                    {{ form_errors(form) }}
+
+                </div>
+                <h4 class="couleur-donateur">{{ "Les informations d'accès utilisateur"|trans({},'messages') }} <div class="pull-right hidden-xs required-input-title"  >(*) {{ "champs obligatoires"|trans({},'messages') }}</div></h4>
+                <hr />
+                <div class=" pull-right visible-xs required-input-title" >(*) {{ "champs obligatoires"|trans({},'messages') }}</div>
+                <br />
+                <form action="{{ path('donateur_register') }}" method="post" class="form-group" {{ form_enctype(form) }}>
+                {{ form_errors(form.user) }}
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="inputEmail3" class=" control-label">{{ form_label(form.user.username, "Login"|trans({},'messages') ) }} <span class="required-input" > * </span></label>
+                            <div >
+                                {% if form.user.username.vars.errors|length %}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="control-label" for="inputError">{{ form_errors(form.user.username) }}</label>
+                                        {{ form_widget(form.user.username, {'attr': {'class': 'task_field form-control', 'id':'inputError', 'id':'nom', 'placeholder':'Login' } }) }}
+                                    </div>
+                                {% else %}
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.user.username, {'attr': {'class': 'task_field form-control', 'id':'nom', 'placeholder':'' } }) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="inputEmail3" class=" control-label">{{ form_label(form.user,  "Mot de passe et confirmation"|trans({},'messages')) }} <span class="required-input" > * </span></label>
+                            <div >
+                                {% if  app.session.flashbag.has('error_user_pass')%}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="control-label" for="inputError">
+                                            {% for flashMessage in app.session.flashbag.get('error_user_pass') %}
+                                                <li>{{ flashMessage }}</li>
+                                            {% endfor %}
+                                        </label>
+                                        <td>{{ form_widget(form.user.password, {'attr': {'class': 'task_field form-control', 'id':'nom', 'placeholder':"Mot de passe"|trans({},'messages') } }) }}</td>
+                                        <td><input type="password" name="confirm_pass" class="form-control" id="confirm_pass" placeholder="Confirmation du mot de passe"></td>
+                                    </div>
+                                {% else %}
+                                    <td>{{ form_widget(form.user.password, {'attr': {'class': 'task_field form-control', 'id':'nom', 'placeholder':'Mot de passe' } }) }}</td>
+                                    <td><input type="password" name="confirm_pass" class="form-control" id="confirm_pass" placeholder='{{ "Confirmation du mot de passe"|trans({},'messages') }}' ></td>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                <h4 class="couleur-donateur">{{ "Informations personnelles"|trans({},'messages') }} </h4>
+                <hr />
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="inputEmail3" class=" control-label">{{ form_label(form.civilite, "Civilité"|trans({},'messages')) }} <span class="required-input" > * </span></label>
+                            <div >
+                                {# Affichage des erreurs pour ce champ précis. #}
+                                {{ form_errors(form.civilite) }}
+
+                                {# Génération de l'input. #}
+                                {{ form_widget(form.civilite, {'attr': {'class': 'task_field form-control', 'id':'civilite'} }) }}
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="inputEmail3" class=" control-label">{{ form_label(form.nom, "Nom"|trans({},'messages')) }} <span class="required-input" > * </span></label>
+                            <div >
+                                {% if form.nom.vars.errors|length %}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="control-label" for="inputError"> {{ form_errors(form.nom) }}</label>
+                                        {{ form_widget(form.nom, {'attr': {'class': 'task_field form-control', 'id':'inputError', 'placeholder':'Nom' } }) }}
+                                    </div>
+                                {% else %}
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.nom, {'attr': {'class': 'task_field form-control', 'id':'nom', 'placeholder':'Nom' } }) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="form-group col-md-6">
+                            <label for="inputEmail3" class=" control-label">{{ form_label(form.prenom, "Prénom"|trans({},'messages')) }} <span class="required-input" > * </span></label>
+                            <div >
+                                {% if form.prenom.vars.errors|length %}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="control-label" for="inputError"> {{ form_errors(form.prenom) }}</label>
+                                        {{ form_widget(form.prenom, {'attr': {'class': 'task_field form-control', 'id':'prenom', 'placeholder':'Prénom' } }) }}
+                                    </div>
+                                {% else %}
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.prenom, {'attr': {'class': 'task_field form-control', 'id':'prenom', 'placeholder':'Prénom' } }) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="inputEmail3" class=" control-label">{{ form_label(form.dateNaissance, "Date de naissance"|trans({},'messages')) }}</label>
+                            <div >
+                                {% if form.dateNaissance.vars.errors|length %}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="control-label" for="inputError"> {{ form_errors(form.dateNaissance) }}</label>
+                                        {{ form_widget(form.dateNaissance, {'attr': { 'id':'dateNaissance', 'placeholder':'jj/mm/aaaa' } }) }}
+                                    </div>
+                                {% else %}
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.dateNaissance, {'attr': { 'id':'nom', 'placeholder':'jj/mm/aaaa'} }) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="inputEmail3" class=" control-label">{{ form_label(form.adresse1, "N° appartement ou boîte aux lettres - etage - couloir - escalier"|trans({},'messages')) }}</label>
+                            <div >
+                                {% if form.adresse1.vars.errors|length %}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="control-label" for="inputError"> {{ form_errors(form.adresse1) }}</label>
+                                        {{ form_widget(form.adresse1, {'attr': { 'class': 'task_field form-control', 'id':'adresse1'} }) }}
+                                    </div>
+                                {% else %}
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.adresse1, {'attr': { 'class': 'task_field form-control', 'id':'adresse1'} }) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="inputEmail3" class=" control-label">{{ form_label(form.adresse2, "Entrée - bâtiment - immeuble - résidence"|trans({},'messages')) }}</label>
+                            <div >
+                                {% if form.adresse2.vars.errors|length %}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="control-label" for="inputError"> {{ form_errors(form.adresse2) }}</label>
+                                        {{ form_widget(form.adresse2, {'attr': { 'class': 'task_field form-control', 'id':'adresse2'} }) }}
+                                    </div>
+                                {% else %}
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.adresse2, {'attr': { 'class': 'task_field form-control', 'id':'adresse2'} }) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="inputEmail3" class=" control-label">{{ form_label(form.adresse3, "Numéro + libellé de la voie (rue,avenue...)"|trans({},'messages')) }}</label>
+                            <div >
+                                {% if form.adresse3.vars.errors|length %}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="control-label" for="inputError"> {{ form_errors(form.adresse3) }}</label>
+                                        {{ form_widget(form.adresse3, {'attr': { 'class': 'task_field form-control', 'id':'adresse3'} }) }}
+                                    </div>
+                                {% else %}
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.adresse3, {'attr': { 'class': 'task_field form-control', 'id':'adresse3'} }) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="inputEmail3" class=" control-label">{{ form_label(form.adresse4, "BP - Lieu dit"|trans({},'messages')) }}</label>
+                            <div >
+                                {% if form.adresse4.vars.errors|length %}
+                                    {# Affichage des erreurs pour ce champ précis. #}
+                                    <div class="form-group has-error">
+                                        <label class="control-label" for="inputError"> {{ form_errors(form.adresse4) }}</label>
+                                        {{ form_widget(form.adresse4, {'attr': { 'class': 'task_field form-control', 'id':'adresse4'} }) }}
+                                    </div>
+                                {% else %}
+                                    {# Génération de l'input. #}
+                                    {{ form_widget(form.adresse4, {'attr': { 'class': 'task_field form-control', 'id':'adresse4'} }) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail3" class=" control-label">{{ form_label(form.zipcode, "Code postal"|trans({},'messages')) }}</label>
+                        <div >
+                            {% if form.zipcode.vars.errors|length %}
+                                {# Affichage des erreurs pour ce champ précis. #}
+                                <div class="form-group has-error">
+                                    <label class="control-label" for="inputError"> {{ form_errors(form.zipcode) }}</label>
+                                    {{ form_widget(form.zipcode, {'attr': { 'class': 'task_field form-control', 'id':'codepostal'} }) }}
+                                </div>
+                            {% else %}
+                                {# Génération de l'input. #}
+                                {{ form_widget(form.zipcode, {'attr': { 'class': 'task_field form-control', 'id':'codepostal'} }) }}
+                            {% endif %}
+
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail3" class=" control-label">{{ form_label(form.email, "Email"|trans({},'messages')) }} <span class="required-input" > * </span></label>
+                        <div >
+                            {% if form.email.vars.errors|length %}
+                                {# Affichage des erreurs pour ce champ précis. #}
+                                <div class="form-group has-error">
+                                    <label class="control-label" for="inputError"> {{ form_errors(form.email) }}</label>
+                                    {{ form_widget(form.email, {'attr': { 'class': 'task_field form-control', 'id':'email'} }) }}
+                                </div>
+                            {% else %}
+                                {# Génération de l'input. #}
+                                {{ form_widget(form.email, {'attr': { 'class': 'task_field form-control', 'id':'email'} }) }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="inputEmail3" class=" control-label">{{ form_label(form.isopays, "Pays") }}</label>
+                            <div >
+                                {# Affichage des erreurs pour ce champ précis. #}
+                                {{ form_errors(form.isopays) }}
+
+                                {# Génération de l'input. #}
+                                {{ form_widget(form.isopays, {'attr': { 'class': 'task_field form-control', 'id':'pays'} }) }}
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="inputEmail3" class=" control-label">{{ form_label(form.isoville, "Localité") }}</label>
+                            <div >
+                                {# Affichage des erreurs pour ce champ précis. #}
+                                {{ form_errors(form.isoville) }}
+
+                                {# Génération de l'input. #}
+                                {{ form_widget(form.isoville, {'attr': { 'class': 'task_field form-control', 'id':'ville'} }) }}
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail3" class=" control-label">{{ form_label(form.telephoneMobile, "Téléphone mobile"|trans({},'messages')) }}</label>
+                        <div >
+                            {# Affichage des erreurs pour ce champ précis. #}
+                            {{ form_errors(form.telephoneMobile) }}
+
+                            {# Génération de l'input. #}
+                            {{ form_widget(form.telephoneMobile, {'attr': { 'class': 'task_field form-control', 'id':'telephoneMobile'} }) }}
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail3" class=" control-label">{{ form_label(form.telephoneFixe, "Téléphone fixe"|trans({},'messages')) }}</label>
+                        <div >
+                            {# Affichage des erreurs pour ce champ précis. #}
+                            {{ form_errors(form.telephoneFixe) }}
+
+                            {# Génération de l'input. #}
+                            {{ form_widget(form.telephoneFixe, {'attr': { 'class': 'task_field form-control', 'id':'telephone_fixe'} }) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label  class=" control-label col-sm-12">{{ "Voulez-vous recevoir les Reçus fiscaux ?"|trans({},'messages') }} <span class="required-input" > * </span></label>
+                        <div class="col-sm-12">
+                            <div class="radio-inline">
+                                <label>
+                                    <input type="radio" name="allow_rf" id="allow_rf1" value="true" {% if data['allow_rf'] is defined  %}{% if  data['allow_rf'] == "true"  %}checked{% endif %}{% else %}checked{% endif %}>
+                                    {{ "Oui"|trans({},'messages') }}
+                                </label>
+                            </div>
+                            <div class="radio-inline">
+                                <label>
+                                    <input type="radio" name="allow_rf" id="allow_rf2" value="false" {% if data['allow_rf'] is defined  and  data['allow_rf'] == "false"  %}checked{% endif %}>
+                                    {{ "Non"|trans({},'messages') }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                        <div class="form-group col-md-6">
+                            <label for="inputEmail3" class=" control-label">{{ form_label(form.receptionMode, "Mode de communication"|trans({},'messages')) }}</label>
+                            <div >
+                                {% for field in form.receptionMode %}
+                                    <li style="list-style-type:none; ">
+                                        {{ form_widget(field, {'attr': { 'checked': 'checked'} }) }}
+                                        {{ form_label(field) }}
+                                    </li>
+                                {% endfor %}
+                            </div>
+                        </div>
+                </div>
+                    <hr />
+                    <div class="form-group">
+                        <div class="col-sm-12 bouton-center">
+                            <center>
+                                <input type="submit" class="btn btn-primary" value =" {{ "Valider l'inscription"|trans({},'messages') }}"/>
+                            </center>
+                            <br />
+                            <br />
+                        </div>
+                    </div>
+                    {{ form_rest(form) }}
+                </form>
+            </div>
+        </div> <!-- /container -->
+    </div>
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+            $(document).ready(function() {
+                $.getJSON("/villes/id/"+$("#fulldon_donateurbundle_donateurtype_pays").val()).done(function( vj ) {
+                    var options = '';
+                    for (var i = 0; i < vj.length; i++) {
+                        options += '<option value="' + vj[i].id + '">' + vj[i].name + '</option>';
+                    }
+                    $("#ville").html(options);
+                    return false;
+                });
+                $("#fulldon_donateurbundle_donateurtype_pays").on('change', function(event){
+                    event.stopImmediatePropagation();
+                    $.getJSON("/villes/id/"+$(this).val()).done(function( vj ) {
+                        var options = '';
+                        for (var i = 0; i < vj.length; i++) {
+                            options += '<option value="' + vj[i].id + '">' + vj[i].name + '</option>';
+                        }
+                        $("#ville").html(options);
+
+                    });
+                    return false;
+                });
+                });
+
+
+            (function($) {
+                $(function() {
+
+                    $('#fulldon_donateurbundle_donateurtype_dateNaissance').datepicker({
+                        startView: 'decade',
+                        showOn: "both",
+                        language: "fr-FR",
+                        format: "dd/mm/yyyy",
+                        autoclose: true,
+                        todayHighlight: false
+                    })
+                            .on('hide',function(){var a = $(this);setTimeout(function(){a.show();},2);})
+                    ;
+
+                });
+            })(jQuery);
+
+        </script>
+    {% endblock %}
+{% endblock %}

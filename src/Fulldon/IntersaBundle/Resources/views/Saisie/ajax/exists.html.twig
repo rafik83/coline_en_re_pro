@@ -1,0 +1,260 @@
+{% if donateur is defined and donateur is not null %}
+<div class="row">
+    <div class="form-group col-md-6">
+        <label for="inputEmail3" class="control-label">{{ form_label(form.civilite, "Civilité") }}</label>{% if donateur is not null %}<a style="font-size: 10px;" class="pull-right" href="#" tabindex="-1" onClick="enable_field('#fulldon_donateurbundle_saisietype_civilite');" > ( Modifier )</a>{% endif %}
+        <div >
+            {# Affichage des erreurs pour ce champ précis. #}
+            {{ form_errors(form.civilite) }}
+
+            {# Génération de l'input. #}
+            {{ form_widget(form.civilite, {'attr': {'class': 'task_field form-control', 'id':'civilite' ,'readonly':'readonly', 'tabindex':'-1'} }) }}
+        </div>
+    </div>
+    <div class="form-group col-md-6">
+        <label for="inputEmail3" class=" control-label">{{ form_label(form.nom, "Nom") }}</label><a style="font-size: 10px;" class="pull-right" href="#" tabindex="-1" onClick="enable_field('#fulldon_donateurbundle_saisietype_nom');"> ( Modifier )</a>
+        <div >
+            {% if form.nom.vars.errors|length %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError"> {{ form_errors(form.nom) }}</label>
+                    {{ form_widget(form.nom, {'attr': {'class': 'task_field form-control', 'id':'inputError', 'placeholder':'Nom' ,'readonly':'readonly', 'tabindex':'-1' } }) }}
+                </div>
+            {% else %}
+                {# Génération de l'input. #}
+                {{ form_widget(form.nom, {'attr': {'class': 'task_field form-control', 'id':'nom', 'placeholder':'Nom' ,'readonly':'readonly', 'tabindex':'-1' } }) }}
+            {% endif %}
+        </div>
+    </div>
+</div>
+<div class="row">
+
+    <div class="form-group col-md-6">
+        <label for="inputEmail3" class="control-label">{{ form_label(form.prenom, "Prénom") }}</label><a style="font-size: 10px;" class="pull-right" href="#" tabindex="-1" onClick="enable_field('#fulldon_donateurbundle_saisietype_prenom');"> ( Modifier )</a>
+        <div >
+            {% if form.prenom.vars.errors|length %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError"> {{ form_errors(form.prenom) }}</label>
+                    {{ form_widget(form.prenom, {'attr': {'class': 'task_field form-control', 'id':'prenom', 'placeholder':'Prénom' ,'readonly':'readonly' , 'tabindex':'-1'} }) }}
+                </div>
+            {% else %}
+                {# Génération de l'input. #}
+                {{ form_widget(form.prenom, {'attr': {'class': 'task_field form-control', 'id':'prenom', 'placeholder':'Prénom' ,'readonly':'readonly' , 'tabindex':'-1'} }) }}
+            {% endif %}
+        </div>
+    </div>
+
+
+    <div class="form-group col-md-6">
+        <label for="inputEmail3" class="control-label">{{ form_label(form.adresse1, "N° appartement ou boîte aux lettres - etage - couloir - escalier ") }}</label><a style="font-size: 10px;" tabindex="-1" class="pull-right" href="#" onClick="enable_field('#fulldon_donateurbundle_saisietype_adresse1');"> ( Modifier )</a>
+        <div>
+            {% if form.adresse1.vars.errors|length %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError"> {{ form_errors(form.adresse1) }}</label>
+                    {{ form_widget(form.adresse1, {'attr': { 'class': 'task_field form-control', 'id':'adresse1' ,'readonly':'readonly', 'tabindex':'-1'} }) }}
+                </div>
+            {% else %}
+                {# Génération de l'input. #}
+                {{ form_widget(form.adresse1, {'attr': { 'class': 'task_field form-control', 'id':'adresse1' ,'readonly':'readonly', 'tabindex':'-1'} }) }}
+            {% endif %}
+        </div>
+    </div>
+</div>
+    <div class="row">
+    <div class="form-group col-md-6">
+        <label for="inputEmail3" class="control-label">{{ form_label(form.adresse2, "Entrée - bâtiment - immeuble - résidence ") }}</label><a style="font-size: 10px;"  tabindex="-1" class="pull-right" href="#" onClick="enable_field('#fulldon_donateurbundle_saisietype_adresse2');"> ( Modifier )</a>
+        <div >
+            {% if form.adresse2.vars.errors|length %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError"> {{ form_errors(form.adresse2) }}</label>
+                    {{ form_widget(form.adresse2, {'attr': { 'class': 'task_field form-control', 'id':'adresse2' ,'readonly':'readonly', 'tabindex':'-1'} }) }}
+                </div>
+            {% else %}
+                {# Génération de l'input. #}
+                {{ form_widget(form.adresse2, {'attr': { 'class': 'task_field form-control', 'id':'adresse2' ,'readonly':'readonly', 'tabindex':'-1'} }) }}
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="form-group col-md-6">
+        <label for="inputEmail3" class="control-label">{{ form_label(form.adresse3, "Numéro + libellé de la voie (rue,avenue...) ") }}</label><a style="font-size: 10px;" tabindex="-1" class="pull-right" href="#" onClick="enable_field('#fulldon_donateurbundle_saisietype_adresse3');"> ( Modifier )</a>
+        <div >
+            {% if form.adresse3.vars.errors|length %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError"> {{ form_errors(form.adresse3) }}</label>
+                    {{ form_widget(form.adresse3, {'attr': { 'class': 'task_field form-control', 'id':'adresse3' ,'readonly':'readonly', 'tabindex':'-1'} }) }}
+                </div>
+            {% else %}
+                {# Génération de l'input. #}
+                {{ form_widget(form.adresse3, {'attr': { 'class': 'task_field form-control', 'id':'adresse3' ,'readonly':'readonly', 'tabindex':'-1'} }) }}
+            {% endif %}
+        </div>
+    </div>
+    </div>
+    <div class="row">
+    <div class="form-group col-md-6">
+        <label for="inputEmail3" class="control-label">{{ form_label(form.adresse4, "BP - Lieu dit ") }}</label><a style="font-size: 10px;" tabindex="-1" class="pull-right" href="#" onClick="enable_field('#fulldon_donateurbundle_saisietype_adresse4');"> ( Modifier )</a>
+        <div >
+            {% if form.adresse4.vars.errors|length %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError"> {{ form_errors(form.adresse4) }}</label>
+                    {{ form_widget(form.adresse4, {'attr': { 'class': 'task_field form-control', 'id':'adresse4' ,'readonly':'readonly', 'tabindex':'-1'} }) }}
+                </div>
+            {% else %}
+                {# Génération de l'input. #}
+                {{ form_widget(form.adresse4, {'attr': { 'class': 'task_field form-control', 'id':'adresse4' ,'readonly':'readonly', 'tabindex':'-1'} }) }}
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="form-group col-md-6">
+        <label for="inputEmail3" class=" control-label">{{ form_label(form.zipcode, "Code postal ") }}</label><a style="font-size: 10px;" class="pull-right" tabindex="-1" href="#" onClick="enable_field('#fulldon_donateurbundle_saisietype_zipcode');"> ( Modifier )</a>
+        <div >
+            {% if form.zipcode.vars.errors|length %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError"> {{ form_errors(form.zipcode) }}</label>
+                    {{ form_widget(form.zipcode, {'attr': { 'class': 'task_field form-control', 'id':'codepostal' ,'readonly':'readonly', 'tabindex':'-1'} }) }}
+                </div>
+            {% else %}
+                {# Génération de l'input. #}
+                {{ form_widget(form.zipcode, {'attr': { 'class': 'task_field form-control', 'id':'codepostal' ,'readonly':'readonly', 'tabindex':'-1'} }) }}
+            {% endif %}
+
+        </div>
+    </div>
+    </div>
+    <div class="row">
+    <div class="form-group col-md-6">
+        <label for="inputEmail3" class="control-label">{{ form_label(form.isopays, "Pays") }}</label><a style="font-size: 10px;" class="pull-right" href="#" tabindex="-1" onClick="enable_field('#fulldon_donateurbundle_saisietype_isopays');"> ( Modifier )</a>
+        <div >
+            {# Affichage des erreurs pour ce champ précis. #}
+            {{ form_errors(form.isopays) }}
+
+            {# Génération de l'input. #}
+            {{ form_widget(form.isopays, {'attr': { 'class': 'task_field form-control', 'id':'pays','readonly':'readonly', 'tabindex':'-1'} }) }}
+        </div>
+    </div>
+
+    <div class="form-group col-md-6">
+        <label for="inputEmail3" class="control-label">{{ form_label(form.isoville, "Ville") }}</label><a style="font-size: 10px;" class="pull-right" href="#" tabindex="-1" onClick="enable_field('#fulldon_donateurbundle_saisietype_isoville');"> ( Modifier )</a>
+        <div >
+            {# Affichage des erreurs pour ce champ précis. #}
+            {{ form_errors(form.isoville) }}
+
+            {# Génération de l'input. #}
+            {{ form_widget(form.isoville, {'attr': { 'class': 'task_field form-control', 'id':'ville','readonly':'readonly', 'tabindex':'-1'} }) }}
+        </div>
+    </div>
+
+</div>
+
+    <h5 class="couleur-intersa" >Autre informations (Optionnelles)<div class="pull-right"><a  class="btn btn-xs btn-default" style="border-radius: 0px;" id="btn-optional"><i class="fa fa-plus-square"></i>  Afficher le formulaire optionnel</a></div></h5>
+    <hr />
+    <br />
+<div id="optionals_fields" style="display:none !important;">
+<div class="row">
+    <div class="form-group col-md-6">
+        <label for="inputEmail3" >{{ form_label(form.receptionMode, "Mode de communication") }}</label><a style="font-size: 10px;" class="pull-right" tabindex="-1" href="#" onClick="enable_field('#fulldon_donateurbundle_saisietype_receptionMode');"> ( Modifier )</a>
+            <div>
+                {% for field in form.receptionMode %}
+                    <li style="list-style-type:none; ">
+                        {{ form_widget(field) }}
+                        {{ form_label(field) }}
+                    </li>
+                {% endfor %}
+            </div>
+        </div>
+
+    <div class="form-group col-md-6">
+        <label for="inputEmail3" class="control-label">{{ form_label(form.dateNaissance, "Date de naissance") }}</label><a style="font-size: 10px;" class="pull-right" href="#" tabindex="-1" onClick="enable_field('#fulldon_donateurbundle_saisietype_dateNaissance');"> ( Modifier )</a>
+        <div >
+            {% if form.dateNaissance.vars.errors|length %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError"> {{ form_errors(form.date_naissance) }}</label>
+                    {{ form_widget(form.dateNaissance, {'attr': { 'id':'dateNaissance', 'placeholder':'jj/mm/aaaa','readonly':'readonly', 'tabindex':'-1' } }) }}
+                </div>
+            {% else %}
+                {# Génération de l'input. #}
+                {{ form_widget(form.dateNaissance, {'attr': { 'id':'nom', 'placeholder':'jj/mm/aaaa' ,'readonly':'readonly', 'tabindex':'-1'} }) }}
+            {% endif %}
+        </div>
+    </div>
+</div>
+    <div class="row">
+        <div class="form-group col-md-6">
+            <label for="telephoneMobile">{{ form_label(form.telephoneMobile, "Téléphone mobile") }}</label><a style="font-size: 10px;" class="pull-right" href="#" tabindex="-1" onClick="enable_field('#fulldon_donateurbundle_saisietype_telephoneMobile');"> ( Modifier )</a>
+            <div >
+                {# Affichage des erreurs pour ce champ précis. #}
+                {{ form_errors(form.telephoneMobile) }}
+
+                {# Génération de l'input. #}
+                {{ form_widget(form.telephoneMobile, {'attr': { 'class': 'task_field form-control', 'id':'telephoneMobile','readonly':'readonly', 'tabindex':'-1' } }) }}
+            </div>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="telephone_fixe" >{{ form_label(form.telephoneFixe, "Téléphone fixe") }}</label><a style="font-size: 10px;" class="pull-right" href="#" tabindex="-1" onClick="enable_field('#fulldon_donateurbundle_saisietype_telephoneFixe');"> ( Modifier )</a>
+            <div >
+                {# Affichage des erreurs pour ce champ précis. #}
+                {{ form_errors(form.telephoneFixe) }}
+
+                {# Génération de l'input. #}
+                {{ form_widget(form.telephoneFixe, {'attr': { 'class': 'task_field form-control', 'id':'telephone_fixe','readonly':'readonly', 'tabindex':'-1' } }) }}
+            </div>
+        </div>
+    </div>
+<div class="row">
+    <div class="form-group col-md-6">
+        <label  class=" control-label col-sm-12">Le donateur peut recevoir les Reçus fiscaux ?</label><a style="font-size: 10px;" class="pull-right" href="#" tabindex="-1" onClick="enable_allow_rf();"> ( Modifier )</a>
+        <div class="col-sm-12">
+            <div class="radio-inline">
+                <label>
+                    <input type="radio" name="allow_rf" id="allow_rf1" value="true" {% if data['allow_rf'] is defined  %}{% if  data['allow_rf'] == "true"  %}checked{% else %}disabled{% endif %}{% else %}checked{% endif %} readonly="readonly" tabindex="-1">
+                    Oui
+                </label>
+            </div>
+            <div class="radio-inline">
+                <label>
+                    <input type="radio" name="allow_rf" id="allow_rf2" value="false" {% if data['allow_rf'] is defined  and  data['allow_rf'] == "false"  %}checked{% else %}disabled{% endif %} readonly="readonly" tabindex="-1">
+                    Non
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group col-md-6">
+        <label for="inputEmail3" class="control-label">{{ form_label(form.email, "Email") }}</label><a style="font-size: 10px;" class="pull-right" href="#" tabindex="-1" onClick="enable_field('#fulldon_donateurbundle_saisietype_email');"> ( Modifier )</a>
+        <div >
+            {% if form.email.vars.errors|length %}
+                {# Affichage des erreurs pour ce champ précis. #}
+                <div class="form-group has-error">
+                    <label class="control-label" for="inputError"> {{ form_errors(form.email) }}</label>
+                    {{ form_widget(form.email, {'attr': { 'class': 'task_field form-control', 'id':'email'  ,'readonly':'readonly', 'tabindex':'-1'} }) }}
+                </div>
+            {% else %}
+                {# Génération de l'input. #}
+                {{ form_widget(form.email, {'attr': { 'class': 'task_field form-control', 'id':'email'  ,'readonly':'readonly', 'tabindex':'-1'} }) }}
+            {% endif %}
+        </div>
+    </div>
+    </div>
+</div>
+    <script>
+        $(document).ready(function() {
+            $('#btn-optional').click(function (e) {
+                if ($('#optionals_fields').is(":hidden")) {
+                    $('#optionals_fields').show();
+                    $('#btn-optional').html('<i class="fa fa-minus-square"></i>  Réduire le formulaire optionnel');
+                } else {
+                    $('#optionals_fields').hide();
+                    $('#btn-optional').html('<i class="fa fa-plus-square"></i>  Afficher le formulaire optionnel');
+                }
+
+            });
+        });
+    </script>
+{% endif %}

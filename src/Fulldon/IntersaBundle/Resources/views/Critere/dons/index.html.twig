@@ -1,0 +1,305 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+    {% stylesheets '../app/Resources/Public/css/global/jquery-ui/*' %}
+    <link rel="stylesheet" type="text/css" charset="UTF-8" media="all" href="{{ asset_url }}"/>
+    {% endstylesheets %}
+{% endblock %}
+{% block coque_intersa %}
+    <div class="breadcrumbs" id="breadcrumbs">
+        <script type="text/javascript">
+            try {
+                ace.settings.check('breadcrumbs', 'fixed')
+            } catch (e) {
+            }
+        </script>
+        <ol class="breadcrumb">
+            <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+            <li class="active">Liste des donateurs</li>
+        </ol>
+    </div>
+    <div class="page-content">
+
+        <!-- PAGE CONTENT BEGINS -->
+        <div class="page-header">
+            <h1>
+                Liste des Dons
+
+            </h1>
+        </div>
+        <!-- /.page-header -->
+
+        {#% for flashMessage in app.session.flashbag.get('info') %}
+            <div class="alert alert-success">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('warning') %}
+            <div class="alert alert-warning">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('success') %}
+            <div class="alert alert-success">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('erreur') %}
+            <div class="alert alert-danger">
+                {{ flashMessage }}
+            </div>
+        {% endfor %#}
+
+
+        <div class="pull-right">
+        </div>
+
+
+
+
+        <!-- Tab panes -->
+        <div id="container_sg_don_elasticsearch" style="display: none"> 
+
+        </div>
+
+
+        <div id="container_sg_don2" style="display: none">
+
+
+        </div>   
+
+        <div id="container_sg_don1" style="display: block">
+
+            <div class="tab-pane">
+                <br/>
+
+                <table class="table table-condensed" id="liste_sg_don">
+                    <thead>
+                        <tr>
+
+                            <th>Titre</th>
+                            <th>Description</th>
+                            <th>Date Création</th>
+                            <!--th>Critére de Recherche</th-->
+                            <th>Chercher</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="content">
+
+                        {% for sgdon in sgdons %}
+                            <tr id="{{sgdon.id}}">
+                                <td>
+                                    {{sgdon.title}}
+                                </td> 
+                                <td>
+                                    {{sgdon.description}}
+                                </td> 
+                                <td>
+                                    {{sgdon.createdAt|date('d/m/Y')}}
+                                </td>
+                                <td>
+
+                                    <button id="btn_search_{{sgdon.id}}" onclick="SearchSuperDon({{sgdon.id}})"  class="btn btn-default btn-xs"><span>Chercher</span></button>
+                                </td> 
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <center>
+
+                    {% if pager is defined and pager is not null %}
+                        {# Pager #}
+                        {% if pager.haveToPaginate %}
+                            {% set state = '' %}
+                            <ul class="pagination pull-center">
+                                {# back #}
+                                {% if pager.hasPreviousPage %}
+                                    {% set state = 'paginate_button first' %}
+                                    <li class="{{ state }}"><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateIndex({{ pager.getCurrentPage() -1 }})">&laquo;&nbsp;{{ 'Previous'|trans }}</a></li>
+                                    {% else %}
+                                    <li class="disabled">
+                                        <span>&laquo;&nbsp;{{ 'Previous'|trans }}</span>
+                                    </li>
+                                {% endif %}
+                                {# pages 1 2 3 ... #}
+                                {% for givenPage in 1..pager.getNbPages() %}
+                                    {% set state = '' %}
+                                    {% if  pager.getCurrentPage()  == givenPage %}
+                                        {% set state = 'active' %}
+                                    {% endif %}
+                                    <li class="{{ state }}"><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateIndex({{ givenPage }})">{{ givenPage }}</a></li>
+                                    {%  endfor %}
+
+
+                                {# forward #}
+                                {% set state = '' %}
+                                {% if pager.hasNextPage %}
+                                    <li class="{{ state }}" ><a href="javascript:void(0);" style="cursor: pointer" onclick="paginateIndex({{ pager.getCurrentPage() +1}})">{{ 'Next'|trans }}&nbsp;&raquo;</a></li>
+                                    {% else %}
+                                    <li class="disabled">
+                                        <span>&laquo;&nbsp;{{ 'Next'|trans }}</span>
+                                    </li>
+                                {% endif %}
+
+
+
+                            {% endif %}
+                        {% endif %}
+
+
+                </center>
+
+            </div>
+
+
+
+
+        </div>                                                                    
+
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+<!-- Modal -->
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts '../app/Resources/Public/js/jquery-ui/jquery-ui.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script>
+        $(document).ready(function () {
+
+        });
+
+        function SearchSuperDon(id_sg_donateur) {
+
+            var id = id_sg_donateur;
+         
+
+            var url = "{{ path('intersa_critere_recherche_don')}}";
+            //var url2 = "/intersa/critere/recherche/donateur/".id;
+            //"{#{ path('intersa_donateur_gestion',{'id':r.id}) }#}"
+
+
+            var obj = {id: id_sg_donateur};
+
+
+            $.ajax({
+                url: url,
+                type: "GET",
+                data: obj, //JSON.stringify(obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                cache: false,
+                success: function (data)
+                {
+                    console.log(data);
+                    //$("#container_sg_donateur_elasticsearch").css('display', 'block');
+                    //alert(data.logo);
+                },
+                complete: function (comp)
+                {
+                    //alert(comp.responseText);
+                    console.log(comp);
+                    //$("#container_sg_donateur").css('display', 'none');
+                    //$("#container_sg_donateur").html('');
+                    //$("#container_sg_donateur_elasticsearch").html(comp.responseText);
+                    //$("#columne_thead").css('display', 'block');
+                    //container_sg_donateur_elasticsearch table thead
+                    //$("#container_sg_donateur_elasticsearch table thead").css('display', 'block');
+                    //$("#container_sg_donateur_elasticsearch").css('display', 'block');
+                     $("#container_sg_don1").css('display', 'none');
+                     $("#container_sg_don2").css('display', 'none');
+                    $("#container_sg_don_elasticsearch").css('display', 'block');
+                    $("#container_sg_don_elasticsearch").html(comp.responseText);
+
+                },
+
+                error: function (err) {
+                    console.log(err);
+                    //alert('err');
+                }
+            }
+            );
+
+        }
+
+        function paginateCritere(page,id_don) {
+            //$("#loading-ajax_typepret").css('display', 'block');
+            
+            //alert(paginateCritere);
+            var url = "{{path('pagination_ligne_search_don')}}";
+            $.ajax({
+                url: url,
+                type: 'GET',
+                cahce: false,
+                data: "param=" + page + "&param2=" + id_don,
+                beforeSend: function () {
+                },
+                success: function (data) {
+                    console.log('success');
+                    console.log(data);
+                    // $("#loading-ajax_typepret").css('display', 'none');
+                    //$("#").html(data);
+                },
+                complete: function (comp)
+                {
+                    console.log('complete');//
+                    console.log(comp);//
+                    $("#container_sg_don_elasticsearch").html(comp.responseText);
+                   
+                },
+                error: function (err) {
+                    console.log(err);
+                    console.log('err');
+
+                }
+            });
+        }
+
+        function paginateIndex(page) {
+            var url = "{{path('critere_recherche_don_pagination')}}";
+            $.ajax({
+                url: url,
+                type: 'GET',
+                cahce: false,
+                data: "param=" + page,
+                beforeSend: function () {
+                },
+                success: function (data) {
+                    console.log('success');
+                    console.log(data);
+                    // $("#loading-ajax_typepret").css('display', 'none');
+
+                },
+                complete: function (comp)
+                {
+                    //alert(comp.responseText);
+                    console.log('complete');
+                    console.log(comp);
+                    $("#container_sg_don1").css('display', 'none');
+                    $("#container_sg_don2").css('display', 'block');
+                    $("#container_sg_don2").html(comp.responseText);
+                },
+                error: function (err) {
+                    console.log(err);
+                    console.log('err');
+
+                }
+            });
+        }
+
+
+
+    </script>
+{% endblock %}

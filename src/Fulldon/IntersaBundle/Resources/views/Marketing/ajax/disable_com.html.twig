@@ -1,0 +1,21 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="confirmDeleteLabel">Mise à jour de la liste des rejets</h4>
+            </div>
+            <div class="modal-body">
+                Voulez-vous retirer ce donateur #{{ donateur.id }} de la liste des rejets?
+                <br />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-xs" data-dismiss="modal">Annuler</button>
+                <a href="{{ path('intersa_marketing_disble_com', {'id': donateur.id}) }}"
+                   class="btn btn-xs  btn-primary">
+                    <i class="ace-icon fa fa-remove "></i>
+                    <span class="bigger-110">Retirer ce donateur</span>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

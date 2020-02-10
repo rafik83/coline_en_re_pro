@@ -1,0 +1,150 @@
+root:
+    pattern: /
+    defaults:
+        _controller: FrameworkBundle:Redirect:urlRedirect
+        path: /donateur
+        permanent: true
+
+fulldon_donateur_accueil:
+    pattern:  /donateur
+    defaults: { _controller: FulldonDonateurBundle:Default:index }
+
+donateur_register:
+    pattern:  /donateur/register
+    defaults: { _controller: FulldonDonateurBundle:Account:register }
+
+#route of edit personal informations
+donateur_account_edit:
+    pattern:  /donateur/account/edit
+    defaults: { _controller: FulldonDonateurBundle:Account:edit }
+
+donateur_account:
+    pattern:  /donateur/account
+    defaults: { _controller: FulldonDonateurBundle:Default:index }
+
+donateur_don:
+    pattern:  /donateur/don
+    defaults: { _controller: FulldonDonateurBundle:OnePage:auth }
+
+donateur_adherent:
+    pattern:  /donateur/adherent
+    defaults: { _controller: FulldonDonateurBundle:OnePage:authAdh }
+
+donateur_don_ponctuel:
+    pattern:  /donateur/donp
+    defaults: { _controller: FulldonDonateurBundle:Donateur:donPonctuel }
+
+donateur_don_regulier:
+    pattern:  /donateur/donr/
+    defaults: { _controller: FulldonDonateurBundle:Donateur:donRegulier }
+
+donateur_don_reglement:
+    pattern:  /donateur/don/reglement/mode/{mode}/id/{id}
+    defaults: { _controller: FulldonDonateurBundle:Donateur:reglement }
+
+donateur_don_bulletin:
+    pattern:  /donateur/don/bulletin/mode/{mode}/id/{id}
+    defaults: { _controller: FulldonDonateurBundle:Donateur:getBulletin }
+
+donateur_don_view:
+    pattern:  /donateur/don/history/view/{id}
+    defaults: { _controller: FulldonDonateurBundle:Donateur:historyView }
+
+payment_details:
+    pattern:  /donateur/payments/details/{id}
+    defaults: { _controller: FulldonDonateurBundle:Payment:details }
+
+payment_complete:
+    pattern:  /donateur/payments/complete/{id}
+    defaults: { _controller: FulldonDonateurBundle:Payment:complete }
+
+payment_share:
+    pattern:  /donateur/don/share/{id}
+    defaults: { _controller: FulldonDonateurBundle:Donateur:share }
+
+payment_callback_anonymous:
+    pattern:  /donateur/payments/anonymous/callback
+    defaults: { _controller: FulldonDonateurBundle:Payment:callbackAnonymous }
+
+payment_callback:
+    pattern:  /donateur/payments/callback
+    defaults: { _controller: FulldonDonateurBundle:Payment:callback }
+
+payment_callback_server:
+    pattern:  /donateur/payments/server/callback
+    defaults: { _controller: FulldonDonateurBundle:Payment:callbackServer }
+
+payment_callback_server_changes:
+    pattern:  /donateur/payments/server/callback/changes
+    defaults: { _controller: FulldonDonateurBundle:Payment:callbackChangeStatut }
+
+#donateur : paypal validation
+donateur_paypal_validation:
+    pattern:  /donateur/paypal/validation
+    defaults: { _controller: FulldonDonateurBundle:Donateur:paypalValidation }
+
+donateur_history:
+    pattern:  /donateur/history/page/{page}
+    defaults: {_controller: FulldonDonateurBundle:Donateur:history }
+
+donateur_rf:
+    pattern:  /donateur/rf/page/{page}
+    defaults: {_controller: FulldonDonateurBundle:Donateur:rf }
+
+donateur_rf_send_mail:
+    pattern:  /donateur/don/rf/send/{id}
+    defaults: { _controller: FulldonDonateurBundle:Donateur:rfSendMail }
+
+fulldon_donateur_rf:
+    pattern: /donateur/rf
+    defaults: {_controller: FulldonDonateurBundle:rf:index}
+
+fulldon_donateur_rf_print_origin:
+    pattern:  /donateur/porigin{$id}
+    defaults: {_controller: FulldonDonateurBundle:rf:porigin }
+
+fulldon_donateur_rf_print_duplicata:
+        pattern:  /donateur/pduplicata/{$id}
+        defaults: {_controller: FulldonDonateurBundle:rf:pduplicata}
+
+mdp_oublie_donateur:
+    pattern:  /donateur/mdpoublie
+    defaults: { _controller: FulldonDonateurBundle:Account:mdpOublieDonateur}
+
+fulldon_donateur_onepage_auth:
+    pattern: /donateur/auth/onepage
+    defaults: {_controller: FulldonDonateurBundle:OnePage:auth}
+
+fulldon_donateur_onepage:
+    pattern: /donateur/onepage
+    defaults: {_controller: FulldonDonateurBundle:OnePage:notAuth}
+
+#Emailing interface
+
+fulldon_donateur_emailing_unsubscribe:
+    pattern: /donateur/onepage/unsubscribe/{id}
+    defaults: {_controller: FulldonDonateurBundle:OnePage:unsubscribe}
+fulldon_donateur_emailing_view_online:
+    pattern: /donateur/onepage/viewhtml/{id}
+    defaults: {_controller: FulldonDonateurBundle:OnePage:viewHtml}
+
+
+fulldon_donateur_onepage_confirm_mandat:
+    pattern: /donateur/onepage/mandat/confirm
+    defaults: {_controller: FulldonDonateurBundle:OnePage:signeDocument}
+
+fulldon_donateur_onepage_adherent:
+    pattern: /donateur/onepage/adherent
+    defaults: { _controller: FulldonDonateurBundle:OnePage:Adherent }
+
+fulldon_donateur_onepage_event:
+    pattern: /donateur/onepage/event
+    defaults: { _controller: FulldonDonateurBundle:OnePage:event }
+
+fulldon_donateur_check_email:
+    pattern: /donateur/onepage/checkemail/{email}
+    defaults: { _controller: FulldonDonateurBundle:OnePage:checkEmail, email:null }
+
+fulldon_donateur_onepage_getpwd:
+    pattern: /donateur/onepage/getpwd/{email}
+    defaults: { _controller: FulldonDonateurBundle:OnePage:getpwd, email:null}

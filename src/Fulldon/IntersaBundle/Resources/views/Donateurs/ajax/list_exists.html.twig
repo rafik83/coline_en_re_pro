@@ -1,0 +1,40 @@
+{% if donateurs|length !=0   %}
+    <br />
+<div class="row">
+<div class="col-md-12">
+    {% if donateurs|length !=0  %}
+    <h4> Donateurs existants :</h4>
+    <hr />
+<table class="table table-striped ">
+    <thead>
+    <th>Nom</th>
+    <th>Prenom</th>
+    <th>Adresse</th>
+    <th>Etat</th>
+    <th></th>
+    </thead>
+    <tbody>
+    {% for donateur in donateurs %}
+    <tr>
+    <td>{{ donateur.nom }}</td>
+    <td>{{ donateur.prenom }}</td>
+    <td>{{ donateur.adresse3 }} <br />
+        {{ donateur.zipcode }}  <br />
+        {% if donateur.isoville is defined and donateur.isoville is not null %}
+            {{ donateur.isoville }}
+        {% endif %} <br />
+        {% if donateur.isopays is defined and donateur.isopays is not null %}
+            {{ donateur.isopays }}
+        {% endif %}<br />
+    </td>
+    <td>{% if donateur.removed %}Innactif{% else %}Actif{% endif %}</td>
+        <td><a href="{{ path('intersa_donateur_gestion',{'id': donateur.id,'cumul':cumul,'date':date}) }}" class="btn btn-xs btn-success"><span class="fa fa-user"></span> Profile</a> </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+    </div>
+
+</div>
+{% endif %}

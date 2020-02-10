@@ -1,0 +1,37 @@
+{% extends "FulldonDonateurBundle:Donateur:coque_donateur.html.twig" %}
+    {% block coque_donateur %}
+        <div class="row" >
+
+        <div class="col-md-12" >
+        <h1  class="couleur-donateur" >Paiement par paypal</h1>
+        <hr />
+        <div class="alert alert-info">Afin de finaliser votre don veuillez saisir les coordonnées de paiement:</div>
+        {% for flashMessage in app.session.flashbag.get('info') %}
+            <div class="alert alert-success">
+                {{ flashMessage|trans({},'messages') }}
+            </div>
+        {% endfor %}
+            <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+                <input type='hidden' value="{{ don.montant }}" name="amount" />
+                <input name="currency_code" type="hidden" value="EUR" />
+                <input name="shipping" type="hidden" value="0.00" />
+                <input name="tax" type="hidden" value="0.00" />
+                <input name="return" type="hidden" value="http://votredomaine/paiementValide.php" />
+                <input name="cancel_return" type="hidden" value="http://votredomaine/paiementAnnule.php" />
+                <input name="notify_url" type="hidden" value="{{ path('donateur_paypal_validation') }}" />
+                <input name="cmd" type="hidden" value="_xclick" />
+                <input name="business" type="hidden" value="boussacsou-facilitator@intersa.fr" />
+                <input name="item_name" type="hidden" value="Don" />
+                <input name="no_note" type="hidden" value="1" />
+                <input name="lc" type="hidden" value="FR" />
+                <input name="bn" type="hidden" value="PP-BuyNowBF" />
+                <input name="custom" type="hidden" value="{{ don.id }}" />
+                <input alt="Effectuez vos paiements via PayPal : une solution rapide, gratuite et sécurisée" name="submit" src="https://www.paypal.com/fr_FR/FR/i/btn/btn_buynow_LG.gif" type="image" /><img src="https://www.paypal.com/fr_FR/i/scr/pixel.gif" border="0" alt="" width="1" height="1" />
+            </form>
+        </div>
+            </div>
+    {% endblock %}
+    {% block javascripts %}
+    {{ parent() }}
+
+{% endblock %}

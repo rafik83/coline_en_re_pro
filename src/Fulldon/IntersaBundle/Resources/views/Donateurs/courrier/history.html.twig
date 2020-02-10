@@ -1,0 +1,89 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+<div class="breadcrumbs" id="breadcrumbs">
+    <ol class="breadcrumb">
+        <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+        <li><a href="{{ path('intersa_donateur') }}">Gestion des donateurs</a></li>
+        <li ><a href="{{ path('intersa_donateur_gestion', {'id':donateur.id,'cumul':cumul,'date':date}) }}">Gestion du donateur #{{ donateur.id }}</a></li>
+        <li class="active">Historique des courriers</li>
+    </ol>
+    </div>
+        <div class="page-content" >
+
+            <div class="col-md-12 pull-left">
+                <div class="page-header">
+                    <h1>
+                        Historique des courriers
+                        <small>
+                            <i class="ace-icon fa fa-angle-double-right"></i>
+                            Référence du donateur : #{{ donateur.refDonateur }}
+                        </small>
+                    </h1>
+                </div><!-- /.page-header -->
+                {% for flashMessage in app.session.flashbag.get('info') %}
+                    <div class="alert alert-success">
+                        {{ flashMessage }}
+                    </div>
+                {% endfor %}
+                    <div class="pagination_desc"><strong>{{ total_mails }}</strong> courrier(s)
+                        {% if last_page > 1 %}
+                            - page <strong>{{ current_page }}/{{ last_page }}</strong>
+                            <br />
+                        {% endif %}
+                    </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for mail in mails %}
+                        <tr>
+                            <td>{{ mail.id }}</td>
+                            <td>{{ mail.createdAt | date('Y-m-d H:i:s') }}</td>
+                            <td>
+                            {%  for  tt in mail.typeTraitements %}
+                                {{ tt.name }}<br />
+                            {%  endfor %}
+                            </td>
+                            <td><a href="{{ path('intersa_donateur_history_courrier_view',{'id':mail.id}) }}" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-eye-open"></span> Voir le Contenu</a>  </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <center>
+        {% if last_page > 1 %}
+            <ul class="pagination pull-center">
+                <li><a href="{{ path('intersa_donateur_history', {'id':donateur.id, 'page': previous_page }) }}">&laquo;</a></li>
+                {% for page in 1..last_page %}
+                    {% if page == current_page %}
+                    <li class="active"><a href="#">{{ page }}</a></li>
+                    {% else %}
+                    <li><a href="{{ path('intersa_donateur_history', { 'id':donateur.id, 'page': page }) }}">{{ page }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                <li><a href="{{ path('intersa_donateur_history', {'id':donateur.id, 'page': next_page }) }}">&raquo;</a></li>
+            </ul>
+            {% endif %}
+        </center>
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+
+            $('#fulldon_donateurbundle_dontype_abonnement_actif').on('click', function(){
+                if($('#fulldon_donateurbundle_dontype_abonnement_actif').is(':checked')) {
+                    $('#abo_date').show();
+                } else {
+                    $('#abo_date').hide();
+                }
+            });
+        </script>
+    {% endblock %}

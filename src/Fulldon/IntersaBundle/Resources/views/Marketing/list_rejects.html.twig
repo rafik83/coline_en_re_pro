@@ -1,0 +1,140 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+<div class="breadcrumbs" id="breadcrumbs">
+    <ol class="breadcrumb">
+        <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+        <li><a href="{{ path('intersa_marketing', {'page':1}) }}">eMarketing</a></li>
+        <li class="active">Statistiques eMarketing</li>
+    </ol>
+</div>
+<div class="page-content">
+    <div class="col-md-12">
+        <div class="page-header">
+            <h1>
+                eMarketing
+                <small>
+                    <i class="ace-icon fa fa-angle-double-right"></i>
+                    Liste des rejets Emailing
+                </small>
+            </h1>
+        </div>
+        <!-- /.page-header -->
+        {% for flashMessage in app.session.flashbag.get('info') %}
+            <div class="alert alert-success">
+                <span class="glyphicon glyphicon-ok-sign"></span>  {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('erreur') %}
+            <div class="alert alert-danger">
+                <span class="glyphicon glyphicon-remove-sign"></span>{{ flashMessage }}
+            </div>
+        {% endfor %}
+        <div class="pagination_desc"><strong>{{ total_elements }}</strong> Donateurs rejetés
+            {% if last_page > 1 %}
+                - page <strong>{{ current_page }}/{{ last_page }}</strong>
+                <br/>
+            {% endif %}
+        </div>
+        <table class="table table-condensed">
+            <thead>
+            <tr>
+                <th>Nom complet</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th></th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for element in elements %}
+                <tr>
+                    <td>{{ element.nom }} {{ element.prenom }}</td>
+                    <td>{{ element.email }}</td>
+                    <td>{{ element.telephoneMobile }}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn btn-default btn-xs dropdown-toggle" type="button"
+                                    data-toggle="dropdown">
+                                Gestion <span class="caret"></span>
+                            </button>
+
+                            <ul class="dropdown-menu">
+
+                                <li>
+                                    <a href="{{ path('intersa_donateur_gestion',{'id':element.id,'cumul':cumul,'date':date}) }}"><i
+                                                class="fa fa-user"></i></span>Fiche du donateur </a></li>
+                                <li>
+                                <li>
+                                    <a href="#" onclick="disablecom({{ element.id }})" ><i
+                                                class="fa fa-remove"></i> Retirer de la liste des rejets</a>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+<center>
+    {% if last_page > 1 %}
+        <ul class="pagination pull-center">
+            <li>
+                <a href="{{ path('intersa_marketing_rejects_emailing', { 'table':table, 'page': previous_page }) }}">&laquo;</a>
+            </li>
+            {% for page in 1..last_page %}
+                {% if page >= current_page-4 and page <= current_page+4 %}
+                    {% if   page == current_page-4 or page == current_page+4 %}
+                        {% if   page == current_page-4 %}
+                            <li>
+                                <a href="{{ path('intersa_marketing_rejects_emailing', { 'table':table, 'page': 1 }) }}">1</a>
+                            </li>
+                            <li class="disabled"><a href="#">...</a></li>
+                        {% else %}
+                            <li class="disabled"><a href="#">...</a></li>
+                            <li>
+                                <a href="{{ path('intersa_marketing_rejects_emailing', { 'table':table, 'page': last_page }) }}">{{ last_page }}</a>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        {% if page == current_page %}
+                            <li class="active"><a href="#">{{ page }}</a></li>
+                        {% else %}
+                            <li>
+                                <a href="{{ path('intersa_marketing_rejects_emailing', { 'table':table, 'page': page }) }}">{{ page }}</a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            <li><a href="{{ path('intersa_marketing_rejects_emailing', { 'table':table, 'page': next_page }) }}">&raquo;</a>
+            </li>
+        </ul>
+    {% endif %}
+</center>
+
+        <div class="modal fade" id="disablecom" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel"
+             aria-hidden="true">
+
+        </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function disablecom(donateur_id) {
+            $.ajax({
+                url: "/intersa/ajax/disable/com/" + donateur_id,
+                beforeSend: function (xhr) {
+
+                }
+            })
+                    .done(function (data) {
+                        $("#disablecom").html(data);
+                        $('#disablecom').modal('show')
+                    });
+        }
+    </script>
+{% endblock %}

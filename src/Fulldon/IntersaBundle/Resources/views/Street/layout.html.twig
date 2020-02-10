@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="./ico/favicon.png">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{% block title %}Login{% endblock %}</title>
+
+    {% block stylesheets %}
+        {% stylesheets '../app/Resources/Public/css/global/*' %}
+        <link rel="stylesheet" type="text/css" charset="UTF-8" media="all" href="{{ asset_url }}"/>
+        {% endstylesheets %}
+    {% endblock %}
+
+
+
+</head>
+<body>
+<div id="wrap">
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" style="padding:5px 10px 0 0;color:#428bca;font-style:italic;font-weight:bold;font-size: 25px;" href=#"><img src="{{ asset('img/logo_street.png') }}" /></a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active" style="margin-right: 5px;"><a href="#">Accueil</a></li>
+                    <li style="margin-top: 15px;" ><span class="glyphicon glyphicon-user" style="float:left !important;margin-left: 10px;margin-top:3px;"></span>&nbsp;<span class="badge" style="background-color:#808080;" > {{ app.user.username }} </span> </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+
+                    <li class="active"><a href="{{ path('logout_street') }}"><span class="glyphicon glyphicon-off" ></span> Déconnexion</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+{% block body %}
+{% endblock %}
+</div>
+<div id="footer">
+    <div class="container">
+        <p class="text-muted">Fulldon 2014</p>
+    </div>
+</div>
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    {# Assets local#}
+    {% javascripts '@FulldonAdminBundle/Resources/public/js/*' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+    {% javascripts '../app/Resources/Public/js/*' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+</body>
+</html>

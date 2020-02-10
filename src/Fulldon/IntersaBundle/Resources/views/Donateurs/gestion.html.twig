@@ -1,0 +1,671 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+{% block coque_intersa %}
+    <div class="breadcrumbs" id="breadcrumbs">
+        <ol class="breadcrumb hidden-print">
+            <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+            <li><a href="{{ path('elastic_donateur') }}">Gestion des donateurs</a></li>
+            <li class="active">Gestion du donateur #{{ donateur.refDonateur }}</li>
+        </ol>
+    </div>
+    <div class="page-content">
+
+        <div class="col-md-12 pull-left">
+            <div class="page-header">
+                <h1>
+                    Fiche du donateur
+                    <small>
+                        <i class="ace-icon fa fa-angle-double-right"></i>
+                        Ref donateur : #{{ donateur.refDonateur }}
+                    </small>
+                </h1>
+            </div>
+            <!-- /.page-header -->
+            {% for flashMessage in app.session.flashbag.get('info') %}
+                <div class="alert alert-success">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+
+            <div class="row">
+                <div id="user-profile-2" class="user-profile">
+                    <div class="tabbable">
+                        <ul class="nav nav-tabs padding-18">
+                            <li class="active">
+                                <a data-toggle="tab" href="#home">
+                                    <i class="orange ace-icon fa fa-user bigger-120"></i>
+                                    Profil
+                                </a>
+                            </li>
+
+
+                            <li>
+                                <a data-toggle="tab" href="#more_infos">
+                                    <i class="orange ace-icon fa fa-plus-circle bigger-120"></i>
+                                    Informations supplémentaires
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content no-border padding-24">
+                            <div id="home" class="tab-pane in active">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-4 ">
+
+
+                                        <div class="space space-4"></div>
+
+
+                                        <a href="#" class="btn btn-sm btn-block btn-primary">
+                                            <i class="ace-icon fa fa-envelope-o bigger-110"></i>
+                                            <span class="bigger-110">Contacter ce donateur </span>
+                                        </a>
+
+                                        <div class="list-group">
+                                            {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') %}
+                                                <a href="{{ path('intersa_donateur_edit', {'id': donateur.id}) }}" class="list-group-item "><span
+                                                        class="glyphicon glyphicon-pencil"></span> Modifier le donateur </a>
+                                                {% endif %}
+                                            <a href="{{ path('intersa_donateur_history',{'id': donateur.id, 'page':1}) }}" class="list-group-item "><span
+                                                    class="glyphicon glyphicon-record"></span> Historique des dons ponctuels
+                                                <span class="badge alert-info pull-right " id="val_stats_history">
+                                                    <img id="load_stats_po" src="{{ asset('img/ajax-loader.gif') }}"/></span>
+                                            </a>
+                                            <a href="{{ path('intersa_donateur_history_pa',{'id': donateur.id, 'page':1}) }}"
+                                               class="list-group-item "><span class="glyphicon glyphicon-time"></span> Historique des dons réguliers
+                                                <span class="badge alert-info pull-right " id="val_stats_history_pa">
+                                                    <img id="load_stats_pa" src="{{ asset('img/ajax-loader.gif') }}"/></span>
+                                            </a>
+                                            <a href="{{ path('intersa_donateur_history_action',{'id':donateur.id}) }}"
+                                               class="list-group-item "><span class="glyphicon glyphicon-book"></span> Historique des actions </a>
+                                            <a href="{{ path('intersa_donateur_history_sollicitation',{'id':donateur.id, 'page':1}) }}"
+                                               class="list-group-item "><span class="glyphicon glyphicon-screenshot"></span> Historique des
+                                                sollicitations </a>
+                                            <a href="{{ path('intersa_donateur_history_courrier',{'id':donateur.id, 'page':1}) }}"
+                                               class="list-group-item "><span class="glyphicon glyphicon-paperclip"></span> Historique des courriers
+                                            </a>
+                                            {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') %}
+                                                <a href="#" class="list-group-item " data-dismiss="modal" aria-hidden="true" data-toggle="modal"
+                                                   data-target="#myModal"><span class="glyphicon glyphicon-send"></span> Signaler un retour courrier (PND) </a>
+                                                <a href="#" {% if donateur.removed == false %} onclick="disable_donateur({{ donateur.id }})"{% else %}onclick="enable_donateur({{ donateur.id }})"{% endif %}
+                                                   class="list-group-item">
+                                                    <span {% if donateur.removed == false %} class="glyphicon glyphicon-minus"></span> Désactiver le donateur </a> {% else %} class="glyphicon glyphicon-play"></span> Réactiver le donateur </a>{% endif %}
+
+
+                                            {% endif %}
+                                            {% if is_granted('ROLE_INTERSA_N1') or is_granted('ROLE_ASSOC_N1') or is_granted('ROLE_TRIAL') %}
+                                                <div class=" hidden-print">
+                                                    <br/>
+                                                    <label><b>Créer un don pour ce donateur : </b></label>
+
+                                                    <form action="{{ path('intersa_dons_add_redirect',{'id':donateur.id}) }}" method="POST">
+                                                        <div class="input-group">
+                                                            <select name="type" class="task_field form-control">
+                                                                {% for type in types %}
+                                                                    {% if type.code != 'MIX' %}
+                                                                        <option value="{{ type.code }}">{{ type.libelle }}</option>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </select>
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-sm btn-success"
+                                                                        type="submit">
+                                                                    <i class="ace-icon fa fa-plus-square bigger-110"></i>
+                                                                    Créer un don
+                                                                </button>
+                                                            </span>
+                                                        </div>
+
+                                                    </form>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <!-- /.col -->
+
+                                    <div class="col-xs-12 col-sm-8">
+                                        <h4 style="color:black;">
+                                            <span class="middle">{{ donateur.nom }} {{ donateur.prenom }}</span>
+                                            {% if donateur.removed %}<span class="label label-danger"><span
+                                                        class="glyphicon glyphicon-minus"></span>Désactivé</span>{% else %}<span
+                                                    class="label label-success arrowed-in arrowed-in-right"><i
+                                                        class="ace-icon fa fa-circle smaller-80 align-middle"></i> Actif</span>{% endif %}
+                                            </h4>
+
+
+                                            <div class="profile-user-info">
+                                                {% if donateur.civilite is defined and donateur.civilite is not null %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Civilité</div>
+
+                                                        <div class="profile-info-value">
+                                                            <span>{{ donateur.civilite }}</span>
+                                                        </div>
+                                                    </div>
+
+                                                {% endif %}
+                                                {% if donateur.nom is defined and donateur.nom is not null %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Nom</div>
+
+                                                        <div class="profile-info-value">
+                                                            <span>{{ donateur.nom }}</span>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if donateur.prenom is defined and donateur.prenom is not null %}
+
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Prénom</div>
+
+                                                        <div class="profile-info-value">
+                                                            <span>{{ donateur.prenom }}</span>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if donateur.nomEntreprise is defined and donateur.nomEntreprise is not null %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Nom de l'entreprise</div>
+
+                                                        <div class="profile-info-value">
+                                                            <span>{{ donateur.nomEntreprise }}</span>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if donateur.user is defined and donateur.user is not null %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Login (Espace donateur)</div>
+
+                                                        <div class="profile-info-value">
+                                                            <span>{{ donateur.user.username }}</span>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if donateur.dateNaissance is defined and donateur.dateNaissance is not null %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Date de naissance</div>
+
+                                                        <div class="profile-info-value">
+                                                            <span>{{ donateur.dateNaissance|date('d/m/Y') }}</span>
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Date de naissance</div>
+
+                                                        <div class="profile-info-value">
+                                                            <span>N/A</span>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if donateur.createdAt is defined and donateur.createdAt is not null %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Date de création</div>
+
+                                                        <div class="profile-info-value">
+                                                            <span>{{ donateur.createdAt|date('d/m/Y H:i:s') }}</span>
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Date de création</div>
+
+                                                        <div class="profile-info-value">
+                                                            <span>N/A</span>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if donateur.email is defined and donateur.email is not null %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Email</div>
+
+                                                        <div class="profile-info-value">
+                                                            <span>{{ donateur.email }}</span>
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Email</div>
+
+                                                        <div class="profile-info-value">
+                                                            <span>N/A</span>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if donateur.telephoneMobile is defined and donateur.telephoneMobile is not null %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Téléphone mobile </div>
+
+                                                        <div class="profile-info-value">
+                                                            <span>{{ donateur.telephoneMobile }}</span>
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Téléphone mobile </div>
+
+                                                        <div class="profile-info-value">
+                                                            <span>N/A</span>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if donateur.telephoneFixe is defined and donateur.telephoneFixe is not null %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Téléphone fixe </div>
+
+                                                        <div class="profile-info-value">
+                                                            <span>{{ donateur.telephoneFixe }}</span>
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Téléphone fixe </div>
+
+                                                        <div class="profile-info-value">
+                                                            <span>N/A</span>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                <div class="profile-info-row">
+                                                    <div class="profile-info-name"> Catégories</div>
+
+                                                    <div class="profile-info-value">
+                                                        {% if donateur.categories|length > 0 %}
+                                                            <ul>
+                                                                {% for r in donateur.categories %}
+                                                                    <li>{{ r.name }}</li>
+                                                                    {% endfor %}
+                                                            </ul>
+                                                        {% else %}
+                                                            Aucune
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+
+                                                {% if donateur.adresse1 is defined and donateur.adresse1 is not null %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Appt, étage, escalier</div>
+
+                                                        <div class="profile-info-value">
+                                                            <span>{{ donateur.adresse1 }}</span>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if donateur.adresse2 is defined and donateur.adresse2 is not null %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Résidence, Immeuble, Tour, Entrée</div>
+
+                                                        <div class="profile-info-value">
+                                                            <span> {{ donateur.adresse2 }}</span>
+                                                        </div>
+                                                    </div>
+
+                                                {% endif %}
+                                                {% if donateur.adresse3 is defined and donateur.adresse3 is not null %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> N° voie et Libellé de voie</div>
+
+                                                        <div class="profile-info-value">
+
+                                                            <span> {{ donateur.adresse3 }}</span>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if donateur.adresse4 is defined and donateur.adresse4 is not null %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Lieu-dit ou Service de Distribution</div>
+
+                                                        <div class="profile-info-value">
+
+                                                            <span> {{ donateur.adresse4 }}</span>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if donateur.zipcode is defined and donateur.zipcode is not null %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Code postal</div>
+
+                                                        <div class="profile-info-value">
+                                                            <span> {{ donateur.zipcode }}</span>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if donateur.isoville is defined and donateur.isoville is not null %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Ville</div>
+
+                                                        <div class="profile-info-value">
+                                                            <i class="fa fa-map-marker light-orange bigger-110"></i>
+                                                            <span> {{ donateur.isoville }}</span>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if donateur.isopays is defined and donateur.isopays is not null %}
+                                                    <div class="profile-info-row">
+                                                        <div class="profile-info-name"> Pays</div>
+
+                                                        <div class="profile-info-value">
+                                                            <i class="fa fa-map-marker light-orange bigger-110"></i>
+                                                            <span> {{ donateur.isopays|getcountryname }}</span>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+
+
+
+
+                                            </div>
+                                            
+                                        </div>
+                                        <!-- /.col -->
+                                    </div>
+                                    <!-- /.row -->
+
+                                    <div class="space-20"></div>
+
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-6">
+                                            <div class="widget-box transparent">
+                                                <div class="widget-header widget-header-small">
+                                                    <h4 class="widget-title smaller">
+                                                        <i class="ace-icon fa fa-link bigger-110"></i>
+                                                        Communication
+                                                    </h4>
+                                                </div>
+
+                                                <div class="widget-body">
+                                                    <div class="widget-main">
+                                                        <b>Accepte les Reçus
+                                                            fiscaux: </b> {% if donateur.allowRf == true %} Oui {% else %} Non {% endif %}<br/>
+                                                        <b>Modes de communication : </b>
+                                                        {% if donateur.ReceptionMode|length > 0 %}
+                                                            <ul>
+                                                                {% for r in donateur.ReceptionMode %}
+                                                                    <li>{{ r.name }}</li>
+                                                                    {% endfor %}
+                                                            </ul>
+                                                        {% else %}
+                                                            Aucun
+                                                        {% endif %}
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-12 col-sm-6">
+                                            <div class="widget-box transparent">
+                                                <div class="widget-header widget-header-small header-color-blue2">
+                                                    <h4 class="widget-title smaller">
+                                                        <i class="ace-icon fa fa-lightbulb-o bigger-120"></i>
+                                                        Les retours courrier du donateur
+                                                    </h4>
+                                                </div>
+
+                                                <div class="widget-body">
+                                                    <div class="widget-main padding-16">
+
+                                                        {% if pnds is defined  and pnds|length > 0 %}
+                                                            <table class="table table-condensed">
+                                                                <thead>
+                                                                <th>Date</th>
+                                                                <th>Motif</th>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {% for pnd in pnds %}
+                                                                        <tr class="{% if pnd.removed %}disabled{% endif %}">
+                                                                            <td>{{ pnd.createdAt | date('Y-m-d H:i:s') }}</td>
+                                                                            <td>{{ pnd.motif.name }}</td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                        {% else %}
+                                                            Pas de retours
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /#home -->
+
+                                <div id="more_infos" class="tab-pane">
+                                    <div class="col-sm-12">
+                                        <div class="widget-box transparent">
+                                            <div class="widget-header widget-header-small">
+                                                <h4 class="widget-title smaller">
+                                                    <i class="ace-icon fa fa-link bigger-110"></i>
+                                                    événements assités par le contact
+                                                </h4>
+                                            </div>
+                                            <table class="table">
+                                                <thead>
+                                                <th>Date de l'événement</th>
+                                                <th>Date de début de l'événement</th>
+                                                <th>Moyenne des notes par événement</th>
+                                                </thead>
+                                                <tbody>
+                                                    {#% for element in gevents %}
+                                                        <tr><td>{{ element.event.libelle }}</td><td>{{ element.event.dateDebutProjet |date('d/m/Y') }}</td><td>{% if element.notes is not null %}
+                                                                <ul class="listnotes">
+                                                                    <li><b>Q1: </b>{{ element.notes[1]|number_format(2, '.', ',')  }}</li>
+                                                                    <li><b>Q2: </b>{{ element.notes[2]|number_format(2, '.', ',')  }}</li>
+                                                                    <li><b>Q3: </b>{{ element.notes[3]|number_format(2, '.', ',')  }}</li>
+                                                                    <li><b>Q4: </b>{{ element.notes[4]|number_format(2, '.', ',')  }}</li>
+                                                                    <li><b>Q5: </b>{{ element.notes[5]|number_format(2, '.', ',')  }}</li>
+                                                                    <li><b>Q6: </b>{{ element.notes[6]|number_format(2, '.', ',')  }}</li>
+                                                                    <li><b>Q7: </b>{{ element.notes[7]|number_format(2, '.', ',')  }}</li>
+                                                                    <li><b>Q8: </b>{{ element.notes[8]|number_format(2, '.', ',')  }}</li>
+                                                                    <li><b>Q9: </b>{{ element.notes[9]|number_format(2, '.', ',')  }}</li>
+                                                                    <li><b>Q10: </b>{{ element.notes[10]|number_format(2, '.', ',')  }}</li>
+
+                                                                </ul>
+
+
+                                                            {% else %} non définies{% endif %}</td></tr>
+                                                                    {% endfor %#}
+
+                                                            </tbody>
+                                                        </table>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="profile-user-info">
+
+
+                                                        {% if donateur.situationFamiliale is defined and donateur.situationFamiliale is not null %}
+                                                            <div class="profile-info-row">
+                                                                <div class="profile-info-name"> Situation familiale</div>
+
+                                                                <div class="profile-info-value">
+                                                                    <span>{{ donateur.situationFamiliale.libelle }}</span>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                        {% if donateur.situationProfessionnelle is defined and donateur.situationProfessionnelle is not null %}
+                                                            <div class="profile-info-row">
+                                                                <div class="profile-info-name"> Situation professionnelle</div>
+
+                                                                <div class="profile-info-value">
+                                                                    <span>{{ donateur.situationProfessionnelle.libelle }}</span>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                        {% if donateur.statutDonateur is defined and donateur.statutDonateur is not null %}
+                                                            <div class="profile-info-row">
+                                                                <div class="profile-info-name"> Statut donateur</div>
+
+                                                                <div class="profile-info-value">
+                                                                    <span>{{ donateur.statutDonateur.libelle }}</span>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                        {% if donateur.fourchetteMin is defined and donateur.fourchetteMin is not null %}
+                                                            <div class="profile-info-row">
+                                                                <div class="profile-info-name"> Revenus minimum du foyer</div>
+
+                                                                <div class="profile-info-value">
+                                                                    <span>{{ donateur.fourchetteMin }}</span>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                        {% if donateur.fourchetteMax is defined and donateur.fourchetteMax is not null %}
+                                                            <div class="profile-info-row">
+                                                                <div class="profile-info-name"> Revenus minimum du foyer</div>
+
+                                                                <div class="profile-info-value">
+                                                                    <span>{{ donateur.fourchetteMax }}</span>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                        {% if donateur.commentaire is defined and donateur.commentaire is not null %}
+                                                            <div class="profile-info-row">
+                                                                <div class="profile-info-name"> Revenus minimum du foyer</div>
+
+                                                                <div class="profile-info-value">
+                                                                    <span>{{ donateur.commentaire }}</span>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <!-- /.col -->
+
+
+                                            </div>
+                                            <!-- /#feed -->
+
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                            <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" id="myModalLabel">Signalisation d'un retour de courrier PND</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="alert alert-danger">Si vous signalez un retour de courrier, ce donateur ne pourra
+                                                pas recevoir de nouveaux courriers de l'appart de cette association .
+                                            </div>
+                                            <form action="{{ path('intersa_donateur_gestion',{'id':donateur.id}) }}" method="post"
+                                                  class="form-group" {{ form_enctype(form) }}>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group ">
+                                                            <label for="inputEmail3"
+                                                                   class="control-label">{{ form_label(form.motif, "Motif du PND :") }}</label>
+
+                                                            <div>
+                                                                {# Affichage des erreurs pour ce champ précis. #}
+                                                                {{ form_errors(form.motif) }}
+
+                                                                {# Génération de l'input. #}
+                                                                {{ form_widget(form.motif, {'attr': {'class': 'task_field form-control', 'id':'motif'} }) }}
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label for="inputEmail3"
+                                                                   class="control-label">{{ form_label(form.motifDesc, "Informations supplémentaires :") }}</label>
+
+                                                            <div>
+                                                                {# Affichage des erreurs pour ce champ précis. #}
+                                                                {{ form_errors(form.motifDesc) }}
+
+                                                                {# Génération de l'input. #}
+                                                                {{ form_widget(form.motifDesc, {'attr': {'class': 'task_field form-control', 'id':'motifDesc'} }) }}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Annuler
+                                                            </button>
+                                                            <input type="submit" class="btn btn-danger" value="Confirmer le pnd"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {{ form_rest(form) }}
+                                            </form>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="modal fade" id="disabledonateur" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel"
+                                 aria-hidden="true">
+
+                            </div>
+                            <!-- /.modal -->
+                        </div>
+                    </div>
+                    {% endblock %}
+                        {% block javascripts %}
+                            {{ parent() }}
+                            <script>
+
+                                $('#fulldon_donateurbundle_dontype_abonnement_actif').on('click', function () {
+                                    if ($('#fulldon_donateurbundle_dontype_abonnement_actif').is(':checked')) {
+                                        $('#abo_date').show();
+                                    } else {
+                                        $('#abo_date').hide();
+                                    }
+                                });
+
+                                function disable_donateur(donateur_id) {
+                                    $.ajax({
+                                        url: "/intersa/ajax/donateur/disable/id/" + donateur_id,
+                                        beforeSend: function (xhr) {
+
+                                        }
+                                    })
+                                            .done(function (data) {
+                                                $("#disabledonateur").html(data);
+                                                $('#disabledonateur').modal('show');
+                                            });
+                                }
+                                function enable_donateur(donateur_id) {
+                                    $.ajax({
+                                        url: "/intersa/ajax/donateur/enable/id/" + donateur_id,
+                                        beforeSend: function (xhr) {
+
+                                        }
+                                    })
+                                            .done(function (data) {
+                                                $("#disabledonateur").html(data);
+                                                $('#disabledonateur').modal('show');
+                                            });
+                                }
+                                function load_stats_gestion_donateur() {
+
+                                    $.ajax({
+                                        url: "/intersa/donateur/stats/id/" +{{ donateur.id }} ,
+                                        beforeSend: function (xhr) {
+                                            ;
+                                        }
+                                    })
+                                            .done(function (data) {
+                                                var res = data.split('|')
+                                                $("#load_stats_po").hide();
+                                                $('#val_stats_history').html(res[0]);
+                                                $("#load_stats_pa").hide();
+                                                $('#val_stats_history_pa').html(res[1]);
+                                            });
+
+
+                                }
+                                $(document).ready(function () {
+                                    load_stats_gestion_donateur();
+                                });
+                            </script>
+                        {% endblock %}

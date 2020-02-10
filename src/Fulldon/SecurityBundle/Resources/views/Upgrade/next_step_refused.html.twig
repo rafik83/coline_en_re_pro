@@ -1,0 +1,19 @@
+{% extends "FulldonSecurityBundle::layout.html.twig" %}
+{% block body %}
+    <div class="backstretch" style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px; height: 2000px; width: 1903px; z-index: -999999; position: fixed;">
+        {% if init['perso'].fondPage is defined  and init['perso'].fondPage  is not null %}
+            <img style="position: absolute; margin: 0px; padding: 0px; border: none; width: 1903px; height: 2000px; max-width: none; z-index: -999999; left: 0px; top: 0px;" src="{{ asset('upload/' ~ init['perso'].id ~'/' ~ init['perso'].fondPage)}}" >
+        {% else %}
+            <img style="position: absolute; margin: 0px; padding: 0px; border: none; width: 1903px; height: 2000px; max-width: none; z-index: -999999; left: 0px; top: 0px;" src="{{ asset('img/bg_login.jpg') }}">
+        {% endif %}
+    </div>
+
+    {# Le formulaire, avec URL de soumission vers la route « login_check » comme on l'a vu #}
+    <div class="container console-auth">
+
+        <div class="form-signin console-form-auth " style="background:  rgba(255, 255, 255, 1) !important;">
+Lien expiré
+        </div>
+
+    </div> <!-- /container -->
+{% endblock %}

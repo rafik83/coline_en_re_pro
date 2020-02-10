@@ -1,0 +1,18 @@
+{% extends "FulldonDonateurBundle:Donateur:coque_donateur.html.twig" %}
+    {% block coque_donateur %}
+        <div class="row" >
+
+            <div class="col-md-6 col-md-offset-3" >
+                <center>
+                    <h3>Votre mandat est signé avec succès</h3>
+                    Vous pouvez télécharger votre mandat signé numériquement via le lien ci-dessous : <br /><br /><br />
+                    <a href="{{ path('assets_signed_mandat', {'token': file}) }}" download class="btn btn-default" >Télécherger votre mandat signé</a>
+                </center>
+            </div>
+
+        </div>
+        <br />
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+    {% endblock %}

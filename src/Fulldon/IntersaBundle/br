@@ -1,0 +1,126 @@
+// pour recuperer un donateur
+$crontask->getAction() = donateurs-pdf
+
+$data = array();
+$colDispaly = null;
+foreach ($crontask->getRecherches() as $favObj) {
+
+if (is_object($favObj)) {
+
+    if ($favObj->getUrl() != '') {
+$request = Request::create($this->getContainer()->get('router')->generate('elastic_donateur') . '?' . $favObj->getUrl());
+$i = 1;
+do {
+    $res = $this->getContainer()->get('fulldon.intersa.global')->getDonateurResult($request, $i, 1000);
+    $data[] = $res['result'];
+    $colDispaly = $res['coldisplay'];
+    $i++;
+} while ($i <= $res['nboffset']);
+}
+}
+
+---------
+  $customtasks = $em->getRepository('FulldonIntersaBundle:CustomCronTask')->findAll();
+foreach ($customtasks as $crontask){
+
+$this->getDonateurCsv($crontask);
+private function getDonateurCsv($crontask) {
+        $data = array();
+        $colDispaly = null;
+        $fileLocations = array();
+        $em = $this->getContainer()->get('doctrine.orm.entity_manager');
+        foreach ($crontask->getRecherches() as $favObj) {
+
+            if (is_object($favObj)) {
+
+                if ($favObj->getUrl() != '') {
+                    $request = Request::create($this->getContainer()->get('router')->generate('elastic_don') . '?' . $favObj->getUrl());
+                    $i = 1;
+                    do {
+                        $res = $this->getContainer()->get('fulldon.intersa.global')->getDonateurResult($request, $i, 1000);
+                        $data[] = $res['result'];
+                        $colDispaly = $res['coldisplay'];
+                        $i++;
+                    } while ($i <= $res['nboffset']);
+                }
+            }
+            // Création du fichier CSV
+            $fields = array();
+            $head = array();
+            $cols = array('numdonateur' => '#REF', 'nom' => 'Nom', 'prenom' => 'Prénom', 'statut' => 'Statut',
+                'nomentreprise' => 'Nom d\'entreprise', 'email' => 'Email', 'birthday' => 'Date de naissance',
+                'telmobile' => 'Téléphone mobile', 'telfixe' => 'Téléphone fixe', 'cat' => 'Catégories',
+                'adresse' => 'Adresse', 'ville' => 'Ville', 'pays' => 'Pays', 'zipcode' => 'Code postal', 'createdat' => 'Date de création');
+
+            foreach ($colDispaly as $cd) {
+                if (array_key_exists($cd, $cols)) {
+                    $head[] = $cols[$cd];
+                }
+            }
+
+            $fields[] = $head;
+            foreach ($data as $donateurs) {
+                foreach ($donateurs as $donateur) {
+
+                    $body = array();
+                    foreach ($colDispaly as $col) {
+                        if ($col == 'numdonateur') {
+                            $body[] = $donateur->getRefDonateur();
+                        } elseif ($col == 'nom') {
+                            $body[] = $donateur->getNom();
+                        } elseif ($col == 'prenom') {
+                            $body[] = $donateur->getPrenom();
+                        } elseif ($col == 'statut') {
+                            if ($donateur->getRemoved()) {
+                                $body[] = 'Activé';
+                            } else {
+                                $body[] = 'Désactivé';
+                            }
+                        } elseif ($col == 'nomentreprise') {
+                            $body[] = $donateur->getNomEntreprise();
+                        } elseif ($col == 'birthday') {
+                            $body[] = $donateur->getDateNaissance()->format('d/m/Y');
+                        } elseif ($col == 'email') {
+                            $body[] = $donateur->getEmail();
+                        } elseif ($col == 'telmobile') {
+                            $body[] = $donateur->getTelephoneMobile();
+                        } elseif ($col == 'telfixe') {
+                            $body[] = $donateur->getTelephoneFixe();
+                        } elseif ($col == 'cat') {
+                            $cats_ids = array();
+                            foreach ($donateur->getCategories() as $cat) {
+                                $rfs_ids[] = $cat->getName();
+                            }
+                            $body[] = implode('|', $cats_ids);
+                        } elseif ($col == 'adresse') {
+                            $body[] = $donateur->getAdresse3() . ' ' . $donateur->getAdresse4();
+                        } elseif ($col == 'ville') {
+                            $body[] = $donateur->getIsoville();
+                        } elseif ($col == 'pays') {
+                            $body[] = $donateur->getIsopays();
+                        } elseif ($col == 'zipcode') {
+                            $body[] = $donateur->getZipcode();
+                        } elseif ($col == 'createdat') {
+                            $body[] = $donateur->getCreatedAt()->format('d/m/Y');
+                        }
+                    }
+                    $fields[] = $body;
+                }
+            }
+
+
+            $name = uniqid(mt_rand());
+            $fileName = $name . '-' . date('Y') . '.csv';
+            $fileLocation = '/' . $this->getContainer()->getParameter('folder_app') . '/Export/' . $fileName;
+            $fileLocations[$favObj->getTitle()] = '/' . $this->getContainer()->getParameter('folder_app') . '/Export/' . $fileName;
+            $fp = fopen($fileLocation, 'wb');
+            //utf8encoding
+            fprintf($fp, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            foreach ($fields as $field) {
+                fputcsv($fp, $field);
+            }
+            fclose($fp);
+        }
+        return $fileLocations;
+    }
+}

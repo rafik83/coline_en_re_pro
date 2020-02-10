@@ -1,0 +1,32 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+        <div class="breadcrumbs" id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li><a href="{{ path('intersa_table_cause',{'page':1}) }}">Gestion des codes activité : </a></li>
+                <li class="active">Statistiques du code activité : {{ cause.libelle }}</li>
+            </ol>
+        </div>
+
+        <div class="page-content">
+            <div class="col-md-12 pull-left">
+                <div class="page-header">
+                    <h1>
+                        Statistiques du code activite
+                        <small>
+                            <i class="ace-icon fa fa-angle-double-right"></i>
+                           Code activité : {{ cause.libelle }}
+                        </small>
+                    </h1>
+                </div>
+                <b>Budget prévisionnel global du code activité ou projet </b> : {{ budget }} €<br/>
+                <b>Dépenses du code d’activité </b>: {{ depenses }} € <br/>
+                <b>Montant global des dons du code d’activité </b>
+                : {% if cummul_don is defined %}{{ cummul_don }} €{% else %}0{% endif %}
+            </div>
+        </div>
+
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+    {% endblock %}

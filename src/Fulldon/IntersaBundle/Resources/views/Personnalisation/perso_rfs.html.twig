@@ -1,0 +1,106 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+        <div class="breadcrumbs" id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li class="active">Personnalisation des reçus fiscaux</li>
+            </ol>
+        </div>
+        <div class="page-content">
+
+            <div class="col-md-12 pull-left">
+                <div class="page-header">
+                    <h1>
+                        Personnalisation des reçus fiscaux
+                        <small>
+                            <i class="ace-icon fa fa-angle-double-right"></i>
+                            Choix du modèle
+                        </small>
+                    </h1>
+                </div><!-- /.page-header -->
+                {% for flashMessage in app.session.flashbag.get('info') %}
+                    <div class="alert alert-success">
+                        {{ flashMessage }}
+                    </div>
+                {% endfor %}
+                {% for flashMessage in app.session.flashbag.get('error') %}
+                    <div class="alert alert-danger">
+                        {{ flashMessage }}
+                    </div>
+                {% endfor %}
+
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3">
+                        <div class="panel panel-default">
+                            <!-- Default panel contents -->
+                            <div class="panel-heading">Choix du document</div>
+                            <div class="panel-body">
+                                <div>
+                                    <label>Pour quelle entité ? </label><br/>
+                                    <select id="entity" name="entity" class="form-control">
+                                        {% for entity in entities %}
+                                            <option value="{{ entity.code }}">{{ entity.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <br/>
+                                    <label> Type de document : ? </label><br/>
+                                    <select id="doc" name="doc" class="form-control">
+                                        <option value="rf"><i class="fa fa-file"></i> RF [Original]</option>
+                                        <option value="rf_pa"><i class="fa fa-file"></i> RF PA [Original]</option>
+                                        <option value="duplicata_rf"><i class="fa fa-file-o"></i> DULICATA RF</option>
+                                        <option value="duplicata_rf_pa"><i class="fa fa-file-o"></i> DULICATA RF PA
+                                        </option>
+                                    </select>
+                                    <hr/>
+                                    <center>
+                                        <button class="btn btn-success" id="choice"><i class="fa fa-cog"></i>
+                                            Personnaliser
+                                        </button>
+                                    </center>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        {% javascripts '@FulldonIntersaBundle/Resources/public/js/*' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '../app/Resources/Public/js/ckeditor_plugins/fulldon.plugin.js' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        <script>
+            $('#choice').click(function () {
+                window.location.replace("/intersa/perso/form/rfs/" + $('#doc').val() + "/" + $('#entity').val());
+            });
+            function getForm(code) {
+
+            }
+            function loadScript(url, callback) {
+                // Adding the script tag to the head as suggested before
+                var head = document.getElementsByTagName('head')[0];
+                var script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = url;
+
+                // Then bind the event to the callback function.
+                // There are several events for cross browser compatibility.
+                script.onreadystatechange = callback;
+                script.onload = callback;
+
+                // Fire the loading
+                head.appendChild(script);
+            }
+            var myPrettyCode = function () {
+
+                alert('yop');
+            };
+
+
+        </script>
+    {% endblock %}

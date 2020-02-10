@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+{% if init['perso'].couleur is defined  and init['perso'].couleur  is not null %}{%  set mycolor = init['perso'].couleur %} {% else %}{%  set mycolor = '#7a6cc0' %}{% endif %}
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12" style="border: 1px solid {{ mycolor }};margin:0 auto;max-width: 610px;padding:10px;">
+            {% if init['perso'].headerPage is defined  and init['perso'].headerPage  is not null %}
+                <img src="{{ url_site ~ asset('upload/' ~ init['perso'].id ~'/' ~ init['perso'].headerPage)}}" alt="headerPage" style="width:600px !important;" class="img-responsive" />
+            {% endif %}
+            <br />
+            <br />
+            <div style="padding:20px;">
+                Bonjour {{ donateur.civilite }} {{ donateur.nom }} {{ donateur.prenom }},<br /><br />
+                <div style=" color:{{ mycolor }}">
+                    Vous avez effectué un don de  {{ rf.don.montant }} € le {{ rf.don.createdAt|date('d/m/Y') }} pour l’association
+
+                    {{ assoc_name }}.<br />
+
+                </div><br />
+                <br />
+                Toute l’équipe de {{ assoc_name }} ainsi que ses bénéficiaires vous remercient
+
+                chaleureusement.
+
+                Vous pouvez bénéficier d’un Reçu Fiscal disponible en pièce jointe de ce mail.
+
+                Merci encore pour votre soutien,<br /><br />
+
+                <div style="float:right;color:{{ mycolor }}">
+                    L'équipe de {{ assoc_name }}
+                </div>
+            </div>
+            <hr style="color: {{ mycolor }};background-color: {{ mycolor }}; height: 1px; margin: -0.5em 0;padding: 0;" />
+            <center style="font-size:12px;">
+
+                {% if init['perso'] is defined and init['perso'] is not null %}
+                    {{ init['perso'].adresseAssoc | raw }}
+                {% endif %}
+
+
+
+            </center>
+
+            <br />
+        </div>
+    </div>
+</div>
+</body>
+</html>

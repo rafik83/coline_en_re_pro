@@ -1,0 +1,196 @@
+{% for r in result_cumul %}
+                                <tr id="{{ r.id }}"
+                                    {% set donateur_ix = r.user.id|donateur %}
+                                    {% for col in col_display %}
+                                        {% if col == "numdon" %}
+                                            <td id="numero_don_{{ r.id }}">{{ r.id }}</td>
+                                        {% elseif col ==  "nom" %}
+                                            <td id="nom_donateur_{{ r.id }}">
+                                                {% if donateur_ix is not null %}
+                                                    {{ donateur_ix.nom }}
+                                                {% endif %}
+                                            </td>
+                                        {% elseif col == "prenom" %}
+                                            <td id="prenom_donateur_{{ r.id }}">
+                                                {% if donateur_ix is not null %}
+                                                    {{ donateur_ix.prenom }}
+                                                {% endif %}
+                                            </td>
+                                        {% elseif col == "statut" %}
+                                            <td id="statut_donateur_{{ r.id }}">
+                                                {% if r.transaction.statut.libelle is defined %}{{ r.transaction.statut.libelle }}{% else %}Abondonné{% endif %}
+                                            </td>
+                                        {% elseif col == "amount" %}
+                                            {% if r.modePaiement is defined and  r.modePaiement is not null %}
+                                                <td id="montant_{{ r.id }}">{{ r.montant|round(2, 'floor') }} €</td>
+                                            {% endif %}
+
+                                        {% elseif col == "createdat" %}
+                                            <td>{{ r.createdAt|date('d/m/Y') }}</td>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                   
+                                </tr>
+                            {% endfor %}
+
+
+---------------------------------------------------------------------
+
+
+  <center>
+                        {% if last_page > 1 %}
+                            {% set state = '' %}
+                            <ul class="pagination pull-center">
+                                {% if result2.hasPreviousPage %}
+                                    {% set state = 'paginate_button first' %}
+                                    <li class="{{ state }}">
+                                        <a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ result2.getCurrentPage() -1 }}" style="cursor: pointer">&laquo;&nbsp;{{ 'Précédent'|trans }}</a>
+
+                                    </li>
+                                {% else %}
+                                    <li class="disabled">
+                                        <span>&laquo;&nbsp;{{ 'Précédent'|trans }}</span>
+                                    </li>
+                                {% endif %}
+                                <!--li><a href="{#{ path('elastic_donateur') }}?{{ params }}&page={{ previous_page }#}">&laquo;</a>
+                                </li-->
+                                {% for page in 1..last_page %}
+                                    {% if page >= current_page-4 and page <= current_page+4 %}
+                                        {% if   page == current_page-4 or page == current_page+4 %}
+                                            {% if   page == current_page-4 %}
+                                                <li><a href="{{ path('elastic_donateur') }}?{{ params }}&page=1">1</a></li>
+                                                <li class="disabled"><a href="#">...</a></li>
+                                                {% else %}
+                                                <li class="disabled"><a href="#">...</a></li>
+                                                <li>
+                                                    <a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ last_page }}">{{ last_page }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% else %}
+                                            {% if page == current_page %}
+                                                <li class="active"><a href="#">{{ page }}</a></li>
+                                                {% else %}
+                                                <li>
+                                                    <a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ page }}">{{ page }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% set state = '' %}
+                                {% if result2.hasNextPage %}
+                                    <li class="{{ state }}" ><a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ result2.getCurrentPage() +1}}" style="cursor: pointer">{{ 'Suivant'|trans }}&nbsp;&raquo;</a></li>
+                                    {% else %}
+                                    <li class="disabled">
+                                        <span>&laquo;&nbsp;{{ 'Suivant'|trans }}</span>
+                                    </li>
+                                {% endif %}
+                                <!--li><a href="{#{ path('elastic_donateur') }}?{{ params }}&page={{ next_page }#}">&raquo;</a></li-->
+                            </ul>
+                        {% endif %}
+                    </center>
+
+
+
+
+
+
+
+
+
+
+
+{% for page in 1..last_page %}
+                                {% if page >= current_page-4 and page <= current_page+4 %}
+                                    {% if   page == current_page-4 or page == current_page+4 %}
+                                        {% if   page == current_page-4 %}
+                                            <li><a href="{{ path('elastic_donateur') }}?{{ params }}&page=1">1</a></li>
+                                            <li class="disabled"><a href="#">...</a></li>
+                                            {% else %}
+                                            <li class="disabled"><a href="#">...</a></li>
+                                            <li>
+                                                <a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ last_page }}">{{ last_page }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if page == current_page %}
+                                            <li class="active"><a href="#">{{ page }}</a></li>
+                                            {% else %}
+                                            <li>
+                                                <a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ page }}">{{ page }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            {% set state = '' %}
+                            {% if result2.hasNextPage %}
+                                <li class="{{ state }}" ><a href="{{ path('elastic_donateur') }}?{{ params }}&page={{ result2.getCurrentPage() +1}}" style="cursor: pointer">{{ 'Suivant'|trans }}&nbsp;&raquo;</a></li>
+                                {% else %}
+                                <li class="disabled">
+                                    <span>&laquo;&nbsp;{{ 'Suivant'|trans }}</span>
+                                </li>
+                            {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

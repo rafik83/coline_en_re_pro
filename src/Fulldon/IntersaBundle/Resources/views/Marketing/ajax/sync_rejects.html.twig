@@ -1,0 +1,20 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="confirmDeleteLabel">Synchronisation des rejets</h4>
+            </div>
+            <div class="modal-body">
+                {{ count }} email(s) rejeté(s) lors des dernières opérations emarketing .
+                {% if count > 0 %}
+                Voulez-vous synchroniser la base de données afin de désactiver la communication par email pour les donateurs correspondant ?
+                {% endif %}
+            </div>
+           {% if count > 0 %}
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                <a href="{{ path('intersa_emarketing_maj_contacts') }}" class="btn btn-success" >Lancer la synchronisation</a>
+            </div>
+          {% endif %}
+</div>
+</div>

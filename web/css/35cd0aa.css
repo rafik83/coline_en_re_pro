@@ -1,0 +1,118 @@
+.btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open .dropdown-toggle.btn-default      {
+
+    background-color: #fff;
+    text-shadow: 0 0 0 #000 !important;
+}
+.radio-inline-anon li {
+    float: left;
+    text-align: center;
+    margin: 0 10px;
+    padding-bottom: 10px;
+}
+
+.radio-inline-anon li {
+    display: list-item;
+    list-style: none;
+}
+ul {
+    padding:0px;
+}
+.radio-inline-anon span {
+    display: block;
+}
+
+.full_autremonatnat {
+    margin-left:10px;
+}
+
+.hr-without-marge
+{
+    margin: 0px;
+}
+.hr-with-bottom-marge {
+    margin: 0px 0px 10px 0px;
+}
+.pwd-recovery-link a {
+    color : #f76d00;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.pwd-recovery-link a:hover {
+    color : #af4a00;
+    font-weight: bold;
+    text-decoration: none;
+}
+.custom-label {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+/* enable absolute positioning */
+.inner-addon {
+    position: relative;
+}
+
+/* style icon */
+.inner-addon .glyphicon {
+    position: absolute;
+    padding: 10px;
+    pointer-events: none;
+    color: #969696;
+}
+
+/* align icon */
+.left-addon .glyphicon  { left:  0px;}
+.right-addon .glyphicon { right: 10px;}
+
+/* add padding  */
+.left-addon input  { padding-left:  30px; }
+.right-addon input { padding-right: 30px; }
+
+body {
+    font-family: 'Raleway', sans-serif !important;
+}
+.icoh4 {
+    padding :5px;
+}
+
+.main-well {
+    overflow:auto;
+    border-radius: 0px !important;
+    margin-bottom: 0px;
+}
+
+.nilborder {
+    border-radius:0px !important;
+}
+
+.panel-heading {
+    padding: 4px 15px;
+    border-top-right-radius: 0px !important;
+    border-top-left-radius: 0px !important;
+}
+.panel {
+
+    border-radius: 0px !important;
+}
+.btn-lg {
+    padding: 10px 16px;
+    font-size: 18px;
+    line-height: 1.33;
+    border-radius: 0px !important;
+}
+p{
+    padding: 0px !important;
+}
+.icopay {
+    float:left;
+    margin-right: 5px;
+}
+.mini-block {
+    font-size: 12px;
+    text-align: justify;
+    text-justify: inter-word;
+}
+hr {
+    margin-bottom: 10px !important;
+    margin-top: 10px !important;
+}

@@ -1,0 +1,7 @@
+parameters:
+#    custom_fulldon_ext_donateur.example.class: CustomFulldon\ExtDonateurBundle\Example
+
+services:
+#    custom_fulldon_ext_donateur.example:
+#        class: %custom_fulldon_ext_donateur.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

@@ -1,0 +1,12 @@
+parameters:
+#    custom_fulldon_ext_intersa.example.class: CustomFulldon\ExtIntersaBundle\Example
+
+services:
+#    custom_fulldon_ext_intersa.example:
+#        class: %custom_fulldon_ext_intersa.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
+    extfulldon.intersa.factorize:
+        class: CustomFulldon\ExtIntersaBundle\Service\Factorize
+        arguments: [ @doctrine.orm.entity_manager ]
+        calls:
+            - [ setContainer,[ @service_container ] ]

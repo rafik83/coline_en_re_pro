@@ -1,0 +1,30 @@
+{% extends "FulldonDonateurBundle:Donateur:coque_donateur.html.twig" %}
+    {% block coque_donateur %}
+
+        <div class="row" >
+
+            <div class="col-xs-12 pull-left">
+                {% for flashMessage in app.session.flashbag.get('info') %}
+                    <div class="alert alert-success">
+                        {{ flashMessage|trans({},'messages') }}
+                    </div>
+                {% endfor %}
+                {% if params['_locale'] == 'fr' %}
+                    {% set locale = 'fr_FR' %}
+                {% elseif params['_locale'] == 'en' %}
+                    {% set locale = 'en_GB' %}
+                {% endif %}
+                <h2 class="couleur-donateur" >{{ "Merci pour votre don"|trans({},'messages') }}</h2>
+                <hr />
+                {{ "Un email de confirmation vient d'être envoyé, un reçu fiscal vous sera communiqué très bientôt."|trans({},'messages') }}
+                {% set desc = "J'ai fais un don pour l'#association "|trans({},'messages')~" "~assoc_name %}
+                <h4 style="margin-top:5px;"  >{{ "Partagez votre don"|trans({},'messages') }} : </h4>
+                {{ socialButtons( { 'facebook': {'locale':'fr_FR', 'send':true, 'url':path('fulldon_donateur_onepage') },'twitter': {'locale':params['_locale'], 'via':socialids['twitter'], 'url': url('fulldon_donateur_onepage'), 'message': desc, 'tag':'don' },'googleplus': {'url':path('fulldon_donateur_onepage'), 'locale':params['_locale']}} ) }}
+            </div>
+        </div>
+
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+
+    {% endblock %}

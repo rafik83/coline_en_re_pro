@@ -1,0 +1,150 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        body {
+            font-size: 12px;
+        }
+        .couleur-titre {
+            color:#d58512;
+        }
+        th {
+            text-align: left;
+        }
+        .row_td {
+            background-color: #B3BCF8;
+        }
+        .sub_total {
+            background-color: #1AC5EC;
+        }
+        .aligne_row {
+            text-align: right;
+            width:150px;
+        }
+        .page {
+            overflow: hidden;
+            page-break-after: always;
+        }
+        td {
+            padding: 3px;
+        }
+    </style>
+
+</head>
+<body>
+<center>
+<h2>Export des dons</h2>
+Extraction {{ "now"|date('d/m/Y H:i:s') }}
+
+</center>
+<hr />
+
+<div class="row">
+    <div class="page">
+        <div class="form-group col-md-12">
+    <table class="table table-condensed" style="width:100%;float:left;">
+        <thead>
+        <tr>
+            {% for col in col_display %}
+                {% set sortcols = { 'numdon':'#REF','statut':'Statut','modepay':'Mode de paiement','typedon':'Type de don',
+                'lot':'Lot','createdat':'Date de création','datefiscale':'Date fiscale',
+                'codeactivite':'Code d\'activité','codeoccasion':'Code occasion','amount':'Montant','codecampagne':'Code campagne'} %}
+                {% set cols = { 'numdon':'#REF','nom':'Nom','prenom':'Prénom','statut':'Statut',
+                'nomentreprise':'Nom d\'entreprise','modepay':'Mode de paiement','typedon':'Type de don',
+                'lot':'Lot','rfs':'Reçus fiscaux','createdat':'Date de création','datefiscale':'Date fiscale',
+                'codeactivite':'Code d\'activité','codeoccasion':'Code occasion','amount':'Montant','codecampagne':'Code campagne'} %}
+                {% if col in cols|keys %}
+                    <th>{{ cols[col] }} {% if col in sortcols|keys %}<a href="#" onclick="flipsort('{{ col }}')" class="pull-right sort" ><i id="sort_{{ col }}" class="fa fa-lg fa-sort"></i></a>{% endif %}</th>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody id="content" >
+                {% for dons in data %}
+                    {% for r in dons %}
+                            <tr {% if r.transaction.statut.code is defined %}
+                                {% if r.transaction.statut.code == "paiement_annule" or r.removed == 1 %}style="background-color:rgba(169, 0, 0, 0.4)"{% endif %}
+                                {% if r.transaction.statut.code == "attente" %}style="background-color:#fff909"{% endif %}
+                                {% if r.transaction.statut.code == "traitement_paiement" %}class="alert-info"{% endif %}
+                                {% if r.transaction.statut.code == "don_valide" %}style="background-color:rgba(16, 153, 59, 0.5)"{% endif %}
+
+                            {% else %}
+                                style="background-color:rgba(169, 0, 0, 0.4)"
+                                    {% endif %}>
+                                {% set donateur_ix = r.user.id|donateur %}
+                                {% for col in col_display %}
+                                    {% if col == "numdon" %}
+                                        <td>{{ r.id }}</td>
+                                    {% elseif col ==  "nom" %}
+                                        <td>
+                                            {% if donateur_ix is not null %}
+                                                {{ donateur_ix.nom }}
+                                            {% endif %}
+                                        </td>
+                                    {% elseif col == "prenom" %}
+                                        <td>
+                                            {% if donateur_ix is not null %}
+                                                {{ donateur_ix.prenom }}
+                                            {% endif %}
+                                        </td>
+                                    {% elseif col == "statut" %}
+                                        <td>
+                                            {% if r.transaction.statut.libelle is defined %}{{ r.transaction.statut.libelle }}{% else %}Abondonné{% endif %}
+                                        </td>
+                                    {% elseif col == "nomentreprise" %}
+                                        <td>
+                                            {% if donateur_ix is not null %}
+                                                {{ donateur_ix.nomEntreprise }}
+                                            {% endif %}
+                                        </td>
+                                    {% elseif col == "modepay" %}
+                                        <td>{% if r.modePaiement is defined and  r.modePaiement is not null %}{{ r.modePaiement.libelle }}{% endif %}</td>
+                                    {% elseif col == "createdat" %}
+                                        <td>{{ r.createdAt|date('d/m/Y') }}</td>
+                                    {% elseif col == "amount" %}
+                                        <td>{{ r.montant|round(2, 'floor') }} €</td>
+                                    {% elseif col == "typedon" %}
+                                        <td>
+                                            {% if r.ispa %}
+                                                régulier
+                                            {% else %}
+                                                ponctuel
+                                            {% endif %}
+                                        </td>
+                                    {% elseif col == "rfs" %}
+                                        <td><ul>
+                                                {% for rf in r.rfs %}
+                                                    <li>{{ rf.id }}</li>
+                                                {% endfor %}
+                                            </ul></td>
+                                    {% elseif col == "codeactivite" %}
+                                        <td> {% if r.cause is not null %}{{ r.cause.code }}{% endif %}</td>
+                                    {% elseif col == "codeoccasion" %}
+                                        <td>{% if r.cause is not null %}{{ r.cause.codeOccasion.code }}{% endif %}</td>
+                                    {% elseif col == "codecampagne" %}
+                                        <td>{% if r.cause.codeOccasion is not null%}{{ r.cause.codeOccasion.codeCompagne.code }}{% endif %}</td>
+                                    {% elseif col == "lot" %}
+                                        <td>{{ r.lot }}</td>
+                                    {% elseif col == "createdat" %}
+                                        <td>{{ r.createdAt|date('d/m/Y') }}</td>
+                                    {% elseif col == "datefiscale" %}
+                                        <td>{{ r.dateFiscale|date('d/m/Y') }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                    {% endfor %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+
+</div>
+</div>
+</body>
+</html>

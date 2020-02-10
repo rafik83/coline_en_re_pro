@@ -1,0 +1,241 @@
+{% extends "FulldonIntersaBundle::coque_intersa.html.twig" %}
+    {% block coque_intersa %}
+
+        <div class="breadcrumbs" id="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="{{ path('fulldon_intersa_homepage') }}">Accueil</a></li>
+                <li><a href="{{ path('intersa_donateur') }}">Gestion des donateurs</a></li>
+                <li ><a href="{{ path('intersa_donateur_gestion', {'id':donateur.id,'cumul':cumul,'date':date}) }}">Gestion du donateur #{{ donateur.refDonateur }}</a></li>
+                <li class="active">Historique des actions :</li>
+            </ol>
+            </div>
+        <div class="page-content">
+        <div class="col-md-12 pull-left">
+            <div class="page-header">
+                <h1>
+                    Historique des actions
+                    <small>
+                        <i class="ace-icon fa fa-angle-double-right"></i>
+                        Référence du donateur : #{{ donateur.refDonateur }}
+                    </small>
+                </h1>
+            </div><!-- /.page-header -->
+        {% for flashMessage in app.session.flashbag.get('info') %}
+            <div class="alert alert-success">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+<form action="" method="post" >
+    <table style="width: 100%;" >
+        <tr >
+            <td style="padding-left:5px;background-color:#BD8D46;">
+                <div class="checkbox" style="margin-left:5px;" >
+                    <label  >
+                        <input type="checkbox" id="infos_rf" class="checktype"> INFOS RF
+                    </label>
+                </div>
+            </td>
+            <td style="width: 12.5%;padding-left:5px;background-color:#4BB5C1;" >
+                <div class="checkbox" style="">
+                    <label>
+                        <input type="checkbox" id="infos_pnd" class="checktype"> INFOS PND
+                    </label>
+                </div>
+            </td>
+            <td style="width: 12.5%;padding-left:5px;background-color:#d9edf7;" >
+                <div class="checkbox" style="">
+                    <label>
+                        <input type="checkbox" id="infos_don" class="checktype"> AJOUT DON
+                    </label>
+                </div>
+            </td>
+            <td style="width: 12.5%;padding-left:5px;background-color:#B4AF91;">
+                <div class="checkbox" style="">
+                    <label>
+                        <input type="checkbox" id="infos_donateur" class="checktype"> AJOUT DONATEUR
+                    </label>
+                </div>
+            </td>
+            <td style="width: 12.5%;padding-left:5px;background-color:#88d685;">
+                <div class="checkbox" style="">
+                    <label>
+                        <input type="checkbox" id="maj_donateur" class="checktype"> MAJ DONATEUR
+                    </label>
+                </div>
+            </td>
+            <td style="width: 12.5%;padding-left:5px;background-color:#b485a6;">
+                <div class="checkbox" style="">
+                    <label>
+                        <input type="checkbox" id="maj_don" class="checktype" > MAJ DON
+                    </label>
+                </div>
+            </td>
+            <td style="width: 12.5%;padding-left:5px;background-color:#bda607;">
+                <div class="checkbox" style="">
+                    <label>
+                        <input type="checkbox" id="infos_duplicata" class="checktype" > INFOS DUPLICATA
+                    </label>
+                </div>
+            </td>
+            <td style="width: 12.5%;padding-left:5px;background-color:#b7b7b7;">
+                <div class="checkbox" style="">
+                    <label>
+                        <input type="checkbox" id="infos_email" class="checktype"> INFOS EMAIL
+                    </label>
+                </div>
+            </td>
+        </tr>
+    </table>
+</form>
+
+            <table class="table table-condensed">
+                <thead>
+                <tr>
+                    <th>#REF</th>
+                    <th>Type d'action</th>
+                    <th>Fait par </th>
+                    <th>Date de création</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody id="content">
+                {% for action in actions %}
+                    <tr {% if action.typelog is defined %}
+                        {% if action.typelog.id == "1" %} style="background-color:#B4AF91 !important;"{% endif %}
+                        {% if action.typelog.id == "2" %} class="alert-info"{% endif %}
+                        {% if action.typelog.id == "3" %} style="background-color:#BD8D46 !important;"  {% endif %}
+                        {% if action.typelog.id == "4" %}style="background-color:#4BB5C1 !important;"  {% endif %}
+                        {% if action.typelog.id == "5" %} style="background-color:#88d685 !important;"{% endif %}
+                        {% if action.typelog.id == "6" %} style="background-color:#b485a6 !important;"{% endif %}
+                        {% if action.typelog.id == "7" %} style="background-color:#bda607 !important;"  {% endif %}
+                        {% if action.typelog.id == "8" %}style="background-color:#b7b7b7 !important;"  {% endif %}
+                    {% else %}
+                        class="danger"
+                            {% endif %}>
+
+                        <td>{{ action.id }}</td>
+                        <td>{{ action.typelog.name }}</td>
+                        {% if action.user is not null %}
+                        <td>{{ action.user.username }}</td>
+                        {% else %}
+                        <td>AUTOMATIQUE</td>
+                        {% endif %}
+                        <td style="width: 25%;" >{{ action.createdAt | date('Y-m-d H:i:s') }}</td>
+                        <td>{{ action.descAction|nl2br }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="holder"></div>
+        </div>
+        </div>
+
+    {% endblock %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+            $(document).ready(function() {
+                $("div.holder").jPages({
+                    containerID : "content",
+                    perPage: 10
+                });
+            });
+
+            function getResult(info_rf,info_pnd,info_don,info_donateur,maj_donateur,maj_don,infos_duplicata, infos_email) {
+                $.post( "/intersa/donateur/ajax/action/id/{{ donateur.id }}", { infos_rf: info_rf, infos_pnd: info_pnd,
+                    infos_don:info_don, infos_donateur:info_donateur, maj_donateur:maj_donateur,maj_don:maj_don,
+                infos_duplicata:infos_duplicata,infos_email:infos_email})
+                        .done(function( data ) {
+                            $('#content').html(data);
+                                $("div.holder").jPages({
+                                    containerID : "content",
+                                    perPage: 10
+                                });
+
+                        });
+            }
+            var rf = false;
+            var pnd = false;
+            var don = false;
+            var donateur= false;
+
+            var maj_donateur = false;
+            var maj_don = false;
+            var infos_email = false;
+            var infos_duplicata = false;
+
+            $('.checktype').click(function() {
+                checkcheck();
+            });
+
+            function checkcheck() {
+                var is_result = false;
+                if ($('#infos_rf').is(':checked')) {
+                    // checked
+                    rf = 1;
+                    is_result = true;
+                } else {
+                    rf = 0;
+                }
+                if ($('#infos_pnd').is(':checked')) {
+                    // checked
+                    pnd = 1;
+                    is_result = true;
+                }else {
+                    pnd = 0;
+                }
+                if ($('#infos_don').is(':checked')) {
+                    // checked
+                    don = 1;
+                    is_result = true;
+                } else {
+                    don = 0;
+                }
+                if ($('#infos_donateur').is(':checked')) {
+                    // checked
+                    donateur = 1;
+                    is_result = true;
+                }else {
+                    donateur = 0;
+                }
+
+                if ($('#maj_donateur').is(':checked')) {
+                    // checked
+                    maj_donateur = 1;
+                    is_result = true;
+                }else {
+                    maj_donateur = 0;
+                }
+                if ($('#maj_don').is(':checked')) {
+                    // checked
+                    maj_don = 1;
+                    is_result = true;
+                }else {
+                    maj_don = 0;
+                }
+
+                if ($('#infos_duplicata').is(':checked')) {
+                    // checked
+                    infos_duplicata = 1;
+                    is_result = true;
+                }else {
+                    infos_duplicata = 0;
+                }
+                if ($('#infos_email').is(':checked')) {
+                    // checked
+                    infos_email = 1;
+                    is_result = true;
+                }else {
+                    infos_email = 0;
+                }
+                if(is_result) {
+                    getResult(rf,pnd,don,donateur,maj_donateur,maj_don,infos_duplicata,infos_email);
+                } else {
+                    getResult(1,1,1,1,1,1,1,1);
+                }
+
+            }
+
+
+        </script>
+    {% endblock %}
